@@ -15,6 +15,7 @@ import {
   faStar,
   faBars,
 } from "@fortawesome/free-solid-svg-icons";
+import Logo from "./components/Logo";
 
 function App() {
   let blogs = [
@@ -60,9 +61,7 @@ function App() {
       {/* Navigator */}
       <nav className="bg-white w-10/12 mx-auto mt-10 p-4 rounded-lg border border-black/10 flex justify-between items-center">
         {/* LOGO */}
-        <div className="logo">
-          <p>Foodify</p>
-        </div>
+        <Logo />
 
         {/* BAR */}
         <div className="bar">
@@ -307,9 +306,16 @@ function App() {
         </div>
       </div>
 
+
       {/* Section - mail letter */}
-      <div className="py-20 bg-black text-white mb-30">
-        <div className="w-50 h-50 bg-red-400"></div>
+      <div className="pb-20 pt-40 mt-30 bg-black text-white mb-30 relative box-out">
+       <div className="box-in w-60 h-60 absolute left-1/2 -translate-x-1/2 -top-[25%] flex items-center justify-center">
+          <img
+            src="images/burger.png"
+            alt="Burger"
+            className="object-contain object-center w-full h-full"
+          />
+        </div>
 
         <div className="w-10/12 mx-auto">
           <h2 className="text-3xl font-medium mb-4">
@@ -331,13 +337,12 @@ function App() {
         </div>
       </div>
 
-      <footer className="bg-red-200 pt-10 w-10/12 mx-auto border border-black/10 rounded-lg ">
+
+      <footer className="bg-white pt-10 w-10/12 mx-auto border border-black/10 rounded-lg mb-30">
         <div className="px-5 pb-10 bg-blue">
           {/* side 1 */}
-          <div className="mb-10">
-            <div className="logo">
-              <p>Foodify</p>
-            </div>
+          <div className="mb-10 flex gap-2 flex-col">
+            <Logo />
             <p>
               “On the other hand, we denouce with righteous indignation and
               dsilike men who are so beguiled and demoralized by the charms of
