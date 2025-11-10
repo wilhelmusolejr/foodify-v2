@@ -14,6 +14,7 @@ import {
   faHeart,
   faStar,
   faBars,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import Logo from "./components/Logo";
 
@@ -177,14 +178,15 @@ function App() {
                 </p>
 
                 {/* form */}
-                <div className="flex gap-3 flex-col ">
+                <div className="flex gap-3 flex-wrap">
                   <input
                     type="text"
                     placeholder="e.g. chicken, rice, broccoli"
-                    className="w-full border border-black/10 rounded-lg px-4 py-3"
+                    className="flex-1 border border-black/10 rounded-lg px-4 py-3"
                   />
-                  <button className="bg-black w-full text-white px-4 py-3 rounded-lg">
-                    Get Started
+                  <button className="bg-black min-w-30 text-white px-4 py-3 rounded-lg uppercase flex gap-2 justify-center items-center">
+                    <FontAwesomeIcon icon={faPlus} />
+                    <p>add</p>
                   </button>
                 </div>
               </div>
@@ -255,9 +257,11 @@ function App() {
                 ))}
 
                 {/* button */}
-                <button className="bg-black uppercase text-white px-4 py-3 w-full rounded-lg">
-                  view more recent blogs
-                </button>
+                <div className="md:w-2/3 mx-auto">
+                  <button className="bg-black uppercase text-white px-4 py-3 w-full rounded-lg ">
+                    view more recent blogs
+                  </button>
+                </div>
               </div>
             </div>
 
