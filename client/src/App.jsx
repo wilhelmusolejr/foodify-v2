@@ -70,23 +70,23 @@ function App() {
       </nav>
 
       {/* Head */}
-      <div className="header min-h-[80vh] w-10/12 mx-auto my-10 text-white px-4 py-10 md:px-10 md:py-14 rounded-lg bg-white border border-black/10 flex flex-col justify-between">
+      <div className="header min-h-[80vh] w-10/12 mx-auto my-10 text-white px-4 py-10 md:px-10 md:py-14 rounded-lg bg-white border border-black/10 flex flex-col justify-center gap-20 ">
         {/* GROUP 1 */}
         <div className="">
           {/* heading */}
-          <h1 className="text-2xl mb-4 autour-one">
+          <h1 className="text-2xl md:text-3xl mb-4 autour-one">
             Discover, share, and savor. Delicious recipes from around the world.
           </h1>
 
           {/* paragraph */}
-          <p className="mb-4  font-extralight text-[#f5f5f5]">
+          <p className="mb-4 font-extralight text-[#f5f5f5] md:text-xl">
             Unlock a word of variety culinary recipes and unleash your inner
             beauty the easy way with Foodify.
           </p>
 
           {/* button */}
           <div className="btn">
-            <button className="bg-[#2B4A13] text-white px-5 uppercase py-3 rounded-lg">
+            <button className="bg-[#2B4A13] text-white px-5 uppercase py-3 rounded-lg font-medium">
               Get Started
             </button>
           </div>
