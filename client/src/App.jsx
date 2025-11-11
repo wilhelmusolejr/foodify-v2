@@ -59,42 +59,44 @@ function App() {
       <Navigator />
 
       {/* Head */}
-      <div className="header min-h-[80vh] xl:min-h-[75vh] w-10/12 mx-auto my-10 text-white  py-10 px-4 md:px-10 xl:px-20 md:pt-30 rounded-lg bg-white border border-black/10 flex flex-col justify-between gap-20 ">
-        {/* GROUP 1 */}
+      <div className="header min-h-[80vh] xl:min-h-[75vh] my-10 text-white py-10 md:pt-30 rounded-lg bg-white border border-black/10">
         <div className="">
-          {/* heading */}
-          <h1 className="text-2xl md:text-3xl xl:text-5xl max-w-4xl mb-4 autour-one">
-            Discover, share, and savor. Delicious recipes from around the world.
-          </h1>
+          {/* GROUP 1 */}
+          <div className="max-w-7xl mx-auto">
+            {/* heading */}
+            <h1 className="text-2xl md:text-3xl xl:text-5xl max-w-4xl mb-4 autour-one">
+              Discover, share, and savor. Delicious recipes from around the world.
+            </h1>
 
-          {/* paragraph */}
-          <p className="mb-4 font-light text-[#f5f5f5] max-w-[600px] md:text-xl">
-            Unlock a word of variety culinary recipes and unleash your inner beauty the easy way
-            with Foodify.
-          </p>
+            {/* paragraph */}
+            <p className="mb-4 font-light text-[#f5f5f5] max-w-[600px] md:text-xl">
+              Unlock a word of variety culinary recipes and unleash your inner beauty the easy way
+              with Foodify.
+            </p>
 
-          {/* button */}
-          <div className="btn">
-            <button className="bg-[#2B4A13] text-white px-5 uppercase py-3 rounded-lg font-semibold">
-              Get Started
-            </button>
-          </div>
-        </div>
-
-        {/* GROUP 2 */}
-        <div className="flex gap-5 flex-wrap justify-center items-center xl:flex-nowrap xl:flex-row-reverse xl:justify-between">
-          {/* stats */}
-          <div className="flex justify-center gap-5 flex-1">
-            <StatCard number="2500+" label="Recipes" />
-            <StatCard number="2500+" label="Deliveries" />
-            <StatCard number="2500+" label="Users" />
+            {/* button */}
+            <div className="btn">
+              <button className="bg-[#2B4A13] text-white px-5 uppercase py-3 rounded-lg font-semibold">
+                Get Started
+              </button>
+            </div>
           </div>
 
-          {/* images */}
-          <div className="flex gap-5 overflow-auto md pb-5">
-            <HeadingImage image_path="images/header/food1.png" />
-            <HeadingImage image_path="images/header/food2.png" />
-            <HeadingImage image_path="images/header/food3.png" />
+          {/* GROUP 2 */}
+          <div className="max-w-7xl mx-auto flex gap-5 flex-wrap justify-center items-center xl:flex-nowrap xl:flex-row-reverse xl:justify-between">
+            {/* stats */}
+            <div className="flex justify-center gap-5 flex-1">
+              <StatCard number="2500+" label="Recipes" />
+              <StatCard number="2500+" label="Deliveries" />
+              <StatCard number="2500+" label="Users" />
+            </div>
+
+            {/* images */}
+            <div className="flex gap-5 overflow-auto md pb-5">
+              <HeadingImage image_path="images/header/food1.png" />
+              <HeadingImage image_path="images/header/food2.png" />
+              <HeadingImage image_path="images/header/food3.png" />
+            </div>
           </div>
         </div>
       </div>
@@ -189,8 +191,8 @@ function App() {
       </div>
 
       {/* Section - Popular Recipes */}
-      <div className="bg-white py-30">
-        <div className="w-10/12 mx-auto">
+      <div className="bg-white py-30 border">
+        <div className="w-10/12 mx-auto max-w-7xl">
           {/* Heading */}
           <SectionHeading
             heading={"Popular Recipes"}
@@ -198,7 +200,7 @@ function App() {
           />
 
           {/* parent */}
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  border">
             {recipes.map((recipe, index) => (
               <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
             ))}
