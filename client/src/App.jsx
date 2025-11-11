@@ -59,32 +59,32 @@ function App() {
       <Navigator />
 
       {/* Head */}
-      <div className="header min-h-[80vh] w-10/12 mx-auto my-10 text-white px-4 py-10 md:px-10 md:py-14 rounded-lg bg-white border border-black/10 flex flex-col justify-center gap-20 ">
+      <div className="header min-h-[80vh] xl:min-h-[75vh] w-10/12 mx-auto my-10 text-white  py-10 px-4 md:px-10 xl:px-20 md:pt-30 rounded-lg bg-white border border-black/10 flex flex-col justify-between gap-20 ">
         {/* GROUP 1 */}
         <div className="">
           {/* heading */}
-          <h1 className="text-2xl md:text-3xl xl:text-4xl mb-4 autour-one">
+          <h1 className="text-2xl md:text-3xl xl:text-5xl max-w-4xl mb-4 autour-one">
             Discover, share, and savor. Delicious recipes from around the world.
           </h1>
 
           {/* paragraph */}
-          <p className="mb-4 font-extralight text-[#f5f5f5] max-w-[600px] leading-relaxed md:text-xl">
+          <p className="mb-4 font-light text-[#f5f5f5] max-w-[600px] md:text-xl">
             Unlock a word of variety culinary recipes and unleash your inner beauty the easy way
             with Foodify.
           </p>
 
           {/* button */}
           <div className="btn">
-            <button className="bg-[#2B4A13] text-white px-5 uppercase py-3 rounded-lg font-medium">
+            <button className="bg-[#2B4A13] text-white px-5 uppercase py-3 rounded-lg font-semibold">
               Get Started
             </button>
           </div>
         </div>
 
         {/* GROUP 2 */}
-        <div className="flex gap-5 flex-wrap justify-center">
+        <div className="flex gap-5 flex-wrap justify-center items-center xl:flex-nowrap xl:flex-row-reverse xl:justify-between">
           {/* stats */}
-          <div className="flex justify-center gap-5 ">
+          <div className="flex justify-center gap-5 flex-1">
             <StatCard number="2500+" label="Recipes" />
             <StatCard number="2500+" label="Deliveries" />
             <StatCard number="2500+" label="Users" />
@@ -125,7 +125,9 @@ function App() {
           {/* Heading */}
           <div className="capitalize flex gap-2 flex-col mb-10 md:text-center">
             <p className="italic">Turn Your Leftovers into Delicious Meals</p>
-            <h2 className="text-2xl font-semibold">What's in Your Fridge?</h2>
+            <h2 className="text-2xl md:text-3xl xl:text-4xl font-semibold">
+              What's in Your Fridge?
+            </h2>
           </div>
 
           <p className="mb-20 font-light text-[#333] max-w-lg mx-auto leading-relaxed ">
@@ -139,31 +141,37 @@ function App() {
           {/* modal */}
           <div className="border-black/10 border rounded-lg p-4  bg-green-900 text-white md:w-2/3 lg:w-full lg:max-w-[1000px] mx-auto">
             <h2 className="uppercase text-xl pb-4 md:pb-5">Recipe finder tool</h2>
-            <div className="flex flex-col lg:flex-row">
+            <div className="flex flex-col lg:flex-row min-h-90">
               {/* box 1 */}
-              <div className="px-4 py-10 md:px-5 bg-white text-black rounded-lg rounded-b-none border-b-2 border-black/30 lg:rounded-e-none lg:rounded-s-lg lg:border-e-2 lg:border-b-0">
-                <h3 className="text-2xl mb-3">Tell us what ingredients you have!</h3>
-                <p className="font-light text-[#333] mb-10 leading-relaxed">
-                  Type the first ingredient you have in the search box and pick the best match from
-                  the drop down. We need a minimum of 3 ingredients to find you some recipes.
-                </p>
+              <div className="px-4 xl:px-10 py-10 md:px-5 bg-white text-black rounded-lg rounded-b-none border-b-2 border-bg-green-900 lg:rounded-e-none lg:rounded-s-lg lg:border-e-2 lg:border-b-0">
+                <div className="flex flex-col gap-6 justify-between">
+                  {/* heading */}
+                  <div className="">
+                    <h3 className="text-2xl mb-3">Tell us what ingredients you have!</h3>
+                    <p className="font-light text-[#333] mb-10 leading-relaxed">
+                      Type the first ingredient you have in the search box and pick the best match
+                      from the drop down. We need a minimum of 3 ingredients to find you some
+                      recipes.
+                    </p>
+                  </div>
 
-                {/* form */}
-                <div className="flex gap-3 flex-wrap">
-                  <input
-                    type="text"
-                    placeholder="e.g. chicken, rice, broccoli"
-                    className="flex-1 border border-black/10 rounded-lg px-4 py-3"
-                  />
-                  <button className="bg-black min-w-30 text-white px-4 py-3 rounded-lg uppercase flex gap-2 justify-center items-center">
-                    <FontAwesomeIcon icon={faPlus} />
-                    <p>add</p>
-                  </button>
+                  {/* form */}
+                  <div className="flex gap-3 flex-wrap ">
+                    <input
+                      type="text"
+                      placeholder="e.g. chicken, rice, broccoli"
+                      className="flex-1 border border-black/10 rounded-lg px-4 py-3"
+                    />
+                    <button className="bg-black min-w-30 w-full lg:w-30 text-white px-4 py-3 rounded-lg uppercase flex gap-2 justify-center items-center">
+                      <FontAwesomeIcon icon={faPlus} />
+                      <p>add</p>
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* box 2 */}
-              <div className="px-4 py-10 md:px-5 bg-white min-h-[300px] min-w-80 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none">
+              <div className="px-4 xl:px-10 py-10 md:px-5 bg-white min-h-[300px] lg:min-w-90 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none">
                 <h3 className="text-2xl  mb-2">Your ingredients list</h3>
 
                 {/* parent */}
@@ -190,7 +198,7 @@ function App() {
           />
 
           {/* parent */}
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {recipes.map((recipe, index) => (
               <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
             ))}
@@ -201,7 +209,7 @@ function App() {
       {/* Section - Blog */}
       <div className="py-30">
         <div className="w-10/12 mx-auto">
-          <div className="flex flex-col lg:flex-row gap-50 lg:gap-10">
+          <div className="flex flex-col lg:flex-row gap-50 lg:gap-10 max-w-7xl mx-auto">
             {/* side 1 */}
             <div className="flex-1">
               <div className=" capitalize flex gap-2 flex-col mb-10">
