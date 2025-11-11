@@ -2,7 +2,7 @@ import React from "react";
 
 export default function HeadingImage({ image_path = "" }) {
   return (
-    <div className={`min-w-40 h-30 rounded-md`}>
+    <div className={`min-w-[200px] h-[150px] rounded-md`}>
       <img
         src={image_path}
         alt={`Image for header food item`}
