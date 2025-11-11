@@ -68,7 +68,7 @@ function App() {
           </h1>
 
           {/* paragraph */}
-          <p className="mb-4 font-extralight text-[#f5f5f5] md:text-xl">
+          <p className="mb-4 font-extralight text-[#f5f5f5] max-w-[600px] leading-relaxed md:text-xl">
             Unlock a word of variety culinary recipes and unleash your inner beauty the easy way
             with Foodify.
           </p>
