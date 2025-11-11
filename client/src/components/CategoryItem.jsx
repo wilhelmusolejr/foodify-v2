@@ -4,7 +4,7 @@ export default function CategoryItem({ image_path, title }) {
   return (
     <div className="text-center flex flex-col items-center gap-2">
       {/* image */}
-      <div className="w-30 h-30 rounded-full">
+      <div className="w-30 h-30 xl:w-[200px] lg:h-[200px] rounded-full">
         <img
           src={image_path}
           alt={`Image for header food item`}
