@@ -160,8 +160,9 @@ function App() {
             ignoring pantry staples like salt or water. Perfect for reducing
             food waste and whipping up quick meals!
           </p>
-
-          <div className="border-black/10 border rounded-lg p-4  bg-green-900 text-white">
+          
+          {/* modal */}
+          <div className="border-black/10 border rounded-lg p-4  bg-green-900 text-white md:w-2/3 mx-auto">
             <h2 className="uppercase text-xl pb-4 md:pb-5">
               Recipe finder tool
             </h2>
@@ -286,13 +287,13 @@ function App() {
               </div>
 
               {/* Category list */}
-              <div className="">
+              <div className="md:w-2/3 mx-auto ">
                 {/* heading */}
                 <div className="py-10 text-center rounded-lg rounded-b-none bg-black text-white">
-                  <h2 className="text-2xl">Recipe collections</h2>
+                  <h2 className="text-2xl uppercase">Recipe collections</h2>
                 </div>
                 {/* list */}
-                <div className="bg-slate-200 rounded-lg rounded-t-none">
+                <div className="bg-slate-200 rounded-lg rounded-t-none border border-black/10 border-t-none">
                   {/* item */}
                   <CategoryListItem
                     name={"Quick & Easy Recipes"}
@@ -310,10 +311,9 @@ function App() {
         </div>
       </div>
 
-
       {/* Section - mail letter */}
       <div className="pb-20 pt-40 mt-30 bg-black text-white mb-30 relative box-out">
-       <div className="box-in w-60 h-60 absolute left-1/2 -translate-x-1/2 -top-[25%] flex items-center justify-center">
+        <div className="box-in w-60 h-60 absolute left-1/2 -translate-x-1/2 -top-[25%] flex items-center justify-center">
           <img
             src="images/burger.png"
             alt="Burger"
@@ -321,7 +321,7 @@ function App() {
           />
         </div>
 
-        <div className="w-10/12 mx-auto">
+        <div className="w-10/12 max-w-96 mx-auto">
           <h2 className="text-3xl font-medium mb-4">
             Deliciousness to your inbox
           </h2>
@@ -341,13 +341,12 @@ function App() {
         </div>
       </div>
 
-
       <footer className="bg-white pt-10 w-10/12 mx-auto border border-black/10 rounded-lg mb-30">
         <div className="px-5 pb-10 bg-blue">
           {/* side 1 */}
-          <div className="mb-10 flex gap-2 flex-col">
+          <div className="mb-14 flex gap-2 flex-col">
             <Logo />
-            <p>
+            <p className="w-10/12 max-w-[450px] leading-relaxed">
               “On the other hand, we denouce with righteous indignation and
               dsilike men who are so beguiled and demoralized by the charms of
               pleasure of the moment”
@@ -355,7 +354,7 @@ function App() {
           </div>
 
           {/* side 2 */}
-          <div className="flex gap-10 flex-col">
+          <div className="flex gap-10 flex-col md:flex-row mb-14">
             {/* nav 1 */}
             <div className="uppercase">
               <h2 className=" text-2xl font-medium mb-5">Browse</h2>
