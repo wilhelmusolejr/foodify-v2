@@ -63,7 +63,7 @@ function App() {
         {/* GROUP 1 */}
         <div className="">
           {/* heading */}
-          <h1 className="text-2xl md:text-3xl mb-4 autour-one">
+          <h1 className="text-2xl md:text-3xl xl:text-4xl mb-4 autour-one">
             Discover, share, and savor. Delicious recipes from around the world.
           </h1>
 
@@ -128,7 +128,7 @@ function App() {
             <h2 className="text-2xl font-semibold">What's in Your Fridge?</h2>
           </div>
 
-          <p className="mb-20 font-light text-[#333]">
+          <p className="mb-20 font-light text-[#333] max-w-lg mx-auto leading-relaxed ">
             This interactive tool lets you enter ingredients from your fridge or pantry (like
             apples, flour, or sugar) and instantly generates recipe ideas that match what you have.
             Prioritize recipes that maximize your available items or minimize missing ones, while
@@ -143,7 +143,7 @@ function App() {
               {/* box 1 */}
               <div className="px-4 py-10 md:px-5 bg-white text-black rounded-lg rounded-b-none border-b-2 border-black/30 lg:rounded-e-none lg:rounded-s-lg lg:border-e-2 lg:border-b-0">
                 <h3 className="text-2xl mb-3">Tell us what ingredients you have!</h3>
-                <p className="font-light text-[#333] mb-10">
+                <p className="font-light text-[#333] mb-10 leading-relaxed">
                   Type the first ingredient you have in the search box and pick the best match from
                   the drop down. We need a minimum of 3 ingredients to find you some recipes.
                 </p>
