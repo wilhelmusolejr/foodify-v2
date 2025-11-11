@@ -1,0 +1,9 @@
+import React from "react";
+
+export default function NavLink({ url = "#", label }) {
+  return (
+    <li className="list-none">
+      <a href={url}>{label}</a>
+    </li>
+  );
+}
