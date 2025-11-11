@@ -9,14 +9,10 @@ import SectionParent from "./components/SectionParent";
 import StatCard from "./components/StatCard";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUtensils,
-  faHeart,
-  faStar,
-  faBars,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faUtensils, faHeart, faStar, faBars, faPlus } from "@fortawesome/free-solid-svg-icons";
+
 import Logo from "./components/Logo";
+import Navigator from "./components/Navigator";
 
 function App() {
   let blogs = [
@@ -60,15 +56,7 @@ function App() {
   return (
     <>
       {/* Navigator */}
-      <nav className="bg-white w-10/12 mx-auto mt-10 p-4 rounded-lg border border-black/10 flex justify-between items-center">
-        {/* LOGO */}
-        <Logo />
-
-        {/* BAR */}
-        <div className="bar">
-          <FontAwesomeIcon icon={faBars} className="text-3xl" />
-        </div>
-      </nav>
+      <Navigator />
 
       {/* Head */}
       <div className="header min-h-[80vh] w-10/12 mx-auto my-10 text-white px-4 py-10 md:px-10 md:py-14 rounded-lg bg-white border border-black/10 flex flex-col justify-center gap-20 ">
@@ -81,8 +69,8 @@ function App() {
 
           {/* paragraph */}
           <p className="mb-4 font-extralight text-[#f5f5f5] md:text-xl">
-            Unlock a word of variety culinary recipes and unleash your inner
-            beauty the easy way with Foodify.
+            Unlock a word of variety culinary recipes and unleash your inner beauty the easy way
+            with Foodify.
           </p>
 
           {/* button */}
@@ -94,7 +82,7 @@ function App() {
         </div>
 
         {/* GROUP 2 */}
-        <div className="flex gap-5 flex-col">
+        <div className="flex gap-5 flex-wrap justify-center">
           {/* stats */}
           <div className="flex justify-center gap-5 ">
             <StatCard number="2500+" label="Recipes" />
@@ -123,22 +111,10 @@ function App() {
           {/* list */}
           <div className="flex gap-4 flex-wrap justify-center">
             {/* item */}
-            <CategoryItem
-              image_path={"images/category/category1.png"}
-              title="Main course"
-            />
-            <CategoryItem
-              image_path={"images/category/category2.png"}
-              title="Sea food"
-            />
-            <CategoryItem
-              image_path={"images/category/category3.png"}
-              title="Dessert"
-            />
-            <CategoryItem
-              image_path={"images/category/category4.png"}
-              title="Salad"
-            />
+            <CategoryItem image_path={"images/category/category1.png"} title="Main course" />
+            <CategoryItem image_path={"images/category/category2.png"} title="Sea food" />
+            <CategoryItem image_path={"images/category/category3.png"} title="Dessert" />
+            <CategoryItem image_path={"images/category/category4.png"} title="Salad" />
           </div>
         </div>
       </div>
@@ -153,29 +129,23 @@ function App() {
           </div>
 
           <p className="mb-20 font-light text-[#333]">
-            This interactive tool lets you enter ingredients from your fridge or
-            pantry (like apples, flour, or sugar) and instantly generates recipe
-            ideas that match what you have. Prioritize recipes that maximize
-            your available items or minimize missing ones, while optionally
-            ignoring pantry staples like salt or water. Perfect for reducing
-            food waste and whipping up quick meals!
+            This interactive tool lets you enter ingredients from your fridge or pantry (like
+            apples, flour, or sugar) and instantly generates recipe ideas that match what you have.
+            Prioritize recipes that maximize your available items or minimize missing ones, while
+            optionally ignoring pantry staples like salt or water. Perfect for reducing food waste
+            and whipping up quick meals!
           </p>
-          
+
           {/* modal */}
           <div className="border-black/10 border rounded-lg p-4  bg-green-900 text-white md:w-2/3 mx-auto">
-            <h2 className="uppercase text-xl pb-4 md:pb-5">
-              Recipe finder tool
-            </h2>
+            <h2 className="uppercase text-xl pb-4 md:pb-5">Recipe finder tool</h2>
             <div className="">
               {/* box 1 */}
               <div className="px-4 py-10  bg-white text-black rounded-lg rounded-b-none border-b-2 border-black/30">
-                <h3 className="text-2xl mb-3">
-                  Tell us what ingredients you have!
-                </h3>
+                <h3 className="text-2xl mb-3">Tell us what ingredients you have!</h3>
                 <p className="font-light text-[#333] mb-10">
-                  Type the first ingredient you have in the search box and pick
-                  the best match from the drop down. We need a minimum of 3
-                  ingredients to find you some recipes.
+                  Type the first ingredient you have in the search box and pick the best match from
+                  the drop down. We need a minimum of 3 ingredients to find you some recipes.
                 </p>
 
                 {/* form */}
@@ -222,11 +192,7 @@ function App() {
           {/* parent */}
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {recipes.map((recipe, index) => (
-              <Recipe
-                key={index}
-                name={recipe.name}
-                image_path={recipe.image_path}
-              />
+              <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
             ))}
           </div>
         </div>
@@ -239,9 +205,7 @@ function App() {
             {/* side 1 */}
             <div className="">
               <div className=" capitalize flex gap-2 flex-col mb-10">
-                <p className="italic">
-                  Top-Rated Recipes from Our Cooking Community This Week
-                </p>
+                <p className="italic">Top-Rated Recipes from Our Cooking Community This Week</p>
                 <h2 className="text-2xl font-semibold">Community Picks</h2>
               </div>
 
@@ -277,11 +241,7 @@ function App() {
                 {/* parent */}
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {recipes.map((recipe, index) => (
-                    <Recipe
-                      key={index}
-                      name={recipe.name}
-                      image_path={recipe.image_path}
-                    />
+                    <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
                   ))}
                 </div>
               </div>
@@ -295,10 +255,7 @@ function App() {
                 {/* list */}
                 <div className="bg-slate-200 rounded-lg rounded-t-none border border-black/10 border-t-none">
                   {/* item */}
-                  <CategoryListItem
-                    name={"Quick & Easy Recipes"}
-                    number={"78"}
-                  />
+                  <CategoryListItem name={"Quick & Easy Recipes"} number={"78"} />
                   <CategoryListItem name={"Healthy Meals"} number={"54"} />
                   <CategoryListItem name={"Desserts & Baking"} number={"62"} />
                   <CategoryListItem name={"Vegan & Vegetarian"} number={"41"} />
@@ -322,9 +279,7 @@ function App() {
         </div>
 
         <div className="w-10/12 max-w-96 mx-auto">
-          <h2 className="text-3xl font-medium mb-4">
-            Deliciousness to your inbox
-          </h2>
+          <h2 className="text-3xl font-medium mb-4">Deliciousness to your inbox</h2>
           <p>Enjoy weekly hand picked recipes and recommendations.</p>
 
           {/* form */}
@@ -334,9 +289,7 @@ function App() {
               placeholder="e.g. chicken, rice, broccoli"
               className="w-full bg-white text-black rounded-lg px-4 py-3"
             />
-            <button className="bg-white w-full text-black px-4 py-3 rounded-lg">
-              Get Started
-            </button>
+            <button className="bg-white w-full text-black px-4 py-3 rounded-lg">Get Started</button>
           </div>
         </div>
       </div>
@@ -347,9 +300,8 @@ function App() {
           <div className="mb-14 flex gap-2 flex-col">
             <Logo />
             <p className="w-10/12 max-w-[450px] leading-relaxed">
-              “On the other hand, we denouce with righteous indignation and
-              dsilike men who are so beguiled and demoralized by the charms of
-              pleasure of the moment”
+              “On the other hand, we denouce with righteous indignation and dsilike men who are so
+              beguiled and demoralized by the charms of pleasure of the moment”
             </p>
           </div>
 
