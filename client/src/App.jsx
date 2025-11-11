@@ -91,7 +91,7 @@ function App() {
           </div>
 
           {/* images */}
-          <div className="flex gap-5 overflow-scroll pb-5">
+          <div className="flex gap-5 overflow-auto md pb-5">
             <HeadingImage image_path="images/header/food1.png" />
             <HeadingImage image_path="images/header/food2.png" />
             <HeadingImage image_path="images/header/food3.png" />
@@ -137,11 +137,11 @@ function App() {
           </p>
 
           {/* modal */}
-          <div className="border-black/10 border rounded-lg p-4  bg-green-900 text-white md:w-2/3 mx-auto">
+          <div className="border-black/10 border rounded-lg p-4  bg-green-900 text-white md:w-2/3 lg:w-full lg:max-w-[1000px] mx-auto">
             <h2 className="uppercase text-xl pb-4 md:pb-5">Recipe finder tool</h2>
-            <div className="">
+            <div className="flex flex-col lg:flex-row">
               {/* box 1 */}
-              <div className="px-4 py-10  bg-white text-black rounded-lg rounded-b-none border-b-2 border-black/30">
+              <div className="px-4 py-10 md:px-5 bg-white text-black rounded-lg rounded-b-none border-b-2 border-black/30 lg:rounded-e-none lg:rounded-s-lg lg:border-e-2 lg:border-b-0">
                 <h3 className="text-2xl mb-3">Tell us what ingredients you have!</h3>
                 <p className="font-light text-[#333] mb-10">
                   Type the first ingredient you have in the search box and pick the best match from
@@ -163,7 +163,7 @@ function App() {
               </div>
 
               {/* box 2 */}
-              <div className="px-4 py-10 md:px-5 bg-white min-h-[300px] text-black rounded-lg rounded-t-none">
+              <div className="px-4 py-10 md:px-5 bg-white min-h-[300px] min-w-80 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none">
                 <h3 className="text-2xl  mb-2">Your ingredients list</h3>
 
                 {/* parent */}
@@ -201,9 +201,9 @@ function App() {
       {/* Section - Blog */}
       <div className="py-30">
         <div className="w-10/12 mx-auto">
-          <div className="flex flex-col gap-50">
+          <div className="flex flex-col lg:flex-row gap-50 lg:gap-10">
             {/* side 1 */}
-            <div className="">
+            <div className="flex-1">
               <div className=" capitalize flex gap-2 flex-col mb-10">
                 <p className="italic">Top-Rated Recipes from Our Cooking Community This Week</p>
                 <h2 className="text-2xl font-semibold">Community Picks</h2>
@@ -222,7 +222,7 @@ function App() {
                 ))}
 
                 {/* button */}
-                <div className="md:w-2/3 mx-auto">
+                <div className="md:w-2/3 mx-auto lg:">
                   <button className="bg-black uppercase text-white px-4 py-3 w-full rounded-lg ">
                     view more recent blogs
                   </button>
@@ -231,7 +231,7 @@ function App() {
             </div>
 
             {/* side 2 */}
-            <div className="flex flex-col gap-20 ">
+            <div className="flex flex-col gap-20 lg:w-[300px] ">
               {/* recipes */}
               <div className="">
                 <div className="mb-10">
@@ -239,7 +239,7 @@ function App() {
                 </div>
 
                 {/* parent */}
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-6">
                   {recipes.map((recipe, index) => (
                     <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
                   ))}
@@ -247,7 +247,7 @@ function App() {
               </div>
 
               {/* Category list */}
-              <div className="md:w-2/3 mx-auto ">
+              <div className="w-full md:w-2/3 mx-auto lg:w-full">
                 {/* heading */}
                 <div className="py-10 text-center rounded-lg rounded-b-none bg-black text-white">
                   <h2 className="text-2xl uppercase">Recipe collections</h2>
