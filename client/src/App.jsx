@@ -9,7 +9,15 @@ import SectionParent from "./components/SectionParent";
 import StatCard from "./components/StatCard";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUtensils, faHeart, faStar, faBars, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUtensils,
+  faHeart,
+  faStar,
+  faBars,
+  faPlus,
+  faCross,
+  faX,
+} from "@fortawesome/free-solid-svg-icons";
 
 import Logo from "./components/Logo";
 import Navigator from "./components/Navigator";
@@ -179,8 +187,8 @@ function App() {
                 {/* parent */}
                 <div className="">
                   {/* item */}
-                  <div className="flex gap-5 py-3 px-4 rounded-lg border border-black/10 w-fit">
-                    <p>X</p>
+                  <div className="flex gap-5 py-3 px-4 items-center rounded-lg border border-black/10 w-fit">
+                    <FontAwesomeIcon icon={faX} />
                     <p>Egg</p>
                   </div>
                 </div>
