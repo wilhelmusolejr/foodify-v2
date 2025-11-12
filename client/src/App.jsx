@@ -17,10 +17,12 @@ import {
   faPlus,
   faCross,
   faX,
+  faBoxOpen,
 } from "@fortawesome/free-solid-svg-icons";
 
 import Logo from "./components/Logo";
 import Navigator from "./components/Navigator";
+import IngredientListItem from "./components/ingredientListItem";
 
 function App() {
   let blogs = [
@@ -181,15 +183,25 @@ function App() {
               </div>
 
               {/* box 2 */}
-              <div className="px-4 xl:px-10 py-10 md:px-5 bg-white min-h-[300px] lg:min-w-90 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none">
-                <h3 className="text-2xl  mb-2">Your ingredients list</h3>
+              <div className="px-4 xl:px-10 py-10  md:px-5 bg-white lg:min-w-90 lg:max-w-90 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none overflow-hidden">
+                <h3 className="text-2xl mb-4">Your ingredients list</h3>
 
-                {/* parent */}
-                <div className="">
-                  {/* item */}
-                  <div className="flex gap-5 py-3 px-4 items-center rounded-lg border border-black/10 w-fit">
-                    <FontAwesomeIcon icon={faX} />
-                    <p>Egg</p>
+                <div className="h-full ">
+                  {/* content */}
+
+                  {/* with item */}
+                  <div className="flex flex-wrap gap-2">
+                    <IngredientListItem name={"Chicken"} />
+                    <IngredientListItem name={"Rice"} />
+                  </div>
+
+                  {/* without */}
+                  <div className="hidden flex-col items-center justify-center text-center h-full py-10 text-gray-500">
+                    <FontAwesomeIcon icon={faBoxOpen} className="text-5xl mb-3 opacity-60" />
+                    <p className="text-lg font-medium">No ingredients yet</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Start adding items to build your list.
+                    </p>
                   </div>
                 </div>
               </div>
