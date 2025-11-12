@@ -15,9 +15,9 @@ export default function BlogItem({ heading, date, description, imageUrl }) {
 
         {/* data */}
         <div className="pt-5 flex-1">
-          <h3 className="mb-2">{date}</h3>
+          <h3 className="mb-4 uppercase font-medium">{date}</h3>
           <h2 className="font-bold text-2xl mb-2 poltawski-nowy text-[#2B4A13]">{heading}</h2>
-          <p className="mb-10  text-[#333]">{description}</p>
+          <p className="mb-10  text-[#333] font-light leading-relaxed">{description}</p>
           <a href="#" className="underline capitalize text-xl text-[#2B4A13]">
             Continue Reading
           </a>
