@@ -177,7 +177,7 @@ function App() {
             <h2 className="uppercase text-xl pb-4 md:pb-5">Recipe finder tool</h2>
             <div className="flex flex-col lg:flex-row min-h-90">
               {/* box 1 */}
-              <div className="px-4 xl:px-10 py-10 md:px-5 bg-white text-black rounded-lg rounded-b-none border-b-2 border-bg-green-900 lg:rounded-e-none lg:rounded-s-lg lg:border-e-2 lg:border-b-0">
+              <div className="px-4 xl:px-10 py-10 md:px-5 bg-white text-black rounded-lg rounded-b-none border-b-2 border-green-900 lg:rounded-e-none lg:rounded-s-lg lg:border-e-2 lg:border-b-0">
                 <div className="flex flex-col gap-6 justify-between">
                   {/* heading */}
                   <div className="">
@@ -216,7 +216,7 @@ function App() {
               </div>
 
               {/* box 2 */}
-              <div className="px-4 xl:px-10 py-10  md:px-5 bg-white lg:min-w-90 lg:max-w-90 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none overflow-hidden">
+              <div className="px-4 xl:px-10 py-10  md:px-5 bg-white min-h-80 lg:min-w-90 lg:max-w-90 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none overflow-hidden">
                 <h3 className="text-2xl mb-4">Your ingredients list</h3>
 
                 <div className="h-full ">
