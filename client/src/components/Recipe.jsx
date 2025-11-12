@@ -4,7 +4,7 @@ export default function Recipe({ image_path, link, name }) {
   return (
     <>
       <div className="">
-        <div class="aspect-square rounded-lg flex items-center justify-center">
+        <div className="aspect-square rounded-lg flex items-center justify-center">
           <img
             src={image_path}
             alt={`Image for header food item`}
