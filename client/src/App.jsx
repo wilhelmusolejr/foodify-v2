@@ -23,6 +23,7 @@ import {
 import Logo from "./components/Logo";
 import Navigator from "./components/Navigator";
 import IngredientListItem from "./components/ingredientListItem";
+import { useState } from "react";
 
 function App() {
   let blogs = [
@@ -62,6 +63,19 @@ function App() {
     name,
     image_path: `images/recipe/recipe (${index + 1}).png`,
   }));
+
+  // DATA
+  let [currentIngredients, setCurrentIngredients] = useState([]);
+  let [ingredient, setIngredient] = useState("");
+
+  function addIngredient(ingredient) {
+    setCurrentIngredients([...currentIngredients, ingredient]);
+    setIngredient("");
+  }
+
+  function removeIngredient(indexToRemove) {
+    setCurrentIngredients(currentIngredients.filter((_, index) => index !== indexToRemove));
+  }
 
   return (
     <>
@@ -173,8 +187,13 @@ function App() {
                       type="text"
                       placeholder="e.g. chicken, rice, broccoli"
                       className="flex-1 border border-black/10 rounded-lg px-4 py-3"
+                      value={ingredient}
+                      onChange={(e) => setIngredient(e.target.value)}
                     />
-                    <button className="bg-black min-w-30 w-full lg:w-30 text-white px-4 py-3 rounded-lg uppercase flex gap-2 justify-center items-center">
+                    <button
+                      className="bg-black min-w-30 w-full lg:w-30 text-white px-4 py-3 rounded-lg uppercase flex gap-2 justify-center items-center"
+                      onClick={() => addIngredient(ingredient)}
+                    >
                       <FontAwesomeIcon icon={faPlus} />
                       <p>add</p>
                     </button>
@@ -189,20 +208,25 @@ function App() {
                 <div className="h-full ">
                   {/* content */}
 
-                  {/* with item */}
-                  <div className="flex flex-wrap gap-2">
-                    <IngredientListItem name={"Chicken"} />
-                    <IngredientListItem name={"Rice"} />
-                  </div>
-
-                  {/* without */}
-                  <div className="hidden flex-col items-center justify-center text-center h-full py-10 text-gray-500">
-                    <FontAwesomeIcon icon={faBoxOpen} className="text-5xl mb-3 opacity-60" />
-                    <p className="text-lg font-medium">No ingredients yet</p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Start adding items to build your list.
-                    </p>
-                  </div>
+                  {currentIngredients.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {currentIngredients.map((ingredient, index) => (
+                        <IngredientListItem
+                          key={index}
+                          name={ingredient}
+                          onRemove={() => removeIngredient(index)}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-center h-full py-10 text-gray-500">
+                      <FontAwesomeIcon icon={faBoxOpen} className="text-5xl mb-3 opacity-60" />
+                      <p className="text-lg font-medium">No ingredients yet</p>
+                      <p className="text-sm text-gray-400 mt-1">
+                        Start adding items to build your list.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -220,7 +244,7 @@ function App() {
           />
 
           {/* parent */}
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
             {recipes.map((recipe, index) => (
               <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
             ))}
@@ -269,7 +293,7 @@ function App() {
                 </div>
 
                 {/* parent */}
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-6">
                   {recipes.map((recipe, index) => (
                     <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
                   ))}
