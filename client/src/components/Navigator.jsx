@@ -18,7 +18,7 @@ export default function Navigator() {
         <ul className="uppercase flex gap-5 items-center">
           <NavLink label={"Home"} url="/" />
           <NavLink label={"About"} />
-          <NavLink label={"Recipes"} />
+          <NavLink label={"Category"} url="category" />
           <NavLink label={"Blog"} />
           <NavLink label={"Faq"} />
           <li>
