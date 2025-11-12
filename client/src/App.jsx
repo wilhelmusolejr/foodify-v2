@@ -59,10 +59,10 @@ function App() {
       <Navigator />
 
       {/* Head */}
-      <div className="header min-h-[80vh] xl:min-h-[75vh] my-10 text-white py-10 md:pt-30 rounded-lg bg-white border border-black/10">
-        <div className="">
+      <div className="header min-h-[80vh] xl:min-h-[75vh] my-10 text-white flex justify-center items-center bg-white border border-black/10">
+        <div className="w-10/12 mx-auto max-w-7xl flex flex-col gap-20">
           {/* GROUP 1 */}
-          <div className="max-w-7xl mx-auto">
+          <div className="">
             {/* heading */}
             <h1 className="text-2xl md:text-3xl xl:text-5xl max-w-4xl mb-4 autour-one">
               Discover, share, and savor. Delicious recipes from around the world.
@@ -83,7 +83,7 @@ function App() {
           </div>
 
           {/* GROUP 2 */}
-          <div className="max-w-7xl mx-auto flex gap-5 flex-wrap justify-center items-center xl:flex-nowrap xl:flex-row-reverse xl:justify-between">
+          <div className=" flex gap-5 flex-wrap justify-center items-center xl:flex-nowrap xl:flex-row-reverse xl:justify-between">
             {/* stats */}
             <div className="flex justify-center gap-5 flex-1">
               <StatCard number="2500+" label="Recipes" />
@@ -191,7 +191,7 @@ function App() {
       </div>
 
       {/* Section - Popular Recipes */}
-      <div className="bg-white py-30 border">
+      <div className="bg-white py-30">
         <div className="w-10/12 mx-auto max-w-7xl">
           {/* Heading */}
           <SectionHeading
@@ -200,7 +200,7 @@ function App() {
           />
 
           {/* parent */}
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  border">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
             {recipes.map((recipe, index) => (
               <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
             ))}
@@ -216,7 +216,7 @@ function App() {
             <div className="flex-1">
               <div className=" capitalize flex gap-2 flex-col mb-10">
                 <p className="italic">Top-Rated Recipes from Our Cooking Community This Week</p>
-                <h2 className="text-2xl font-semibold">Community Picks</h2>
+                <h2 className="text-2xl md:text-3xl xl:text-4xl font-semibold">Community Picks</h2>
               </div>
 
               {/* parent */}
@@ -232,7 +232,7 @@ function App() {
                 ))}
 
                 {/* button */}
-                <div className="md:w-2/3 mx-auto lg:">
+                <div className="md:w-2/3 max-w-70 ">
                   <button className="bg-black uppercase text-white px-4 py-3 w-full rounded-lg ">
                     view more recent blogs
                   </button>
@@ -241,7 +241,7 @@ function App() {
             </div>
 
             {/* side 2 */}
-            <div className="flex flex-col gap-20 lg:w-[300px] ">
+            <div className="flex flex-col gap-20 lg:w-[350px] ">
               {/* recipes */}
               <div className="">
                 <div className="mb-10">
@@ -304,23 +304,24 @@ function App() {
         </div>
       </div>
 
-      <footer className="bg-white pt-10 w-10/12 mx-auto border border-black/10 rounded-lg mb-30">
-        <div className="px-5 pb-10 bg-blue">
+      {/* Footer */}
+      <footer className="bg-white w-10/12 mx-auto border border-black/10 rounded-lg mb-30">
+        <div className="flex flex-col lg:flex-row lg:items-center pt-14  gap-14 justify-center min-h-[50vh] w-10/12 max-w-7xl mx-auto">
           {/* side 1 */}
-          <div className="mb-14 flex gap-2 flex-col">
+          <div className="flex gap-2 flex-col md:w-10/12 max-w-[450px]">
             <Logo />
-            <p className="w-10/12 max-w-[450px] leading-relaxed">
+            <p className=" leading-relaxed text-[#333] font-light">
               “On the other hand, we denouce with righteous indignation and dsilike men who are so
               beguiled and demoralized by the charms of pleasure of the moment”
             </p>
           </div>
 
           {/* side 2 */}
-          <div className="flex gap-10 flex-col md:flex-row mb-14">
+          <div className="flex gap-10 flex-col md:flex-row justify-center mb-14 flex-1 md:items-center lg:mb-0">
             {/* nav 1 */}
             <div className="uppercase">
               <h2 className=" text-2xl font-medium mb-5">Browse</h2>
-              <ul className="flex  gap-5 flex-col">
+              <ul className="flex  gap-5 flex-col font-light">
                 <li>
                   <a href="#">Home</a>
                 </li>
@@ -341,7 +342,7 @@ function App() {
             {/* nav 2 */}
             <div className="uppercase">
               <h2 className=" text-2xl font-medium mb-5">Browse</h2>
-              <ul className="flex  gap-5 flex-col">
+              <ul className="flex  gap-5 flex-col font-light">
                 <li>
                   <a href="#">Home</a>
                 </li>
@@ -363,7 +364,7 @@ function App() {
         </div>
 
         <div className="border-t text-center border border-black/10">
-          <p className="uppercase py-10">all right reserved.</p>
+          <p className="uppercase py-5">all right reserved.</p>
         </div>
       </footer>
     </>
