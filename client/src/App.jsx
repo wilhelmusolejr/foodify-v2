@@ -18,6 +18,7 @@ import {
   faCross,
   faX,
   faBoxOpen,
+  faExclamationCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 import Logo from "./components/Logo";
@@ -65,12 +66,19 @@ function App() {
   }));
 
   // DATA
-  let [currentIngredients, setCurrentIngredients] = useState([]);
-  let [ingredient, setIngredient] = useState("");
+  const [currentIngredients, setCurrentIngredients] = useState([]);
+  const [ingredient, setIngredient] = useState("");
+  const [ingredientError, setIngredientError] = useState(false);
 
   function addIngredient(ingredient) {
+    if (ingredient.trim() === "") {
+      setIngredientError(true);
+      return;
+    }
+
     setCurrentIngredients([...currentIngredients, ingredient]);
     setIngredient("");
+    setIngredientError(false);
   }
 
   function removeIngredient(indexToRemove) {
@@ -183,15 +191,21 @@ function App() {
 
                   {/* form */}
                   <div className="flex gap-3 flex-wrap ">
-                    <input
-                      type="text"
-                      placeholder="e.g. chicken, rice, broccoli"
-                      className="flex-1 border border-black/10 rounded-lg px-4 py-3"
-                      value={ingredient}
-                      onChange={(e) => setIngredient(e.target.value)}
-                    />
+                    <div className="flex-1 relative">
+                      <input
+                        type="text"
+                        placeholder="e.g. chicken, rice, broccoli"
+                        className={`w-full border  ${ingredientError ? "border-red-500" : "border-black/50"} rounded-lg px-4 py-3 pr-10 focus:outline-none`}
+                        value={ingredient}
+                        onChange={(e) => setIngredient(e.target.value)}
+                      />
+                      <FontAwesomeIcon
+                        icon={faExclamationCircle}
+                        className={`absolute right-3 top-1/2 -translate-y-1/2  pointer-events-none ${ingredientError ? "text-red-500" : "text-transparent"}`}
+                      />
+                    </div>
                     <button
-                      className="bg-black min-w-30 w-full lg:w-30 text-white px-4 py-3 rounded-lg uppercase flex gap-2 justify-center items-center"
+                      className="bg-black min-w-30 w-full cursor-pointer lg:w-30 text-white px-4 py-3 rounded-lg uppercase flex gap-2 justify-center items-center"
                       onClick={() => addIngredient(ingredient)}
                     >
                       <FontAwesomeIcon icon={faPlus} />
