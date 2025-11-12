@@ -1,14 +1,9 @@
 import React from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUtensils,
-  faHeart,
-  faStar,
-  faBars,
-  faPlus,
-  faSearch,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBars, faSearch } from "@fortawesome/free-solid-svg-icons";
+
+// Components
 import Logo from "./Logo";
 import NavLink from "./NavLink";
 
