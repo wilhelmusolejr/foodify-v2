@@ -14,7 +14,7 @@ import NavLink from "./NavLink";
 
 export default function Navigator() {
   return (
-    <nav className="bg-white w-10/12 mx-auto mt-10 p-5 rounded-lg border border-black/10 flex justify-between items-center gap-20 lg:gap-10 sticky top-5 z-50 shadow-2xl">
+    <nav className="bg-white w-10/12 mx-auto mt-10 p-5 rounded-lg border border-black/20 flex justify-between items-center gap-20 lg:gap-10 sticky top-5 z-50 shadow-2xl">
       <div className="flex-1">
         <Logo />
       </div>
