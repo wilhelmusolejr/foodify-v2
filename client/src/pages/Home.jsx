@@ -9,7 +9,6 @@ import HeadingImage from "@components/HeadingImage";
 import Recipe from "@components/Recipe";
 import SectionHeading from "@components/SectionHeading";
 import StatCard from "@components/StatCard";
-import Logo from "@components/Logo";
 import Navigator from "@components/Navigator";
 import IngredientListItem from "@components/ingredientListItem";
 
@@ -22,6 +21,8 @@ import {
   faBoxOpen,
   faExclamationCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import Footer from "../components/Footer";
+import MailLetter from "../components/MailLetter";
 
 function Home() {
   let blogs = [
@@ -334,94 +335,10 @@ function Home() {
       </div>
 
       {/* Section - mail letter */}
-      <div className="pb-20 pt-40 mt-30 bg-black text-white mb-30 relative box-out">
-        <div className="box-in w-60 h-60 absolute left-1/2 -translate-x-1/2 -top-[25%] flex items-center justify-center">
-          <img
-            src="images/burger.png"
-            alt="Burger"
-            className="object-contain object-center w-full h-full"
-          />
-        </div>
-
-        <div className="w-10/12 max-w-96 mx-auto">
-          <h2 className="text-3xl font-medium mb-4">Deliciousness to your inbox</h2>
-          <p>Enjoy weekly hand picked recipes and recommendations.</p>
-
-          {/* form */}
-          <div className="flex gap-3 flex-col mt-4">
-            <input
-              type="text"
-              placeholder="e.g. chicken, rice, broccoli"
-              className="w-full bg-white text-black rounded-lg px-4 py-3"
-            />
-            <button className="bg-white w-full text-black px-4 py-3 rounded-lg">Get Started</button>
-          </div>
-        </div>
-      </div>
+      <MailLetter />
 
       {/* Footer */}
-      <footer className="bg-white w-10/12 mx-auto border border-black/10 rounded-lg mb-30">
-        <div className="flex flex-col lg:flex-row lg:items-center pt-14  gap-14 justify-center min-h-[50vh] w-10/12 max-w-7xl mx-auto">
-          {/* side 1 */}
-          <div className="flex gap-2 flex-col md:w-10/12 max-w-[450px]">
-            <Logo />
-            <p className=" leading-relaxed text-[#333] font-light">
-              “On the other hand, we denouce with righteous indignation and dsilike men who are so
-              beguiled and demoralized by the charms of pleasure of the moment”
-            </p>
-          </div>
-
-          {/* side 2 */}
-          <div className="flex gap-10 flex-col md:flex-row justify-center mb-14 flex-1 md:items-center lg:mb-0">
-            {/* nav 1 */}
-            <div className="uppercase">
-              <h2 className=" text-2xl font-medium mb-5">Browse</h2>
-              <ul className="flex  gap-5 flex-col font-light">
-                <li>
-                  <a href="#">Home</a>
-                </li>
-                <li>
-                  <a href="#">Recipes</a>
-                </li>
-                <li>
-                  <a href="#">Blog</a>
-                </li>
-                <li>
-                  <a href="#">Faq</a>
-                </li>
-                <li>
-                  <a href="#">About</a>
-                </li>
-              </ul>
-            </div>
-            {/* nav 2 */}
-            <div className="uppercase">
-              <h2 className=" text-2xl font-medium mb-5">Browse</h2>
-              <ul className="flex  gap-5 flex-col font-light">
-                <li>
-                  <a href="#">Home</a>
-                </li>
-                <li>
-                  <a href="#">Recipes</a>
-                </li>
-                <li>
-                  <a href="#">Blog</a>
-                </li>
-                <li>
-                  <a href="#">Faq</a>
-                </li>
-                <li>
-                  <a href="#">About</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-t text-center border border-black/10">
-          <p className="uppercase py-5">all right reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
