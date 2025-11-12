@@ -14,14 +14,14 @@ import NavLink from "./NavLink";
 
 export default function Navigator() {
   return (
-    <nav className="bg-white w-10/12 mx-auto mt-10 p-4 rounded-lg border border-black/10 flex justify-between items-center gap-10">
+    <nav className="bg-white w-10/12 mx-auto mt-10 p-5 rounded-lg border border-black/10 flex justify-between items-center gap-20 lg:gap-10 sticky top-5 z-50 shadow-2xl">
       <div className="flex-1">
         <Logo />
       </div>
 
       <div className="hidden lg:block">
-        <ul className="uppercase flex gap-4">
-          <NavLink label={"Home"} />
+        <ul className="uppercase flex gap-5 items-center">
+          <NavLink label={"Home"} url="/" />
           <NavLink label={"About"} />
           <NavLink label={"Recipes"} />
           <NavLink label={"Blog"} />
