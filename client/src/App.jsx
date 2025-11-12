@@ -134,7 +134,7 @@ function App() {
       </div>
 
       {/* Section - Categories */}
-      <div className="bg-white py-30">
+      <div className="bg-white py-30 border-t border-black/10">
         <div className="w-10/12 mx-auto">
           {/* Heading */}
           <SectionHeading
@@ -154,7 +154,7 @@ function App() {
       </div>
 
       {/* Section - Recipe Finder */}
-      <div className="py-30">
+      <div className="py-30 border-t border-black/10">
         <div className="w-10/12 mx-auto">
           {/* Heading */}
           <div className="capitalize flex gap-2 flex-col mb-10 md:text-center">
@@ -249,7 +249,7 @@ function App() {
       </div>
 
       {/* Section - Popular Recipes */}
-      <div className="bg-white py-30">
+      <div className="bg-white py-30 border-t border-black/10">
         <div className="w-10/12 mx-auto max-w-7xl">
           {/* Heading */}
           <SectionHeading
@@ -267,7 +267,7 @@ function App() {
       </div>
 
       {/* Section - Blog */}
-      <div className="py-30">
+      <div className="py-30 border-t border-black/10">
         <div className="w-10/12 mx-auto">
           <div className="flex flex-col lg:flex-row gap-50 lg:gap-10 max-w-7xl mx-auto">
             {/* side 1 */}
