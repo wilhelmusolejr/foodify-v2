@@ -17,10 +17,10 @@ export default function Navigator() {
       <div className="hidden lg:block">
         <ul className="uppercase flex gap-5 items-center">
           <NavLink label={"Home"} url="/" />
-          <NavLink label={"About"} />
+          <NavLink label={"About"} url="about" />
           <NavLink label={"Category"} url="category" />
-          <NavLink label={"Blog"} />
-          <NavLink label={"Faq"} />
+          <NavLink label={"Blog"} url="blog" />
+          <NavLink label={"Faq"} url="faq" />
           <li>
             <FontAwesomeIcon icon={faSearch} className="text-base" />
           </li>
