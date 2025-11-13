@@ -5,12 +5,12 @@ export default function TeamItem() {
     <div className="">
       {/* image */}
       <div className="">
-        <div className="w-40 h-50 bg-black/10 rounded-lg"></div>
+        <div className="h-50 md:h-60 bg-black/10 rounded-lg"></div>
       </div>
 
       {/* text */}
       <div className="">
-        <h2 className="capitalize font-medium text-lg mt-2">Member Name</h2>
+        <h2 className="capitalize font-medium text-lg mt-2">Wilhelmus Ole</h2>
         <p className="text-sm font-light">Role</p>
       </div>
     </div>
