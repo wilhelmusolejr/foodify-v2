@@ -14,6 +14,7 @@ import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
 import TextImageBlock from "@components/TextImageBlock";
 import React from "react";
+import TeamItem from "../components/TeamItem";
 
 export default function About() {
   let featureList = [
@@ -141,6 +142,17 @@ export default function About() {
       <div className="py-30">
         <div className="w-10/12 mx-auto">
           <SectionHeading heading="Our Team" subheading={"This interactive tool lets"} />
+
+          <div className="flex justify-center flex-wrap gap-5">
+            {/* item */}
+            <TeamItem />
+            {/* item */}
+            <TeamItem />
+            {/* item */}
+            <TeamItem />
+            {/* item */}
+            <TeamItem />
+          </div>
         </div>
       </div>
 
