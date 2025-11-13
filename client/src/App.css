@@ -17,3 +17,9 @@ body {
     linear-gradient(rgba(95, 126, 100, 0.9), rgba(95, 126, 100, 0.8)),
     url("images/header_bg2.png") no-repeat center center / cover;
 }
+
+.about-header {
+  background:
+    linear-gradient(rgba(95, 126, 100, 0.9), rgba(95, 126, 100, 0.8)),
+    url("images/about/header_bg.png") no-repeat center center / cover;
+}
