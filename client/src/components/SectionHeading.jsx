@@ -1,10 +1,10 @@
 import React from "react";
 
-export default function SectionHeading({ heading, subheading }) {
+export default function SectionHeading({ heading, subheading, className = "" }) {
   return (
-    <div className="text-center capitalize flex gap-2 flex-col mb-14">
-      <p className="italic w-8/12 mx-auto">{subheading}</p>
-      <h2 className="text-2xl md:text-3xl xl:text-4xl font-semibold">{heading}</h2>
+    <div className={`flex flex-col uppercase gap-2 mb-15 text-center ${className}`}>
+      <p className="italic text-sm md:text-base lg:text-lg">{subheading}</p>
+      <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold">{heading}</h2>
     </div>
   );
 }
