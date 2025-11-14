@@ -1,11 +1,36 @@
-Heading - Banner
+HEADING - Banner
 1440px = 7xl
 1024px = 6xl
 768px = 5xl
 425px = 4xl
 
-Sub Heading - Banner
+SUBHEADING - Banner
 1440px = xl
 1024px = xl
 768px = lg
 425px = base
+
+------------------------
+
+CONTAINER
+10/12
+max-w-7xl
+
+PARAGRAPH
+1440px = xl
+1024px = lg
+768px = lg
+425px = base
+
+-------------------------
+HEADING - Section
+1440px = 4xl
+1024px = 3xl
+768px = 2xl
+425px = xl
+
+SUBHEADING - Section
+1440px = lg
+1024px = lg
+768px = base
+425px = sm
