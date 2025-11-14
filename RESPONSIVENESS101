@@ -1,8 +1,8 @@
 HEADING - Banner
 1440px = 7xl
 1024px = 6xl
-768px = 5xl
-425px = 4xl
+768px = 5xl = 24px
+425px = 4xl = 20px
 
 SUBHEADING - Banner
 1440px = xl
