@@ -1,5 +1,7 @@
 import React from "react";
 
+import Paragraph from "./Paragraph";
+
 export default function BlogItem({ heading, date, description, imageUrl }) {
   return (
     <div className="my-20 border-b border-black/20 pb-20">
@@ -17,7 +19,9 @@ export default function BlogItem({ heading, date, description, imageUrl }) {
         <div className="pt-5 flex-1">
           <h3 className="mb-4 uppercase font-medium">{date}</h3>
           <h2 className="font-bold text-2xl mb-2 poltawski-nowy text-[#2B4A13]">{heading}</h2>
-          <p className="mb-10  text-[#333] font-light leading-relaxed">{description}</p>
+
+          <Paragraph className="mx-auto mb-10">{description}</Paragraph>
+
           <a href="#" className="underline capitalize text-xl text-[#2B4A13]">
             Continue Reading
           </a>
