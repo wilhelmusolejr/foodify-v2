@@ -1,4 +1,5 @@
 import React from "react";
+import Paragraph from "./Paragraph";
 
 export default function TextImageBlock({ image_path, description, heading, type }) {
   return (
@@ -8,7 +9,7 @@ export default function TextImageBlock({ image_path, description, heading, type 
       {/* text */}
       <div className="flex-1 ">
         <h3 className="text-2xl font-semibold mb-2 capitalize">{heading}</h3>
-        <p className="font-light text-[#333] leading-relaxed text-xl max-w-prose">{description}</p>
+        <Paragraph className="">{description}</Paragraph>
       </div>
 
       {/* image */}
