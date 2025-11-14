@@ -23,6 +23,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Footer from "../components/Footer";
 import MailLetter from "../components/MailLetter";
+import Paragraph from "../components/Paragraph";
 
 function Home() {
   let blogs = [
@@ -89,7 +90,7 @@ function Home() {
       <Navigator />
 
       {/* Head */}
-      <div className="header min-h-[80vh] xl:min-h-[75vh] my-10 text-white flex justify-center items-center bg-white border border-black/10">
+      <div className="header min-h-[80vh] xl:min-h-[75vh] my-10 md:my-14 py-20 text-white flex justify-center items-center bg-white border border-black/10">
         <div className="w-10/12 mx-auto max-w-7xl flex flex-col gap-20">
           {/* GROUP 1 */}
           <div className="">
@@ -99,10 +100,10 @@ function Home() {
             </h1>
 
             {/* paragraph */}
-            <p className="mb-4 font-light text-[#f5f5f5] max-w-[600px] md:text-xl">
-              Unlock a word of variety culinary recipes and unleash your inner beauty the easy way
+            <Paragraph className="mb-10 text-[#f5f5f5]">
+              Unlock a world of variety culinary recipes and unleash your inner beauty the easy way
               with Foodify.
-            </p>
+            </Paragraph>
 
             {/* button */}
             <div className="btn">
@@ -132,12 +133,12 @@ function Home() {
       </div>
 
       {/* Section - Categories */}
-      <div className="bg-white py-30 border-t border-black/10">
+      <div className="bg-white py-40 border-t border-black/10">
         <div className="w-10/12 mx-auto">
           {/* Heading */}
           <SectionHeading
             heading={"Explore meal types"}
-            subheading={"Discover delicious meals for every ocean."}
+            subheading={"Discover delicious meals for every ocean"}
           />
 
           {/* list */}
@@ -152,23 +153,22 @@ function Home() {
       </div>
 
       {/* Section - Recipe Finder */}
-      <div className="py-30 border-t border-black/10">
+      <div className="py-40 border-t border-black/10">
         <div className="w-10/12 mx-auto">
           {/* Heading */}
-          <div className="capitalize flex gap-2 flex-col mb-10 md:text-center">
-            <p className="italic">Turn Your Leftovers into Delicious Meals</p>
-            <h2 className="text-2xl md:text-3xl xl:text-4xl font-semibold">
-              What's in Your Fridge?
-            </h2>
-          </div>
+          <SectionHeading
+            heading={"What's in Your Fridge?"}
+            subheading={"Turn Your Leftovers into Delicious Meals"}
+            className={"md:text-center"}
+          />
 
-          <p className="mb-20 font-light text-[#333] max-w-lg mx-auto leading-relaxed ">
+          <Paragraph className="mx-auto mb-20">
             This interactive tool lets you enter ingredients from your fridge or pantry (like
             apples, flour, or sugar) and instantly generates recipe ideas that match what you have.
             Prioritize recipes that maximize your available items or minimize missing ones, while
             optionally ignoring pantry staples like salt or water. Perfect for reducing food waste
             and whipping up quick meals!
-          </p>
+          </Paragraph>
 
           {/* modal */}
           <div className="border-black/10 border rounded-lg p-4  bg-green-900 text-white md:w-2/3 lg:w-full lg:max-w-[1000px] mx-auto">
@@ -180,11 +180,11 @@ function Home() {
                   {/* heading */}
                   <div className="">
                     <h3 className="text-2xl mb-3">Tell us what ingredients you have!</h3>
-                    <p className="font-light text-[#333] mb-10 leading-relaxed">
+                    <Paragraph className="mx-auto mb-10">
                       Type the first ingredient you have in the search box and pick the best match
                       from the drop down. We need a minimum of 3 ingredients to find you some
                       recipes.
-                    </p>
+                    </Paragraph>
                   </div>
 
                   {/* form */}
@@ -252,7 +252,7 @@ function Home() {
           {/* Heading */}
           <SectionHeading
             heading={"Popular Recipes"}
-            subheading={"Discover delicious meals for every ocean."}
+            subheading={"Discover delicious meals for every ocean"}
           />
 
           {/* parent */}
@@ -270,10 +270,11 @@ function Home() {
           <div className="flex flex-col lg:flex-row gap-50 lg:gap-10 max-w-7xl mx-auto">
             {/* side 1 */}
             <div className="flex-1">
-              <div className=" capitalize flex gap-2 flex-col mb-10">
-                <p className="italic">Top-Rated Recipes from Our Cooking Community This Week</p>
-                <h2 className="text-2xl md:text-3xl xl:text-4xl font-semibold">Community Picks</h2>
-              </div>
+              <SectionHeading
+                heading={"Community Picks"}
+                subheading={"Top-Rated Recipes from Our Cooking Community This Week"}
+                className={"text-left"}
+              />
 
               {/* parent */}
               <div className="">

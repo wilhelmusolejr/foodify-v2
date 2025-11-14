@@ -15,6 +15,7 @@ import MailLetter from "@components/MailLetter";
 import TextImageBlock from "@components/TextImageBlock";
 import React from "react";
 import TeamItem from "../components/TeamItem";
+import Paragraph from "../components/Paragraph";
 
 export default function About() {
   let featureList = [
@@ -75,10 +76,10 @@ export default function About() {
 
       {/* Paragraphs */}
       <div className="py-30 bg-white">
-        <div className="w-10/12 max-w-7xl mx-auto border">
+        <div className="w-10/12 max-w-7xl mx-auto ">
           {/* paragraph */}
-          <div className="flex flex-col gap-10 max-w-prose  text-xl mx-auto leading-relaxed text-[#333] font-light">
-            <p>
+          <div className="flex flex-col gap-10 ">
+            <Paragraph className="mx-auto">
               At
               <span className="inline-block px-2">
                 <img src="images/logo.png" alt="" className="w-20" />
@@ -90,27 +91,22 @@ export default function About() {
               flavors, we provide the tools to make recipe management simple, intuitive, and
               enjoyable. Built by food lovers, for food lovers, we’re here to help you turn every
               ingredient into inspiration.
-            </p>
+            </Paragraph>
 
-            <p>
+            <Paragraph className="mx-auto">
               At LOGO, we believe that food is more than just meals—it’s a way to connect, create,
               and celebrate. Our platform is designed for home cooks, food enthusiasts, and chefs
               alike to easily organize, discover, and share their favorite recipes.
-            </p>
+            </Paragraph>
           </div>
         </div>
       </div>
 
       {/* Features */}
       <div className="py-40 bg-green-900 text-white">
-        <div className="w-10/12 max-w-7xl mx-auto border">
-          {/* <SectionHeading heading="Our Features" subheading="Empowering Your Culinary Journey" /> */}
-          <div className="text-center capitalize flex gap-2 flex-col mb-20">
-            <p className="italic text-sm md:text-base lg:text-lg uppercase">
-              Empowering Your Culinary Journey
-            </p>
-            <h2 class="text-2xl md:text-3xl lg:text-4xl font-semibold">Our Features</h2>
-          </div>
+        <div className="w-10/12 max-w-7xl mx-auto ">
+          {/* HEADING */}
+          <SectionHeading heading="Our Features" subheading="Empowering Your Culinary Journey" />
 
           {/* Parent */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 md:gap-5">
@@ -124,7 +120,7 @@ export default function About() {
 
       {/* Text - Image  */}
       <div className="py-40 bg-white">
-        <div className="w-10/12 max-w-7xl mx-auto border">
+        <div className="w-10/12 max-w-7xl mx-auto ">
           <div className="flex flex-col gap-20 ">
             {/* item */}
             <TextImageBlock
@@ -151,15 +147,11 @@ export default function About() {
 
       {/* Our Team */}
       <div className="py-40">
-        <div className="w-10/12 max-w-7xl mx-auto border">
-          <div className="text-center capitalize flex gap-2 flex-col mb-20">
-            <p className="italic text-sm md:text-base lg:text-lg uppercase">
-              Empowering Your Culinary Journey
-            </p>
-            <h2 class="text-2xl md:text-3xl lg:text-4xl font-semibold">Our Features</h2>
-          </div>
+        <div className="w-10/12 max-w-7xl mx-auto ">
+          {/* HEADING */}
+          <SectionHeading heading="Our Features" subheading="Empowering Your Culinary Journey" />
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-10 max-w-[700px] mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-5  max-w-[700px] mx-auto">
             {/* item */}
             <TeamItem />
             {/* item */}
@@ -174,7 +166,7 @@ export default function About() {
 
       {/* Actual about */}
       <div className="py-40 bg-white">
-        <div className="w-10/12 max-w-7xl mx-auto border">
+        <div className="w-10/12 max-w-7xl mx-auto ">
           {/* image */}
           <div className="mb-20 h-50 md:h-70 lg:h-90 relative">
             <img
@@ -190,8 +182,8 @@ export default function About() {
             />
           </div>
 
-          <div className="flex flex-col gap-10 max-w-prose  text-xl mx-auto leading-relaxed text-[#333] font-light">
-            <p className="leading-relaxed text-[#333] font-light mb-10 max-w-prose text-xl mx-auto">
+          <div className="flex flex-col gap-10 max-w-prose text-xl mx-auto leading-relaxed text-[#333] font-light">
+            <Paragraph className="mb-10 mx-auto">
               We believe that food is more than just meals—it’s a way to connect, create, and
               celebrate. Our platform is designed for home cooks, food enthusiasts, and chefs alike
               to easily organize, discover, and share their favorite recipes. Whether you’re
@@ -199,7 +191,7 @@ export default function About() {
               flavors, we provide the tools to make recipe management simple, intuitive, and
               enjoyable. Built by food lovers, for food lovers, we’re here to help you turn every
               ingredient into inspiration.
-            </p>
+            </Paragraph>
 
             <div className="">
               <h2 className="capitalize font-medium text-2xl">Follow Us</h2>
