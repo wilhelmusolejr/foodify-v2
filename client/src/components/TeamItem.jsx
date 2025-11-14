@@ -5,7 +5,7 @@ export default function TeamItem() {
     <div className="">
       {/* image */}
       <div className="">
-        <div className="h-50 md:h-60 bg-black/10 rounded-lg"></div>
+        <div className="h-50 md:h-70 lg:h-70 bg-black/10 rounded-lg"></div>
       </div>
 
       {/* text */}
