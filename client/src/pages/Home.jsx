@@ -247,7 +247,7 @@ function Home() {
       </div>
 
       {/* Section - Popular Recipes */}
-      <div className="bg-white py-30 border-t border-black/10">
+      <div className="bg-white py-40 border-t border-black/10">
         <div className="w-10/12 mx-auto max-w-7xl">
           {/* Heading */}
           <SectionHeading
@@ -265,7 +265,7 @@ function Home() {
       </div>
 
       {/* Section - Blog */}
-      <div className="py-30 border-t border-black/10">
+      <div className="py-40 border-t border-black/10">
         <div className="w-10/12 mx-auto">
           <div className="flex flex-col lg:flex-row gap-50 lg:gap-10 max-w-7xl mx-auto">
             {/* side 1 */}

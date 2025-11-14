@@ -2,7 +2,7 @@ import React from "react";
 
 export default function MailLetter() {
   return (
-    <div className="pb-20 pt-40 mt-30 bg-black text-white mb-30 relative box-out">
+    <div className="pb-20 pt-40 my-40 bg-black text-white relative box-out">
       <div className="box-in w-60 h-60 absolute left-1/2 -translate-x-1/2 -top-[25%] flex items-center justify-center">
         <img
           src="images/burger.png"
