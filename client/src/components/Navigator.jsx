@@ -22,7 +22,9 @@ export default function Navigator() {
           <NavLink label={"Blog"} url="blog" />
           <NavLink label={"Faq"} url="faq" />
           <li>
-            <FontAwesomeIcon icon={faSearch} className="text-base" />
+            <a href="/search">
+              <FontAwesomeIcon icon={faSearch} className="text-base" />
+            </a>
           </li>
         </ul>
       </div>
