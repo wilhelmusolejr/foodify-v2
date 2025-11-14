@@ -6,8 +6,9 @@ import { faPlus, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
 import SearchTypeItem from "@components/SearchTypeItem";
-import CheckboxItem from "../components/CheckboxItem";
-import Label from "../components/Label";
+import CheckboxItem from "@components/CheckboxItem";
+import Label from "@components/Label";
+import NutrientFormGroup from "@components/NutrientFormGroup";
 
 export default function Search() {
   const meal_types = [
@@ -73,7 +74,7 @@ export default function Search() {
         {/* form big */}
         <div className="py-20 lg:py-30 xl:py-40 px-10 bg-white border border-black/10 rounded-lg flex md:justify-center ">
           {/* SEARCY BY RECIPE */}
-          <div className="">
+          <div className="hidden">
             {/* search input */}
             <div className="flex flex-col md:flex-row md:items-end gap-2 mb-10">
               {/* form */}
@@ -125,6 +126,25 @@ export default function Search() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* SEARCH BY INGREDIENTS */}
+          <div className="text-center">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-5 max-w-[600px] text-left mb-20">
+              {/* Carbohydrates */}
+              <NutrientFormGroup heading="Carbohydrates" />
+              {/* Calories */}
+              <NutrientFormGroup heading="Calories" />
+              {/* Fat */}
+              <NutrientFormGroup heading="Fat" />
+              {/* Protein */}
+              <NutrientFormGroup heading="Protein" />
+            </div>
+
+            {/* button */}
+            <button className="bg-black w-fit cursor-pointer text-white px-4 py-3 rounded-lg uppercase">
+              <p>Search</p>
+            </button>
           </div>
         </div>
 
