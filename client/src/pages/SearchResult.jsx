@@ -22,7 +22,7 @@ export default function SearchResult({ data }) {
   return (
     <>
       {/* heading */}
-      <div className="w-10/12 mx-auto max-w-7xl ">
+      <div className="w-10/12 mx-auto">
         {/* Heading */}
         <div className="text-center my-20 md:my-28 lg:my-32 flex flex-col md:flex-row justify-between items-center gap-10">
           {/* side 1 */}
@@ -59,7 +59,7 @@ export default function SearchResult({ data }) {
         </div>
 
         {/* Parent */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20">
+        <div className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20">
           {recipes.map((recipe, index) => (
             <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
           ))}

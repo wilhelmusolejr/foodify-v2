@@ -12,6 +12,8 @@ import Label from "@components/Label";
 import NutrientFormGroup from "@components/NutrientFormGroup";
 import IngredientListItem from "@components/ingredientListItem";
 import SearchResult from "./SearchResult";
+import Footer from "@components/Footer";
+import MailLetter from "@components/MailLetter";
 
 export default function Search() {
   const [searchType, setSearchType] = useState("recipe");
@@ -237,13 +239,11 @@ export default function Search() {
         </>
       )}
 
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
+      {/* Section - mail letter */}
+      <MailLetter />
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 }
