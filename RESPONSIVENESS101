@@ -34,3 +34,16 @@ SUBHEADING - Section
 1024px = lg
 768px = base
 425px = sm
+
+
+<div className="border border-black/10 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+            <img
+              src="https://via.placeholder.com/300x200"
+              alt="Recipe"
+              className="w-full h-40 object-cover"
+            />
+            <div className="p-4">
+              <h3 className="text-lg font-medium mb-2">Delicious Egg Recipe</h3>
+              <p className="text-sm text-gray-600">A brief description of the recipe goes here.</p>
+            </div>
+          </div>
