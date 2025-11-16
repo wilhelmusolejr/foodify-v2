@@ -59,6 +59,8 @@ export default function SearchResult({ data }) {
         </div>
 
         {/* Parent */}
+        {/* Parent */}
+        {/* Parent */}
         <div className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20">
           {recipes.map((recipe, index) => (
             <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
