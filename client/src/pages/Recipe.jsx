@@ -5,7 +5,7 @@ import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCircle, faCircleCheck, faClock } from "@fortawesome/free-solid-svg-icons";
 
 import RecipeTime from "@components/RecipeTime";
 import Paragraph from "@components/Paragraph";
@@ -13,6 +13,9 @@ import ChecklistItem from "@components/ChecklistItem";
 import Heading from "@components/Recipe/Heading";
 import ListItem from "@components/Recipe/ListItem";
 import RecipeItem from "@components/RecipeItem";
+import Tags from "../components/Recipe/Tags";
+import NutritionFacts from "../components/NutritionFacts";
+import Feedback from "../components/Recipe/Feedback";
 
 export default function Recipe() {
   const { id } = useParams();
@@ -51,7 +54,7 @@ export default function Recipe() {
           {/* mini data */}
           <div className="flex items-center flex-wrap gap-5">
             {/* item */}
-            <div className="p-2 bg-green-900 gap-2 hidden text-white rounded-lg w-fit flex items-center">
+            <div className="p-2 bg-green-900 gap-2 hidden text-white rounded-lg w-fit md:flex items-center">
               <div className="px-2 py-1 bg-black/10 rounded-lg">86</div>
               <p>Health Score</p>
             </div>
@@ -68,11 +71,11 @@ export default function Recipe() {
 
         {/* image */}
         <div className="py-10 border-t border-black/10">
-          <div className="h-50 bg-black rounded-xl"></div>
+          <div className="h-50 md:h-80 lg:h-90 xl:h-96 bg-black rounded-xl"></div>
         </div>
 
         {/* clock */}
-        <div className="flex flex-col gap-7 mt-5 mb-15 ">
+        <div className="flex flex-col gap-7 mb-15 md:flex-row md:items-center md:justify-center lg:justify-start">
           {/* item */}
           <RecipeTime />
           <RecipeTime />
@@ -80,9 +83,9 @@ export default function Recipe() {
         </div>
 
         {/* content */}
-        <div className="">
+        <div className="lg:flex gap-20 justify-between ">
           {/* side 1 */}
-          <div className="">
+          <div className="lg:w-10/12">
             {/* paragraph */}
             <Paragraph className={"my-14"}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
@@ -93,15 +96,8 @@ export default function Recipe() {
               mollit anim id est laborum.
             </Paragraph>
             {/* tags */}
-            <div className="px-10 min-h-[30vh] my-20 flex flex-wrap justify-center items-center border rounded-lg border-black/10  bg-green-900 text-white">
-              <div className="flex flex-col gap-2">
-                {/* item */}
-                <ChecklistItem name={"Vegetarian"} />
-                <ChecklistItem name={"Popular"} />
-                <ChecklistItem name={"Gluten Free"} />
-                <ChecklistItem name={"Cheap"} />
-              </div>
-            </div>
+            <Tags className="lg:hidden my-20" />
+
             {/* Ingredients */}
             <div className="my-14">
               {/* heading */}
@@ -110,7 +106,7 @@ export default function Recipe() {
               <div className="flex flex-col gap-7">
                 {/* item - produce */}
                 <div className="">
-                  <h3 className="text-xl">Produce</h3>
+                  <h3 className="text-xl font-medium text-[#333]">Produce</h3>
 
                   <ul className="flex flex-col gap-3 mt-5 ms-2">
                     <ListItem>
@@ -122,7 +118,7 @@ export default function Recipe() {
 
                 {/* item - cheese */}
                 <div className="">
-                  <h3 className="text-xl">Cheese</h3>
+                  <h3 className="text-xl font-medium text-[#333]">Cheese</h3>
 
                   <ul className="flex flex-col gap-3 mt-5 ms-2">
                     <ListItem>
@@ -188,43 +184,22 @@ export default function Recipe() {
                 </li>
               </ul>
             </div>
-            {/* Nutrition Facts */}
-            <div className="px-7 py-10 my-14 bg-white rounded-lg border border-black/10 shadow-md">
-              <div className="">
-                <h2 className="text-xl uppercase font-semibold">Nutrition facts</h2>
-              </div>
 
-              <ul className="mt-5 flex gap-2 flex-col">
-                <li className="flex mb-2 border-b border-black/10 justify-between">
-                  <div className="">
-                    <p>Calories</p>
-                  </div>
-                  <div className="">
-                    <p>200 kcal</p>
-                  </div>
-                </li>
-                <li className="flex mb-2 border-b border-black/10 justify-between">
-                  <div className="">
-                    <p>Calories</p>
-                  </div>
-                  <div className="">
-                    <p>200 kcal</p>
-                  </div>
-                </li>
-                <li className="flex mb-2 border-b border-black/10 justify-between">
-                  <div className="">
-                    <p>Calories</p>
-                  </div>
-                  <div className="">
-                    <p>200 kcal</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
+            {/* Nutrition Facts */}
+            <NutritionFacts className="block lg:hidden my-14" />
+
+            {/* feedback */}
+            <Feedback className="hidden lg:text-center lg:flex my-20" />
           </div>
 
           {/* side 2 */}
-          <div className="">
+          <div className="lg:max-w-[300px] xl:max-w-[450px] ">
+            {/* tags */}
+            <Tags className="hidden lg:flex mb-14" />
+
+            {/* nutrition */}
+            <NutritionFacts className="hidden lg:block my-14" />
+
             {/* recipes */}
             <div className="my-14">
               {/* heading */}
@@ -241,17 +216,12 @@ export default function Recipe() {
             </div>
 
             {/* feedback */}
-            <div className="min-h-[30vh] px-10 my-20 bg-green-900 rounded-lg text-white flex justify-center items-center ">
-              <div className="flex flex-col gap-2">
-                <h2 className="text-2xl font-bold">Have your tried this recipe?</h2>
-                <p>Mention @budgetbytes or tag #budgetbytes on Instagram!</p>
-              </div>
-            </div>
+            <Feedback className="lg:hidden my-20" />
           </div>
         </div>
 
         {/* Comment */}
-        <div className="mt-40">
+        <div className="mt-40 lg:w-8/12 lg:mx-auto">
           <h2 className="text-3xl font-bold mb-5">Already made this?</h2>
           <button className="px-7 py-4 border rounded-lg mb-10">Share your feedback</button>
           <div className="h-2 bg-green-900 mb-10"></div>
@@ -286,7 +256,7 @@ export default function Recipe() {
               </div>
             </div>
 
-            <div className="min-h-[50vh] p-5 border border-black/10 rounded-lg bg-white shadow-md relative">
+            <div className="min-h-[50vh] lg:min-h-[30vh] p-5 border border-black/10 rounded-lg bg-white shadow-md relative">
               <p>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim dolores aliquam
                 eveniet ea odio, porro dicta libero rem tempore quo?
