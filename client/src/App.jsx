@@ -4,6 +4,7 @@ import Category from "@pages/Category";
 import About from "@pages/About";
 import Search from "@pages/Search";
 import Blog from "@pages/Blog";
+import Recipe from "@pages/Recipe";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/search" element={<Search />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/recipe/:id" element={<Recipe />} />
       </Routes>
     </BrowserRouter>
   );
