@@ -5,7 +5,13 @@ import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faCircle, faCircleCheck, faClock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBookmark,
+  faCheck,
+  faCircle,
+  faCircleCheck,
+  faClock,
+} from "@fortawesome/free-solid-svg-icons";
 
 import RecipeTime from "@components/RecipeTime";
 import Paragraph from "@components/Paragraph";
@@ -39,39 +45,47 @@ export default function Recipe() {
       {/* Navigator */}
       <Navigator />
 
-      <div className="w-10/12 max-w-7x mx-auto mt-30">
+      <div className="w-10/12 max-w-7x mx-auto mt-30 ">
         {/* heading */}
-        <div className="mb-10">
-          <div className={`flex flex-col uppercase gap-2 mb-7 `}>
-            <p className="italic text-sm md:text-base lg:text-lg">
-              Browse All Recipes by Category or Filter
-            </p>
-            <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold">
-              Stawberry Cream Cheesecake
-            </h2>
+        <div className="mb-10 relative">
+          {/* side 1 */}
+          <div className="">
+            <div className={`flex flex-col uppercase gap-2 mb-7 `}>
+              <p className="italic text-sm md:text-base lg:text-lg">
+                Browse All Recipes by Category or Filter
+              </p>
+              <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold">
+                Stawberry Cream Cheesecake
+              </h2>
+            </div>
+
+            {/* mini data */}
+            <div className="flex items-center flex-wrap gap-5">
+              {/* item */}
+              <div className="p-2 bg-green-900 gap-2 hidden text-white rounded-lg w-fit md:flex items-center">
+                <div className="px-2 py-1 bg-black/10 rounded-lg">86</div>
+                <p>Health Score</p>
+              </div>
+
+              {/* tags */}
+              <div className="flex flex-wrap gap-5">
+                {/* item */}
+                <ChecklistItem name={"Vegan"} iconClassname="text-green-900" />
+                <ChecklistItem name={"Vegan"} iconClassname="text-green-900" />
+                <ChecklistItem name={"Vegan"} iconClassname="text-green-900" />
+              </div>
+            </div>
           </div>
 
-          {/* mini data */}
-          <div className="flex items-center flex-wrap gap-5">
-            {/* item */}
-            <div className="p-2 bg-green-900 gap-2 hidden text-white rounded-lg w-fit md:flex items-center">
-              <div className="px-2 py-1 bg-black/10 rounded-lg">86</div>
-              <p>Health Score</p>
-            </div>
-
-            {/* tags */}
-            <div className="flex flex-wrap gap-5">
-              {/* item */}
-              <ChecklistItem name={"Vegan"} iconClassname="text-green-900" />
-              <ChecklistItem name={"Vegan"} iconClassname="text-green-900" />
-              <ChecklistItem name={"Vegan"} iconClassname="text-green-900" />
-            </div>
+          {/* side 2 */}
+          <div className="absolute right-0 top-0 md:top-3 md:right-3 lg:top-5 lg:right-5 hidden md:block">
+            <FontAwesomeIcon icon={faBookmark} className="text-green-900 w-10 h-10" size="3x" />
           </div>
         </div>
 
         {/* image */}
         <div className="py-10 border-t border-black/10">
-          <div className="h-50 md:h-80 lg:h-90 xl:h-96 bg-black rounded-xl"></div>
+          <div className="h-50 md:h-80 lg:h-90 xl:h-[60vh] bg-black rounded-xl"></div>
         </div>
 
         {/* clock */}
