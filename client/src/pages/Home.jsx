@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../App.css";
 
 // Components
@@ -6,7 +6,6 @@ import BlogItem from "@components/BlogItem";
 import CategoryItem from "@components/CategoryItem";
 import CategoryListItem from "@components/CategoryListItem";
 import HeadingImage from "@components/HeadingImage";
-import Recipe from "@components/Recipe";
 import SectionHeading from "@components/SectionHeading";
 import StatCard from "@components/StatCard";
 import Navigator from "@components/Navigator";
@@ -24,8 +23,18 @@ import {
 import Footer from "../components/Footer";
 import MailLetter from "../components/MailLetter";
 import Paragraph from "../components/Paragraph";
+import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
+import RecipeItem from "../components/RecipeItem";
+
+import axios from "axios";
 
 function Home() {
+  const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
+
+  const [isloading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [recipes, setRecipes] = useState(null);
+
   let blogs = [
     {
       header: "10 Quick and Easy Dinner Recipes for Busy Weeknights",
@@ -50,19 +59,35 @@ function Home() {
     },
   ];
 
-  let recipeNames = [
-    "Spaghetti Carbonara",
-    "Grilled Chicken Salad",
-    "Creamy Mushroom Risotto",
-    "Beef Stir-Fry with Veggies",
-    "Lemon Garlic Shrimp Pasta",
-    "Classic Margherita Pizza",
-  ];
+  useEffect(() => {
+    const apiUrl = `https://api.spoonacular.com/recipes/random?number=17&apiKey=${apiKey}`;
 
-  let recipes = recipeNames.map((name, index) => ({
-    name,
-    image_path: `images/recipe/recipe (${index + 1}).png`,
-  }));
+    const fetchRecipeData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // 1. Axios handles the request
+        const response = await axios.get(apiUrl);
+
+        // 2. Axios data is automatically parsed as JSON
+        setRecipes({
+          popular: response.data.recipes.slice(0, 8),
+          explore: response.data.recipes.slice(7, 13),
+          heading: response.data.recipes.slice(14, 17),
+        });
+      } catch (err) {
+        console.error("Error fetching recipe:", err);
+        setError(err.response ? err.response.data.message : err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRecipeData();
+  }, []);
+
+  console.log(recipes);
 
   // DATA
   const [currentIngredients, setCurrentIngredients] = useState([]);
@@ -124,9 +149,31 @@ function Home() {
 
             {/* images */}
             <div className="flex gap-5 overflow-auto md pb-5">
-              <HeadingImage image_path="images/header/food1.png" />
-              <HeadingImage image_path="images/header/food2.png" />
-              <HeadingImage image_path="images/header/food3.png" />
+              {isloading && (
+                <>
+                  {[...Array(3)].map((_, index) => (
+                    <div className={`min-w-[200px] h-[150px] rounded-md animate-pulse`} key={index}>
+                      <div
+                        // This inner div mirrors the <img> tag's dimensions and styling:
+                        // w-full h-full rounded-sm object-cover object-center
+                        className="w-full h-full rounded-sm bg-gray-300"
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {!isloading && recipes && (
+                <>
+                  {recipes.heading.map((headingRecipe, index) => (
+                    <HeadingImage
+                      image_name={headingRecipe.image}
+                      id={headingRecipe.id}
+                      key={index}
+                    />
+                  ))}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -257,9 +304,26 @@ function Home() {
 
           {/* parent */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
-            {recipes.map((recipe, index) => (
-              <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
-            ))}
+            {isloading && (
+              <>
+                {[...Array(8)].map((_, index) => (
+                  <RecipeItemSkeleton key={index} />
+                ))}
+              </>
+            )}
+
+            {!isloading && recipes && (
+              <>
+                {recipes.popular.map((popularRecipe, index) => (
+                  <RecipeItem
+                    key={index}
+                    name={popularRecipe.title}
+                    image_name={popularRecipe.image}
+                    id={popularRecipe.id}
+                  />
+                ))}
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -307,9 +371,26 @@ function Home() {
 
                 {/* parent */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-6">
-                  {recipes.map((recipe, index) => (
-                    <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
-                  ))}
+                  {isloading && (
+                    <>
+                      {[...Array(6)].map((_, index) => (
+                        <RecipeItemSkeleton key={index} />
+                      ))}
+                    </>
+                  )}
+
+                  {!isloading && recipes && (
+                    <>
+                      {recipes.explore.map((exploreRecipe, index) => (
+                        <RecipeItem
+                          key={index}
+                          name={exploreRecipe.title}
+                          image_name={exploreRecipe.image}
+                          id={exploreRecipe.id}
+                        />
+                      ))}
+                    </>
+                  )}
                 </div>
               </div>
 
