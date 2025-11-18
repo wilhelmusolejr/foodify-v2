@@ -21,12 +21,12 @@ export default function NutritionFacts({ className, data }) {
               className="flex border-b border-black/10 justify-between text-lg lg:text-xl pb-2"
             >
               {/* Nutrient Name */}
-              <div className="font-medium text-gray-700">
+              <div className=" text-gray-700">
                 <p>{item.name}</p>
               </div>
 
               {/* Nutrient Amount and Unit */}
-              <div className="font-semibold text-gray-900">
+              <div className=" text-gray-900">
                 <p>
                   {/* Display amount, rounded to 1 decimal place, followed by the unit */}
                   {item.amount.toFixed(1)} {item.unit}
