@@ -19,9 +19,9 @@ import ChecklistItem from "@components/ChecklistItem";
 import Heading from "@components/Recipe/Heading";
 import ListItem from "@components/Recipe/ListItem";
 import RecipeItem from "@components/RecipeItem";
-import Tags from "../components/Recipe/Tags";
-import NutritionFacts from "../components/NutritionFacts";
-import Feedback from "../components/Recipe/Feedback";
+import Tags from "@components/Recipe/Tags";
+import NutritionFacts from "@components/NutritionFacts";
+import Feedback from "@components/Recipe/Feedback";
 
 export default function Recipe() {
   const { id } = useParams();
@@ -37,7 +37,7 @@ export default function Recipe() {
 
   let recipes_list = recipeNames.map((name, index) => ({
     name,
-    image_path: `images/recipe/recipe (${index + 1}).png`,
+    image_path: `/images/recipe/recipe (${index + 1}).png`,
   }));
 
   return (
@@ -45,7 +45,7 @@ export default function Recipe() {
       {/* Navigator */}
       <Navigator />
 
-      <div className="w-10/12 max-w-7x mx-auto mt-30 ">
+      <div className="w-10/12 max-w-7xl mx-auto mt-30 ">
         {/* heading */}
         <div className="mb-10 relative">
           {/* side 1 */}
@@ -54,9 +54,9 @@ export default function Recipe() {
               <p className="italic text-sm md:text-base lg:text-lg">
                 Browse All Recipes by Category or Filter
               </p>
-              <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold">
+              <h1 className="text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold">
                 Stawberry Cream Cheesecake
-              </h2>
+              </h1>
             </div>
 
             {/* mini data */}
@@ -85,7 +85,7 @@ export default function Recipe() {
 
         {/* image */}
         <div className="py-10 border-t border-black/10">
-          <div className="h-50 md:h-80 lg:h-90 xl:h-[60vh] bg-black rounded-xl"></div>
+          <div className="h-60 md:h-[50vh] lg:h-[60vh] bg-black rounded-xl"></div>
         </div>
 
         {/* clock */}
@@ -120,7 +120,7 @@ export default function Recipe() {
               <div className="flex flex-col gap-7">
                 {/* item - produce */}
                 <div className="">
-                  <h3 className="text-xl font-medium text-[#333]">Produce</h3>
+                  <h3 className="text-xl lg:text-2xl font-medium text-[#333]">Produce</h3>
 
                   <ul className="flex flex-col gap-3 mt-5 ms-2">
                     <ListItem>
@@ -218,7 +218,7 @@ export default function Recipe() {
             <div className="my-14">
               {/* heading */}
               <div className="mb-10">
-                <h2 className="text-2xl font-semibold">Explore Recipes</h2>
+                <h2 className="text-3xl uppercase font-semibold">Explore Recipes</h2>
               </div>
 
               {/* parent */}
@@ -236,18 +236,33 @@ export default function Recipe() {
 
         {/* Comment */}
         <div className="mt-40 lg:w-8/12 lg:mx-auto">
-          <h2 className="text-3xl font-bold mb-5">Already made this?</h2>
+          <h2 className="text-2xl lg:text-3xl font-semibold mb-5">Already made this?</h2>
           <button className="px-7 py-4 border rounded-lg mb-10">Share your feedback</button>
           <div className="h-2 bg-green-900 mb-10"></div>
-          <h3 className="text-2xl font-semibold mt-30 mb-10">(36) Comments</h3>
+          <h3 className="text-xl lg:text-2xl font-semibold mt-30 mb-10">(36) Comments</h3>
 
           {/* actual comments */}
-          <div className="">
+          <div className="flex flex-col gap-14">
             {/* item */}
-            <div className="flex gap-5 border-t border-black/10 pt-10">
+            <div className="flex gap-5 border-t border-black/10 pt-14">
               <div className="w-10 h-10 rounded-full bg-black"></div>
               <div className="flex-1">
-                <h4 className="text-lg font-medium">Wihelmus Ole</h4>
+                <h4 className="text-xl font-medium">Wihelmus Ole</h4>
+                <p className="text-sm">42 mins ago</p>
+
+                <Paragraph className={"mt-3"}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </Paragraph>
+              </div>
+            </div>
+
+            {/* item */}
+            <div className="flex gap-5 border-t border-black/10 pt-14">
+              <div className="w-10 h-10 rounded-full bg-black"></div>
+              <div className="flex-1">
+                <h4 className="text-xl font-medium">Wihelmus Ole</h4>
                 <p className="text-sm">42 mins ago</p>
 
                 <Paragraph className={"mt-3"}>
@@ -260,7 +275,7 @@ export default function Recipe() {
           </div>
 
           {/* write a comment */}
-          <div className="my-20">
+          <div className="my-40">
             <div className="flex justify-between items-center mb-5">
               <div className="">
                 <h5 className="text-2xl font-bold">Write a comment</h5>
