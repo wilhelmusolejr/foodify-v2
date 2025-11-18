@@ -1,18 +1,21 @@
 import React from "react";
 
-export default function RecipeItem({ image_path, link, name }) {
+export default function RecipeItem({ image_name, id, name }) {
+  let image_path = `https://img.spoonacular.com/recipes/${image_name}`;
+  let recipe_link = `http://localhost:5173/recipe/${id}`;
+
   return (
     <>
-      <div className="">
-        <div className="aspect-square rounded-lg flex items-center justify-center">
+      <a href={recipe_link} className="">
+        <div className="aspect-square rounded-lg flex items-center justify-center ">
           <img
             src={image_path}
             alt={`Image for header food item`}
-            className=" object-cover object-center w-full h-full rounded-sm"
+            className=" object-cover object-center w-full h-full rounded-sm border border-black/10 bg-white"
           />
         </div>
         <h2 className="capitalize mt-2 text-lg font-medium">{name}</h2>
-      </div>
+      </a>
     </>
   );
 }
