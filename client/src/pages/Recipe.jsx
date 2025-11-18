@@ -3,7 +3,23 @@ import { useParams } from "react-router-dom";
 
 // Font Awesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookmark, faDollarSign, faTrophy, faUsers } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAppleWhole,
+  faBan,
+  faBookmark,
+  faCow,
+  faDollarSign,
+  faHeart,
+  faHeartPulse,
+  faLeaf,
+  faRecycle,
+  faSeedling,
+  faStar,
+  faTags,
+  faTrophy,
+  faUsers,
+  faWheatAwn,
+} from "@fortawesome/free-solid-svg-icons";
 
 // Components
 import Navigator from "@components/Navigator";
@@ -20,6 +36,7 @@ import Feedback from "@components/Recipe/Feedback";
 import axios from "axios";
 
 import recipeData from "./data.json";
+import IconItem from "../components/IconItem";
 
 export default function Recipe() {
   const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
@@ -312,9 +329,51 @@ export default function Recipe() {
             ],
           };
 
-          setRecipe(randomRecipe);
+          randomRecipe.tags = [
+            {
+              heading: "Cheap",
+              name: "cheap",
+              icon: faDollarSign,
+            },
+            {
+              heading: "Gluten Free",
+              name: "glutenFree",
+              icon: faWheatAwn,
+            },
+            {
+              heading: "Sustainable",
+              name: "sustainable",
+              icon: faSeedling,
+            },
+            {
+              heading: "Vegan",
+              name: "vegan",
+              icon: faLeaf,
+            },
+            {
+              heading: "Vegetarian",
+              name: "vegetarian",
+              icon: faAppleWhole,
+            },
+            {
+              heading: "Very Healthy",
+              name: "veryHealthy",
+              icon: faHeart,
+            },
+            {
+              heading: "Very Popular",
+              name: "veryPopular",
+              icon: faStar,
+            },
+          ];
 
-          console.log(randomRecipe);
+          randomRecipe.tags.forEach((tags) => {
+            tags.status = randomRecipe[tags.name];
+          });
+
+          console.log(randomRecipe.tags);
+
+          setRecipe(randomRecipe);
         }
 
         setError(err.response ? err.response.data.message : err.message);
@@ -468,6 +527,12 @@ export default function Recipe() {
               />
 
               {/* tags */}
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 border my-20 bg-white p-10 rounded-lg gap-5 border-black/10 text-black ">
+                {recipe.tags.map((tag, index) => (
+                  <IconItem icon={tag.icon} name={tag.heading} key={index} />
+                ))}
+              </div>
+
               <Tags className="lg:hidden my-20" />
 
               {/* Ingredients */}
