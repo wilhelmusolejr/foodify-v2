@@ -1,7 +1,14 @@
 import React from "react";
 
 export default function RecipeItem({ image_name, id, name }) {
-  let image_path = `https://img.spoonacular.com/recipes/${image_name}`;
+  let image_path;
+
+  if (image_name.includes("https")) {
+    image_path = image_name;
+  } else {
+    image_path = `https://img.spoonacular.com/recipes/${image_name}`;
+  }
+
   let recipe_link = `http://localhost:5173/recipe/${id}`;
 
   return (
