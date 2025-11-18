@@ -29,6 +29,8 @@ export default function SearchResult({ query }) {
         setIsLoading(true);
         setError(null);
 
+        throw new Error("upgrade your plan");
+
         // 1. Axios handles the request
         const response = await axios.get(apiUrl);
 
@@ -40,7 +42,7 @@ export default function SearchResult({ query }) {
         console.log(response.data);
       } catch (err) {
         // if reached 50 points
-        if (err.response.data.message.includes("upgrade your plan")) {
+        if (err.message.includes("upgrade your plan")) {
           setSearchResults({
             recipe: recipeData,
           });
