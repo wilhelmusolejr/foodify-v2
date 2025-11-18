@@ -5,6 +5,7 @@ import About from "@pages/About";
 import Search from "@pages/Search";
 import Blog from "@pages/Blog";
 import Recipe from "@pages/Recipe";
+import Profile from "@pages/Profile";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/recipe/:id" element={<Recipe />} />
+        <Route path="/profile/:id" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
