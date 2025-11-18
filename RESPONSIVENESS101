@@ -10,7 +10,7 @@ SUBHEADING - Banner
 768px = lg
 425px = base
 
-------------------------
+---
 
 CONTAINER
 10/12
@@ -22,7 +22,8 @@ PARAGRAPH
 768px = lg
 425px = base
 
--------------------------
+---
+
 HEADING - Section
 1440px = 4xl
 1024px = 3xl
@@ -34,7 +35,6 @@ SUBHEADING - Section
 1024px = lg
 768px = base
 425px = sm
-
 
 <div className="border border-black/10 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
             <img
@@ -48,39 +48,67 @@ SUBHEADING - Section
             </div>
           </div>
 
-
--------------------------
+---
 
 MAIN HEADING
-Desktop   = 5xl
-Laptop    = 4xl
-Tablet    = 3xl
-Mobile    = 3xl
+Desktop = 5xl
+Laptop = 4xl
+Tablet = 3xl
+Mobile = 3xl
 
 SUB HEADING
-Desktop   = 3xl
-Laptop    = 3xl
-Tablet    = 2xl
-Mobile    = 2xl
+Desktop = 3xl
+Laptop = 3xl
+Tablet = 2xl
+Mobile = 2xl
 
+// const [recipe, setRecipe] = useState(null);
+const [isLoading, setIsLoading] = useState(true);
+const [error, setError] = useState(null);
 
-
-  // const [recipe, setRecipe] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-
-
-
- {/* Parent */}
+{/_ Parent _/}
 {searchResults.map((recipe, index) => (
-            <RecipeItem key={index} image_name={recipe.image} id={recipe.id} name={recipe.title} />
-          ))}
-
-        
-
-          
+<RecipeItem key={index} image_name={recipe.image} id={recipe.id} name={recipe.title} />
+))}
 
 "3a26da254435490dbd4166e3f2ea12bf";
 "9c192c6b0bc44dc1a4f2a4bd5e10e4ae";
 "1752e513ded04b76a0513cbfacbf663f"
+"fec93702d1534cee88b3bbfd66cae193"
+
+  <li className="flex gap-5 items-start">
+                      {/* numbering */}
+                      <div className="w-7 h-7  rounded-full bg-green-900 text-white font-bold flex justify-center items-center">
+                        <p>1</p>
+                      </div>
+                      <Paragraph className={"flex-1"}>
+                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tenetur dolor
+                        quos, asperiores iure odit, eos suscipit vero quaerat molestiae aperiam
+                        nihil ullam! Qui, commodi provident? Architecto officia voluptate natus
+                        obcaecati.
+                      </Paragraph>
+                    </li>
+                    <li className="flex gap-5 items-start">
+                      {/* numbering */}
+                      <div className="w-7 h-7  rounded-full bg-green-900 text-white font-bold flex justify-center items-center">
+                        <p>2</p>
+                      </div>
+                      <Paragraph className={"flex-1"}>
+                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tenetur dolor
+                        quos, asperiores iure odit, eos suscipit vero quaerat molestiae aperiam
+                        nihil ullam! Qui, commodi provident? Architecto officia voluptate natus
+                        obcaecati.
+                      </Paragraph>
+                    </li>
+                    <li className="flex gap-5 items-start">
+                      {/* numbering */}
+                      <div className="w-7 h-7  rounded-full bg-green-900 text-white font-bold flex justify-center items-center">
+                        <p>3</p>
+                      </div>
+                      <Paragraph className={"flex-1"}>
+                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tenetur dolor
+                        quos, asperiores iure odit, eos suscipit vero quaerat molestiae aperiam
+                        nihil ullam! Qui, commodi provident? Architecto officia voluptate natus
+                        obcaecati.
+                      </Paragraph>
+                    </li>
