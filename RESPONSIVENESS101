@@ -62,3 +62,25 @@ Desktop   = 3xl
 Laptop    = 3xl
 Tablet    = 2xl
 Mobile    = 2xl
+
+
+
+  // const [recipe, setRecipe] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
+
+
+ {/* Parent */}
+{searchResults.map((recipe, index) => (
+            <RecipeItem key={index} image_name={recipe.image} id={recipe.id} name={recipe.title} />
+          ))}
+
+        
+
+          
+
+"3a26da254435490dbd4166e3f2ea12bf";
+"9c192c6b0bc44dc1a4f2a4bd5e10e4ae";
+"1752e513ded04b76a0513cbfacbf663f"
