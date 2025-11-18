@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 
+// Font Awesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faDollarSign, faTrophy, faUsers } from "@fortawesome/free-solid-svg-icons";
 
+// Components
 import Navigator from "@components/Navigator";
 import RecipeTime from "@components/RecipeTime";
 import Paragraph from "@components/Paragraph";
@@ -14,6 +15,11 @@ import RecipeItem from "@components/RecipeItem";
 import Tags from "@components/Recipe/Tags";
 import NutritionFacts from "@components/NutritionFacts";
 import Feedback from "@components/Recipe/Feedback";
+
+// Library
+import axios from "axios";
+
+import recipeData from "./data.json";
 
 export default function Recipe() {
   const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
@@ -29,6 +35,9 @@ export default function Recipe() {
     if (!id) return;
 
     const apiUrl = `https://api.spoonacular.com/recipes/${id}/information?apiKey=${apiKey}`;
+
+    const randomIndex = Math.floor(Math.random() * recipeData.length);
+    const randomRecipe = recipeData[randomIndex];
 
     const fetchRecipeData = async () => {
       try {
@@ -70,10 +79,43 @@ export default function Recipe() {
         );
 
         setRecipe(response.data);
-        console.log(response.data);
       } catch (err) {
-        console.error("Error fetching recipe:", err);
-        // Axios errors often have a structured response property
+        // if reached 50 points
+        if (err.response.data.message.includes("upgrade your plan")) {
+          // 2. Axios data is automatically parsed as JSON
+          randomRecipe.groupedByAisle = randomRecipe.extendedIngredients.reduce(
+            (accumulator, ingredient) => {
+              const aisle = ingredient.aisle;
+
+              // If the aisle doesn't exist in the accumulator, initialize it as an array
+              if (!accumulator[aisle]) {
+                accumulator[aisle] = [];
+              }
+
+              // Push the ingredient object (or a subset of its properties)
+              accumulator[aisle].push({
+                id: ingredient.id,
+                name: ingredient.name,
+                original: ingredient.original,
+              });
+
+              return accumulator;
+            },
+            {}
+          );
+
+          randomRecipe.finalIngredientsArray = Object.entries(randomRecipe.groupedByAisle).map(
+            ([aisleName, ingredientList]) => {
+              return {
+                name: aisleName, // The key becomes the 'name' property
+                list: ingredientList, // The value (the array of ingredients) becomes the 'list' property
+              };
+            }
+          );
+
+          setRecipe(randomRecipe);
+        }
+
         setError(err.response ? err.response.data.message : err.message);
       } finally {
         setIsLoading(false);

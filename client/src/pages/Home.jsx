@@ -10,22 +10,19 @@ import SectionHeading from "@components/SectionHeading";
 import StatCard from "@components/StatCard";
 import Navigator from "@components/Navigator";
 import IngredientListItem from "@components/ingredientListItem";
+import Footer from "@components/Footer";
+import MailLetter from "@components/MailLetter";
+import Paragraph from "@components/Paragraph";
+import RecipeItemSkeleton from "@components/RecipeItemSkeleton";
+import RecipeItem from "@components/RecipeItem";
 
+import recipeData from "./data.json";
+
+// Fontawesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUtensils,
-  faHeart,
-  faPlus,
-  faX,
-  faBoxOpen,
-  faExclamationCircle,
-} from "@fortawesome/free-solid-svg-icons";
-import Footer from "../components/Footer";
-import MailLetter from "../components/MailLetter";
-import Paragraph from "../components/Paragraph";
-import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
-import RecipeItem from "../components/RecipeItem";
+import { faPlus, faBoxOpen, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
+// Library
 import axios from "axios";
 
 function Home() {
@@ -77,6 +74,15 @@ function Home() {
           heading: response.data.recipes.slice(14, 17),
         });
       } catch (err) {
+        // if reached 50 points
+        if (err.response.data.message.includes("upgrade your plan")) {
+          setRecipes({
+            popular: recipeData.slice(0, 8),
+            explore: recipeData.slice(7, 13),
+            heading: recipeData.slice(14, 17),
+          });
+        }
+
         console.error("Error fetching recipe:", err);
         setError(err.response ? err.response.data.message : err.message);
       } finally {
@@ -86,8 +92,6 @@ function Home() {
 
     fetchRecipeData();
   }, []);
-
-  console.log(recipes);
 
   // DATA
   const [currentIngredients, setCurrentIngredients] = useState([]);

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import SectionHeading from "@components/SectionHeading";
+// Component
 import Label from "@components/Label";
-import Recipe from "@components/Recipe";
-import RecipeItem from "../components/RecipeItem";
+import RecipeItem from "@components/RecipeItem";
+import RecipeItemSkeleton from "@components/RecipeItemSkeleton";
 
+// Axios
 import axios from "axios";
-import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
+
+import recipeData from "./data.json";
 
 export default function SearchResult({ query }) {
   const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
@@ -37,7 +39,13 @@ export default function SearchResult({ query }) {
 
         console.log(response.data);
       } catch (err) {
-        console.error("Error fetching recipe:", err);
+        // if reached 50 points
+        if (err.response.data.message.includes("upgrade your plan")) {
+          setSearchResults({
+            recipe: recipeData,
+          });
+        }
+
         setError(err.response ? err.response.data.message : err.message);
       } finally {
         setIsLoading(false);
