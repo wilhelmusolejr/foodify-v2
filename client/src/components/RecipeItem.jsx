@@ -6,7 +6,7 @@ export default function RecipeItem({ image_path, link, name }) {
       <div className="">
         <div className="aspect-square rounded-lg flex items-center justify-center">
           <img
-            src={`images/recipe/recipe (1).png`}
+            src={image_path}
             alt={`Image for header food item`}
             className=" object-cover object-center w-full h-full rounded-sm"
           />
