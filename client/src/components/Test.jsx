@@ -3,18 +3,24 @@ import React from "react";
 export default function Test({ name, image_name }) {
   let image_path = `images/category/${image_name}`;
 
+  // needs checking
+  let link = `http://localhost:5173/search?query=${name}`;
+  // https://api.spoonacular.com/recipes/complexSearch?type=vegan&apiKey=fec93702d1534cee88b3bbfd66cae193
+
   return (
     <div className="text-center flex flex-col items-center gap-5 w-full">
       {/* image */}
-      <div className="rounded-full">
+      <a href={link} className="rounded-full">
         <img
           src={image_path}
           alt={`Image for header food item`}
-          className=" object-cover border border-black/10 shadow-md object-center w-full h-full rounded-full aspect-square"
+          className=" object-cover border border-black/10 shadow-md object-center w-full h-full rounded-full aspect-square bg-white"
         />
-      </div>
+      </a>
 
-      <p className="md:text-xl uppercase">{name}</p>
+      <a href={link} className="text-xl font-medium uppercase">
+        {name}
+      </a>
     </div>
   );
 }
