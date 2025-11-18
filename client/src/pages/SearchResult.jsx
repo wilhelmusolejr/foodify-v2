@@ -1,23 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import SectionHeading from "@components/SectionHeading";
 import Label from "@components/Label";
 import Recipe from "@components/Recipe";
+import RecipeItem from "../components/RecipeItem";
 
-export default function SearchResult({ data }) {
-  let recipeNames = [
-    "Spaghetti Carbonara",
-    "Grilled Chicken Salad",
-    "Creamy Mushroom Risotto",
-    "Beef Stir-Fry with Veggies",
-    "Lemon Garlic Shrimp Pasta",
-    "Classic Margherita Pizza",
-  ];
+import axios from "axios";
+import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
 
-  let recipes = recipeNames.map((name, index) => ({
-    name,
-    image_path: `images/recipe/recipe (${index + 1}).png`,
-  }));
+export default function SearchResult({ query }) {
+  const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
+
+  const [isloading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [searchResults, setSearchResults] = useState({ recipe: [] });
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchTerm = searchParams.get("query");
+
+  useEffect(() => {
+    const apiUrl = `https://api.spoonacular.com/recipes/complexSearch?query=${searchTerm}&apiKey=${apiKey}`;
+
+    const fetchRecipeData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // 1. Axios handles the request
+        const response = await axios.get(apiUrl);
+
+        // 2. Axios data is automatically parsed as JSON
+        setSearchResults({
+          recipe: response.data.results,
+        });
+
+        console.log(response.data);
+      } catch (err) {
+        console.error("Error fetching recipe:", err);
+        setError(err.response ? err.response.data.message : err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRecipeData();
+  }, [searchTerm]);
 
   return (
     <>
@@ -31,7 +59,7 @@ export default function SearchResult({ data }) {
               Browse All Recipes by Category or Filter
             </p>
             <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold">
-              {`Search Results for "${data.searchInput || ""}"`}
+              {`Search Results for "${searchTerm || ""}"`}
             </h2>
           </div>
 
@@ -59,12 +87,28 @@ export default function SearchResult({ data }) {
         </div>
 
         {/* Parent */}
-        {/* Parent */}
-        {/* Parent */}
         <div className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20">
-          {recipes.map((recipe, index) => (
-            <Recipe key={index} name={recipe.name} image_path={recipe.image_path} />
-          ))}
+          {isloading && (
+            <>
+              {[...Array(8)].map((_, index) => (
+                <RecipeItemSkeleton key={index} />
+              ))}
+            </>
+          )}
+
+          {/* --- Conditional Rendering for Data Loaded State --- */}
+          {!isloading && searchResults.recipe.length > 0 && (
+            <>
+              {searchResults.recipe.map((recipe) => (
+                <RecipeItem
+                  key={recipe.id}
+                  id={recipe.id}
+                  name={recipe.title}
+                  image_name={recipe.image}
+                />
+              ))}
+            </>
+          )}
         </div>
 
         {/* Pagination */}

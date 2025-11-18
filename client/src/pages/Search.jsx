@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,10 +19,19 @@ export default function Search() {
   const [searchType, setSearchType] = useState("recipe");
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState("");
-  const [searchResults, setSearchResults] = useState({});
 
   const searchTerm = searchParams.get("query");
 
+  // USE CALLBACK
+  function handleSearchTypeChange(type) {
+    setSearchType(type);
+  }
+
+  function handleSearch() {
+    setSearchParams({ query: searchInput });
+  }
+
+  // DATA
   const meal_types = [
     "main course",
     "side dish",
@@ -60,22 +69,6 @@ export default function Search() {
     { id: 2, name: "Ingredient" },
     { id: 3, name: "Nutrient" },
   ];
-
-  // USE CALLBACK
-  // USE CALLBACK
-  // USE CALLBACK
-  function handleSearchTypeChange(type) {
-    setSearchType(type);
-  }
-
-  function handleSearch() {
-    setSearchParams({ query: searchInput });
-    setSearchResults({
-      searchType: searchType,
-      searchInput: searchInput,
-      recipe: [],
-    });
-  }
 
   return (
     <>
@@ -235,7 +228,7 @@ export default function Search() {
         </>
       ) : (
         <>
-          <SearchResult data={searchResults} />
+          <SearchResult query={searchTerm} />
         </>
       )}
 
