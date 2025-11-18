@@ -47,3 +47,18 @@ SUBHEADING - Section
               <p className="text-sm text-gray-600">A brief description of the recipe goes here.</p>
             </div>
           </div>
+
+
+-------------------------
+
+MAIN HEADING
+Desktop   = 5xl
+Laptop    = 4xl
+Tablet    = 3xl
+Mobile    = 3xl
+
+SUB HEADING
+Desktop   = 3xl
+Laptop    = 3xl
+Tablet    = 2xl
+Mobile    = 2xl
