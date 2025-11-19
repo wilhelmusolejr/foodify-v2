@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faExclamationCircle, faBoxOpen } from "@fortawesome/free-solid-svg-icons";
+import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 
 import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
@@ -11,11 +11,11 @@ import CheckboxItem from "@components/CheckboxItem";
 import Label from "@components/Label";
 import NutrientFormGroup from "@components/NutrientFormGroup";
 import IngredientListItem from "@components/ingredientListItem";
-import SearchResult from "./SearchResult";
 import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
 import RecipeItemSkeleton from "@components/RecipeItemSkeleton";
 import RecipeItem from "@components/RecipeItem";
+import PaginationButton from "@components/PaginationButton";
 
 import axios from "axios";
 
@@ -583,51 +583,42 @@ export default function Search() {
             {searchResults.totalResults > 10 && (
               <div className="flex justify-center items-center gap-3 my-30">
                 {pageNum > 1 && (
-                  <button
-                    className="px-3 h-10 border border-black rounded-md bg-white cursor-pointer"
-                    onClick={(e) => {
-                      handlePagination(pageNum - 1);
-                    }}
-                    disabled={pageNum <= 1}
-                  >
-                    <p>Previous</p>
-                  </button>
+                  <PaginationButton
+                    pageNum={pageNum - 1}
+                    onClick={handlePagination}
+                    className="px-3"
+                    isDisabled={pageNum <= 1}
+                    text={"Previous"}
+                  />
                 )}
                 {pageNum > 1 && (
-                  <button
-                    className="w-10 h-10 border border-black rounded-lg bg-white cursor-pointer"
-                    onClick={(e) => {
-                      handlePagination(pageNum - 1);
-                    }}
-                  >
-                    <p>{pageNum - 1}</p>
-                  </button>
+                  <PaginationButton
+                    pageNum={pageNum - 1}
+                    text={pageNum - 1}
+                    onClick={handlePagination}
+                  />
                 )}
-                <button
-                  className="w-10 h-10 border border-black rounded-lg bg-black text-white "
-                  disabled
-                >
-                  <p>{pageNum}</p>
-                </button>
+
+                <PaginationButton
+                  pageNum={pageNum}
+                  text={pageNum}
+                  isDisabled={true}
+                  className={"bg-black text-white"}
+                />
 
                 {pageNum < searchResults.pageLimit && (
                   <>
-                    <button
-                      className="w-10 h-10 border border-black rounded-lg bg-white cursor-pointer"
-                      onClick={(e) => {
-                        handlePagination(pageNum + 1);
-                      }}
-                    >
-                      <p>{pageNum + 1}</p>
-                    </button>
-                    <button
-                      className="px-3 h-10 border border-black rounded-lg bg-white cursor-pointer"
-                      onClick={(e) => {
-                        handlePagination(pageNum + 1);
-                      }}
-                    >
-                      <p>Next</p>
-                    </button>
+                    <PaginationButton
+                      pageNum={pageNum + 1}
+                      text={pageNum + 1}
+                      onClick={handlePagination}
+                    />
+                    <PaginationButton
+                      pageNum={pageNum + 1}
+                      text={"Next"}
+                      onClick={handlePagination}
+                      className="px-3"
+                    />
                   </>
                 )}
               </div>
