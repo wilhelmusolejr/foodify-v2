@@ -371,9 +371,8 @@ export default function Recipe() {
             tags.status = randomRecipe[tags.name];
           });
 
-          randomRecipe.showTag = randomRecipe.tags.filter((tag) => tag.status === true);
-
           setRecipe(randomRecipe);
+          console.log(randomRecipe);
         }
 
         setError(err.response ? err.response.data.message : err.message);
@@ -527,13 +526,11 @@ export default function Recipe() {
               />
 
               {/* tags */}
-              {recipe.showTag.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 border my-20 bg-white p-10 rounded-lg gap-5 border-black/10 text-black ">
-                  {recipe.tags.map((tag, index) => (
-                    <IconItem icon={tag.icon} name={tag.heading} key={index} status={tag.status} />
-                  ))}
-                </div>
-              )}
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 border my-20 bg-white p-10 rounded-lg gap-5 border-black/10 text-black ">
+                {recipe.tags.map((tag, index) => (
+                  <IconItem icon={tag.icon} name={tag.heading} key={index} status={tag.status} />
+                ))}
+              </div>
 
               <Tags className="lg:hidden my-20" />
 
