@@ -582,17 +582,20 @@ export default function Search() {
             {/* Pagination */}
             {searchResults.totalResults > 10 && (
               <div className="flex justify-center items-center gap-3 my-30">
-                <button
-                  className="px-3 h-10 border border-black rounded-md bg-white"
-                  onClick={(e) => {
-                    handlePagination(pageNum - 1);
-                  }}
-                >
-                  <p>Previous</p>
-                </button>
                 {pageNum > 1 && (
                   <button
-                    className="w-10 h-10 border border-black rounded-lg bg-white"
+                    className="px-3 h-10 border border-black rounded-md bg-white cursor-pointer"
+                    onClick={(e) => {
+                      handlePagination(pageNum - 1);
+                    }}
+                    disabled={pageNum <= 1}
+                  >
+                    <p>Previous</p>
+                  </button>
+                )}
+                {pageNum > 1 && (
+                  <button
+                    className="w-10 h-10 border border-black rounded-lg bg-white cursor-pointer"
                     onClick={(e) => {
                       handlePagination(pageNum - 1);
                     }}
@@ -600,14 +603,17 @@ export default function Search() {
                     <p>{pageNum - 1}</p>
                   </button>
                 )}
-                <button className="w-10 h-10 border border-black rounded-lg bg-black text-white">
+                <button
+                  className="w-10 h-10 border border-black rounded-lg bg-black text-white "
+                  disabled
+                >
                   <p>{pageNum}</p>
                 </button>
 
                 {pageNum < searchResults.pageLimit && (
                   <>
                     <button
-                      className="w-10 h-10 border border-black rounded-lg bg-white"
+                      className="w-10 h-10 border border-black rounded-lg bg-white cursor-pointer"
                       onClick={(e) => {
                         handlePagination(pageNum + 1);
                       }}
@@ -615,7 +621,7 @@ export default function Search() {
                       <p>{pageNum + 1}</p>
                     </button>
                     <button
-                      className="px-3 h-10 border border-black rounded-lg bg-white"
+                      className="px-3 h-10 border border-black rounded-lg bg-white cursor-pointer"
                       onClick={(e) => {
                         handlePagination(pageNum + 1);
                       }}
