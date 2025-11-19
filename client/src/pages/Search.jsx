@@ -25,12 +25,13 @@ export default function Search() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchTerm = searchParams.get("query");
 
-  const [searchType, setSearchType] = useState("nutrient");
+  const [searchType, setSearchType] = useState("recipe");
   const [searchInput, setSearchInput] = useState("");
   const [isloading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchResults, setSearchResults] = useState({ recipes: [] });
   const [isTriggerSearch, setIsTriggerSeach] = useState(false);
+  const [pageNum, setPageNum] = useState(1);
 
   const [carbohydrates, setCarbohydrates] = useState(["", ""]);
   const [calories, setCalories] = useState(["", ""]);
@@ -250,7 +251,7 @@ export default function Search() {
       parameters.push(`maxProtein=${protein[1]}`);
     }
 
-    protein;
+    parameters.push(`offset=${pageNum * 10}`);
 
     let apiUrl = `${initialUrl}${parameters.join("&")}${apiKeyUrl}`;
 
@@ -273,6 +274,7 @@ export default function Search() {
         let tempRecipe = {
           recipes: response.data.results,
           totalResults: response.data.totalResults,
+          pageLimit: Math.ceil(response.data.totalResults / 10) - 1,
         };
 
         // 2. Axios data is automatically parsed as JSON
@@ -292,6 +294,15 @@ export default function Search() {
 
     fetchRecipeData();
   }, [isTriggerSearch]);
+
+  function handlePagination(gotoPage) {
+    if (gotoPage === pageNum) {
+      return;
+    }
+
+    setPageNum(gotoPage);
+    setIsTriggerSeach(true);
+  }
 
   return (
     <>
@@ -569,20 +580,52 @@ export default function Search() {
             </div>
 
             {/* Pagination */}
-            <div className="flex justify-center items-center gap-3 my-30">
-              <button className="px-3 h-10 border border-black rounded-md bg-white">
-                <p>Previous</p>
-              </button>
-              <button className="w-10 h-10 border border-black rounded-lg bg-black text-white">
-                <p>1</p>
-              </button>
-              <button className="w-10 h-10 border border-black rounded-lg bg-white">
-                <p>2</p>
-              </button>
-              <button className="px-3 h-10 border border-black rounded-lg bg-white">
-                <p>Next</p>
-              </button>
-            </div>
+            {searchResults.totalResults > 10 && (
+              <div className="flex justify-center items-center gap-3 my-30">
+                <button
+                  className="px-3 h-10 border border-black rounded-md bg-white"
+                  onClick={(e) => {
+                    handlePagination(pageNum - 1);
+                  }}
+                >
+                  <p>Previous</p>
+                </button>
+                {pageNum > 1 && (
+                  <button
+                    className="w-10 h-10 border border-black rounded-lg bg-white"
+                    onClick={(e) => {
+                      handlePagination(pageNum - 1);
+                    }}
+                  >
+                    <p>{pageNum - 1}</p>
+                  </button>
+                )}
+                <button className="w-10 h-10 border border-black rounded-lg bg-black text-white">
+                  <p>{pageNum}</p>
+                </button>
+
+                {pageNum < searchResults.pageLimit && (
+                  <>
+                    <button
+                      className="w-10 h-10 border border-black rounded-lg bg-white"
+                      onClick={(e) => {
+                        handlePagination(pageNum + 1);
+                      }}
+                    >
+                      <p>{pageNum + 1}</p>
+                    </button>
+                    <button
+                      className="px-3 h-10 border border-black rounded-lg bg-white"
+                      onClick={(e) => {
+                        handlePagination(pageNum + 1);
+                      }}
+                    >
+                      <p>Next</p>
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </>
       )}
