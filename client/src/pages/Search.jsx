@@ -33,10 +33,12 @@ export default function Search() {
   const [isTriggerSearch, setIsTriggerSeach] = useState(false);
   const [pageNum, setPageNum] = useState(1);
 
-  const [carbohydrates, setCarbohydrates] = useState(["", ""]);
-  const [calories, setCalories] = useState(["", ""]);
-  const [fat, setFat] = useState(["", ""]);
-  const [protein, setProtein] = useState(["", ""]);
+  const [nutrientRanges, setNutrientRanges] = useState({
+    carbohydrates: ["", ""],
+    calories: ["", ""],
+    fat: ["", ""],
+    protein: ["", ""],
+  });
 
   const [listIngredients, setListIngredients] = useState([]);
   const [ingredient, setIngredient] = useState("");
@@ -44,6 +46,7 @@ export default function Search() {
   const [selectedDiet, setSelectedDiet] = useState([]);
   const [selectedIntolerances, setSelectedIntolerances] = useState([]);
 
+  // Searh parameters
   const searchParameters = {
     array: [
       { key: "diet", value: selectedDiet, separator: "|" },
@@ -51,73 +54,30 @@ export default function Search() {
       { key: "includeIngredients", value: listIngredients, separator: "," },
     ],
     numerical: [
-      { key: "minCarbs", value: carbohydrates[0] },
-      { key: "maxCarbs", value: carbohydrates[1] },
-      { key: "minCalories", value: calories[0] },
-      { key: "maxCalories", value: calories[1] },
-      { key: "minFat", value: fat[0] },
-      { key: "maxFat", value: fat[1] },
-      { key: "minProtein", value: protein[0] },
-      { key: "maxProtein", value: protein[1] },
+      { key: "minCarbs", value: nutrientRanges.carbohydrates[0] },
+      { key: "maxCarbs", value: nutrientRanges.carbohydrates[1] },
+      { key: "minCalories", value: nutrientRanges.calories[0] },
+      { key: "maxCalories", value: nutrientRanges.calories[1] },
+      { key: "minFat", value: nutrientRanges.fat[0] },
+      { key: "maxFat", value: nutrientRanges.fat[1] },
+      { key: "minProtein", value: nutrientRanges.protein[0] },
+      { key: "maxProtein", value: nutrientRanges.protein[1] },
       { key: "offset", value: pageNum * 10 },
     ],
     string: [{ key: "query", value: searchInput }],
   };
 
-  // nutrient
-  // nutrient
-  // nutrient
-  const handleCarbsChange = (newValue, indexToUpdate) => {
-    // 2. Use the functional update form to safely modify the array
-    setCarbohydrates((prevCarbs) => {
-      // Create a copy of the previous array
-      const newCarbs = [...prevCarbs];
-
-      // Update the specific index (0 for min, 1 for max)
-      newCarbs[indexToUpdate] = newValue;
-
-      // Return the new array to update the state
-      return newCarbs;
-    });
-  };
-  const handleCaloriesChange = (newValue, indexToUpdate) => {
-    // 2. Use the functional update form to safely modify the array
-    setCalories((prevCarbs) => {
-      // Create a copy of the previous array
-      const newCarbs = [...prevCarbs];
-
-      // Update the specific index (0 for min, 1 for max)
-      newCarbs[indexToUpdate] = newValue;
-
-      // Return the new array to update the state
-      return newCarbs;
-    });
-  };
-  const handleFatChange = (newValue, indexToUpdate) => {
-    // 2. Use the functional update form to safely modify the array
-    setFat((prevCarbs) => {
-      // Create a copy of the previous array
-      const newCarbs = [...prevCarbs];
-
-      // Update the specific index (0 for min, 1 for max)
-      newCarbs[indexToUpdate] = newValue;
-
-      // Return the new array to update the state
-      return newCarbs;
-    });
-  };
-  const handleProteinChange = (newValue, indexToUpdate) => {
-    // 2. Use the functional update form to safely modify the array
-    setProtein((prevCarbs) => {
-      // Create a copy of the previous array
-      const newCarbs = [...prevCarbs];
-
-      // Update the specific index (0 for min, 1 for max)
-      newCarbs[indexToUpdate] = newValue;
-
-      // Return the new array to update the state
-      return newCarbs;
-    });
+  // HANDLER FOR SEARCH BY NUTRIENTS
+  // Use a single, generic handler:
+  const handleNutrientRangeChange = (nutrientKey, newValue, indexToUpdate) => {
+    setNutrientRanges((prevRanges) => ({
+      ...prevRanges,
+      [nutrientKey]: [
+        ...prevRanges[nutrientKey].slice(0, indexToUpdate),
+        newValue,
+        ...prevRanges[nutrientKey].slice(indexToUpdate + 1),
+      ],
+    }));
   };
 
   // ingredients
@@ -411,26 +371,30 @@ export default function Search() {
                   {/* Carbohydrates */}
                   <NutrientFormGroup
                     heading="Carbohydrates"
-                    data={carbohydrates}
-                    onChange={handleCarbsChange}
+                    data={nutrientRanges.carbohydrates}
+                    onChange={handleNutrientRangeChange}
                   />
 
                   {/* Calories */}
                   <NutrientFormGroup
                     heading="Calories"
-                    data={calories}
-                    onChange={handleCaloriesChange}
+                    data={nutrientRanges.calories}
+                    onChange={handleNutrientRangeChange}
                   />
 
                   {/* Protein */}
                   <NutrientFormGroup
                     heading="Protein"
-                    data={protein}
-                    onChange={handleProteinChange}
+                    data={nutrientRanges.protein}
+                    onChange={handleNutrientRangeChange}
                   />
 
                   {/* Fat */}
-                  <NutrientFormGroup heading="Fat" data={fat} onChange={handleFatChange} />
+                  <NutrientFormGroup
+                    heading="Fat"
+                    data={nutrientRanges.fat}
+                    onChange={handleNutrientRangeChange}
+                  />
                 </div>
 
                 {/* button */}

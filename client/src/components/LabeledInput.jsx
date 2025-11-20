@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function LabeledInput({ name, data, onChange }) {
+export default function LabeledInput({ name, data, onChange, nutrientName }) {
   // Define the range
   const min = 1000;
   const max = 9999;
@@ -14,11 +14,11 @@ export default function LabeledInput({ name, data, onChange }) {
     <div className="w-full flex items-center gap-5 justify-between">
       <label htmlFor={randomDigit}>{name}</label>
       <input
-        type="text"
+        type="number"
         id={randomDigit}
         placeholder="0"
         value={data}
-        onChange={(e) => onChange(e.target.value, type)}
+        onChange={(e) => onChange(nutrientName, e.target.value, type)}
         className={`border w-30 border-black/50 rounded-lg px-4 py-3 text-right`}
       />
     </div>
