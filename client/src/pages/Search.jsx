@@ -16,6 +16,7 @@ import MailLetter from "@components/MailLetter";
 import RecipeItemSkeleton from "@components/RecipeItemSkeleton";
 import RecipeItem from "@components/RecipeItem";
 import PaginationButton from "@components/PaginationButton";
+import SearchButton from "@components/SearchButton";
 
 import axios from "axios";
 
@@ -23,7 +24,6 @@ export default function Search() {
   const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const searchTerm = searchParams.get("query");
 
   const [searchType, setSearchType] = useState("recipe");
   const [searchInput, setSearchInput] = useState("");
@@ -62,7 +62,7 @@ export default function Search() {
       { key: "maxFat", value: nutrientRanges.fat[1] },
       { key: "minProtein", value: nutrientRanges.protein[0] },
       { key: "maxProtein", value: nutrientRanges.protein[1] },
-      { key: "offset", value: pageNum * 10 },
+      { key: "offset", value: (pageNum - 1) * 10 },
     ],
     string: [{ key: "query", value: searchInput }],
   };
@@ -172,6 +172,7 @@ export default function Search() {
 
   function handleSearch() {
     setIsTriggerSeach(true);
+    setPageNum(1);
   }
 
   useEffect(() => {
@@ -218,6 +219,7 @@ export default function Search() {
 
     let apiUrl = (initialUrl += apiKeyUrl);
     setSearchParams(urlParameter);
+    console.log(searchParameters);
 
     const fetchRecipeData = async () => {
       try {
@@ -236,11 +238,14 @@ export default function Search() {
         let tempRecipe = {
           recipes: response.data.results,
           totalResults: response.data.totalResults,
-          pageLimit: Math.ceil(response.data.totalResults / 10) - 1,
+          pageLimit: Math.ceil(response.data.totalResults / 10),
         };
 
         // 2. Axios data is automatically parsed as JSON
         setSearchResults(tempRecipe);
+
+        console.log(tempRecipe);
+        console.log(apiUrl);
       } catch (err) {
         console.log(err);
         console.log(err.response.data.message);
@@ -269,7 +274,7 @@ export default function Search() {
       {/* Navigator */}
       <Navigator />
 
-      {searchResults.recipes.length == 0 ? (
+      {searchParams.size == 0 ? (
         <>
           {/* heading */}
           <div className="w-10/12 mx-auto mt-30">
@@ -317,12 +322,7 @@ export default function Search() {
                     />
                   </div>
                   {/* button */}
-                  <button
-                    className="bg-black w-full cursor-pointer text-white px-4 py-3 rounded-lg uppercase"
-                    onClick={handleSearch}
-                  >
-                    <p>Search</p>
-                  </button>
+                  <SearchButton onClick={handleSearch} />
                 </div>
 
                 {/* filter */}
@@ -398,19 +398,14 @@ export default function Search() {
                 </div>
 
                 {/* button */}
-                <button
-                  className="bg-black w-fit cursor-pointer text-white px-4 py-3 rounded-lg uppercase"
-                  onClick={handleSearch}
-                >
-                  <p>Search</p>
-                </button>
+                <SearchButton onClick={handleSearch} />
               </div>
 
               {/* SEARCH BY INGREDIENTS */}
               <div
                 className={`${searchType === "ingredient" ? "block" : "hidden"} w-full md:w-fit text-center`}
               >
-                <div className="text-left flex flex-col lg:flex-row items-start gap-10">
+                <div className="text-left flex flex-col lg:flex-row items-start gap-10 mb-20">
                   {/* input */}
                   <div className="flex flex-col md:flex-row md:items-end gap-2 lg:py-5 w-full lg:w-fit">
                     {/* form */}
@@ -469,12 +464,7 @@ export default function Search() {
                 </div>
 
                 {/* button */}
-                <button
-                  className="bg-black w-fit cursor-pointer text-white px-4 py-3 mt-30 rounded-lg uppercase"
-                  onClick={handleSearch}
-                >
-                  <p>Search</p>
-                </button>
+                <SearchButton onClick={handleSearch} />
               </div>
             </div>
           </div>
@@ -491,13 +481,13 @@ export default function Search() {
                   Browse All Recipes by Category or Filter
                 </p>
                 <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold">
-                  {`Search Results for "${searchTerm || ""}"`}
+                  {`Search by ${searchType}`}
                 </h2>
               </div>
 
               {/* side 2 */}
               <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium uppercase">
-                {searchResults.totalResults} recipes found
+                <span className="font-semibold">{searchResults.totalResults}</span> recipes found
               </h2>
             </div>
 
@@ -510,12 +500,12 @@ export default function Search() {
                   type="text_name"
                   placeholder="e.g. chicken, rice, broccoli"
                   className={`border flex-1 md:w-fit border-black/50 rounded-lg px-4 py-3 lg:min-w-80`}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
                 />
               </div>
               {/* button */}
-              <button className="bg-black w-full md:w-fit cursor-pointer text-white px-4 py-3 rounded-lg uppercase">
-                <p>Search</p>
-              </button>
+              <SearchButton onClick={handleSearch} />
             </div>
 
             {/* Parent */}
