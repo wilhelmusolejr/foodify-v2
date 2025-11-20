@@ -38,6 +38,32 @@ export default function Search() {
   const [fat, setFat] = useState(["", ""]);
   const [protein, setProtein] = useState(["", ""]);
 
+  const [listIngredients, setListIngredients] = useState([]);
+  const [ingredient, setIngredient] = useState("");
+
+  const [selectedDiet, setSelectedDiet] = useState([]);
+  const [selectedIntolerances, setSelectedIntolerances] = useState([]);
+
+  const searchParameters = {
+    array: [
+      { key: "diet", value: selectedDiet, separator: "|" },
+      { key: "intolerances", value: selectedIntolerances, separator: "," },
+      { key: "includeIngredients", value: listIngredients, separator: "," },
+    ],
+    numerical: [
+      { key: "minCarbs", value: carbohydrates[0] },
+      { key: "maxCarbs", value: carbohydrates[1] },
+      { key: "minCalories", value: calories[0] },
+      { key: "maxCalories", value: calories[1] },
+      { key: "minFat", value: fat[0] },
+      { key: "maxFat", value: fat[1] },
+      { key: "minProtein", value: protein[0] },
+      { key: "maxProtein", value: protein[1] },
+      { key: "offset", value: pageNum * 10 },
+    ],
+    string: [{ key: "query", value: searchInput }],
+  };
+
   // nutrient
   // nutrient
   // nutrient
@@ -97,9 +123,6 @@ export default function Search() {
   // ingredients
   // ingredients
   // ingredients
-  const [listIngredients, setListIngredients] = useState([]);
-  const [ingredient, setIngredient] = useState("");
-
   function addIngredient(ingredient) {
     if (ingredient.trim() === "") {
       return;
@@ -116,9 +139,6 @@ export default function Search() {
   // Recipe
   // Recipe
   // Recipe
-  const [selectedDiet, setSelectedDiet] = useState([]);
-  const [selectedIntolerances, setSelectedIntolerances] = useState([]);
-
   const handleCheckboxChangeDiet = (name, isChecked) => {
     setSelectedDiet((prevTypes) => {
       if (isChecked) {
@@ -191,15 +211,6 @@ export default function Search() {
   }
 
   function handleSearch() {
-    // bonk
-    let dietString = selectedDiet.join(",");
-    let intolerancesString = selectedIntolerances.join(",");
-
-    setSearchParams({
-      query: searchInput,
-      diet: dietString,
-      intolerances: intolerancesString,
-    });
     setIsTriggerSeach(true);
   }
 
@@ -208,54 +219,45 @@ export default function Search() {
       return;
     }
 
-    const apiKeyUrl = `&apiKey=${apiKey}`;
+    let urlParameter = {};
 
+    // 1. Process String Filters (e.g., query)
+    searchParameters.string.forEach((filter) => {
+      if (filter.value) {
+        urlParameter[filter.key] = filter.value;
+      }
+    });
+
+    // 2. Process Array Filters (e.g., diet, intolerances)
+    searchParameters.array.forEach((filter) => {
+      // Check if the array exists and has elements
+      if (filter.value && filter.value.length > 0) {
+        urlParameter[filter.key] = filter.value.join(filter.separator);
+      }
+    });
+
+    // 3. Process Numerical Filters (min/max ranges)
+    searchParameters.numerical.forEach((filter) => {
+      // Check if the numerical value is greater than zero
+      if (filter.value > 0) {
+        urlParameter[filter.key] = filter.value;
+      }
+    });
+
+    const apiKeyUrl = `&apiKey=${apiKey}`;
     let initialUrl = `https://api.spoonacular.com/recipes/complexSearch?`;
 
-    let parameters = [];
-
-    if (searchInput) {
-      parameters.push(`query=${searchInput}`);
-    }
-    if (selectedDiet.length) {
-      parameters.push(`diet=${selectedDiet.join("|")}`);
-    }
-    if (selectedIntolerances.length) {
-      parameters.push(`intolerances=${selectedIntolerances.join(",")}`);
-    }
-    if (listIngredients.length) {
-      parameters.push(`includeIngredients=${listIngredients.join(",")}`);
-    }
-    if (carbohydrates[0] > 0) {
-      parameters.push(`minCarbs=${carbohydrates[0]}`);
-    }
-    if (carbohydrates[1] > 0) {
-      parameters.push(`maxCarbs=${carbohydrates[1]}`);
-    }
-    if (calories[0] > 0) {
-      parameters.push(`minCalories=${calories[0]}`);
-    }
-    if (calories[1] > 0) {
-      parameters.push(`maxCalories=${calories[1]}`);
-    }
-    if (fat[0] > 0) {
-      parameters.push(`minFat=${fat[0]}`);
-    }
-    if (fat[1] > 0) {
-      parameters.push(`maxFat=${fat[1]}`);
-    }
-    if (protein[0] > 0) {
-      parameters.push(`minProtein=${protein[0]}`);
-    }
-    if (protein[1] > 0) {
-      parameters.push(`maxProtein=${protein[1]}`);
+    for (let key in urlParameter) {
+      if (urlParameter.hasOwnProperty(key)) {
+        const value = urlParameter[key];
+        if (value != false || value) {
+          initialUrl += `&${key}=${value}`;
+        }
+      }
     }
 
-    parameters.push(`offset=${pageNum * 10}`);
-
-    let apiUrl = `${initialUrl}${parameters.join("&")}${apiKeyUrl}`;
-
-    console.log(apiUrl);
+    let apiUrl = (initialUrl += apiKeyUrl);
+    setSearchParams(urlParameter);
 
     const fetchRecipeData = async () => {
       try {
@@ -279,8 +281,6 @@ export default function Search() {
 
         // 2. Axios data is automatically parsed as JSON
         setSearchResults(tempRecipe);
-
-        console.log(tempRecipe);
       } catch (err) {
         console.log(err);
         console.log(err.response.data.message);
@@ -309,7 +309,7 @@ export default function Search() {
       {/* Navigator */}
       <Navigator />
 
-      {searchTerm === null ? (
+      {searchResults.recipes.length == 0 ? (
         <>
           {/* heading */}
           <div className="w-10/12 mx-auto mt-30">
