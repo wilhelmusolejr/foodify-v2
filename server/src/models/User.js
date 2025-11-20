@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: [true, "First name is required."], // Better error messaging
+      required: [true, "First name is required."],
       trim: true,
       maxlength: 50,
     },
@@ -17,12 +17,11 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, "Email is required."],
-      unique: true, // Crucial for login/user identification
+      unique: true,
       trim: true,
-      lowercase: true, // Ensure consistent format
+      lowercase: true,
     },
     password: {
-      // CRUCIAL FIELD for authentication
       type: String,
       required: [true, "Password is required."],
       minlength: 6,
@@ -30,20 +29,17 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      required: false, // Gender is often optional
+      required: false,
       enum: ["Male", "Female", "Other", "Prefer not to say"], // Use enum for limited choices
     },
     bio: {
       type: String,
-      required: false, // Bio is rarely required
+      required: false,
       maxlength: 500,
     },
-    // You might also add:
-    // role: { type: String, default: 'user', enum: ['user', 'admin'] },
   },
-  { timestamps: true } // Adds createdAt and updatedAt fields
+  { timestamps: true }
 );
 
-// IMPORTANT: Export the model using the conventional name.
 const User = mongoose.model("User", userSchema);
 export default User;
