@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
+import { faBoxOpen, faGear } from "@fortawesome/free-solid-svg-icons";
 
 import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
@@ -24,6 +24,7 @@ export default function Search() {
   const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const searchTerm = searchParams.get("query");
 
   const [searchType, setSearchType] = useState("recipe");
   const [searchInput, setSearchInput] = useState("");
@@ -47,25 +48,6 @@ export default function Search() {
   const [selectedIntolerances, setSelectedIntolerances] = useState([]);
 
   // Searh parameters
-  const searchParameters = {
-    array: [
-      { key: "diet", value: selectedDiet, separator: "|" },
-      { key: "intolerances", value: selectedIntolerances, separator: "," },
-      { key: "includeIngredients", value: listIngredients, separator: "," },
-    ],
-    numerical: [
-      { key: "minCarbs", value: nutrientRanges.carbohydrates[0] },
-      { key: "maxCarbs", value: nutrientRanges.carbohydrates[1] },
-      { key: "minCalories", value: nutrientRanges.calories[0] },
-      { key: "maxCalories", value: nutrientRanges.calories[1] },
-      { key: "minFat", value: nutrientRanges.fat[0] },
-      { key: "maxFat", value: nutrientRanges.fat[1] },
-      { key: "minProtein", value: nutrientRanges.protein[0] },
-      { key: "maxProtein", value: nutrientRanges.protein[1] },
-      { key: "offset", value: (pageNum - 1) * 10 },
-    ],
-    string: [{ key: "query", value: searchInput }],
-  };
 
   // HANDLER FOR SEARCH BY NUTRIENTS
   // Use a single, generic handler:
@@ -176,9 +158,29 @@ export default function Search() {
   }
 
   useEffect(() => {
-    if (!isTriggerSearch) {
+    if (!isTriggerSearch && searchParams.size === 0) {
       return;
     }
+
+    const searchParameters = {
+      array: [
+        { key: "diet", value: selectedDiet, separator: "|" },
+        { key: "intolerances", value: selectedIntolerances, separator: "," },
+        { key: "includeIngredients", value: listIngredients, separator: "," },
+      ],
+      numerical: [
+        { key: "minCarbs", value: nutrientRanges.carbohydrates[0] },
+        { key: "maxCarbs", value: nutrientRanges.carbohydrates[1] },
+        { key: "minCalories", value: nutrientRanges.calories[0] },
+        { key: "maxCalories", value: nutrientRanges.calories[1] },
+        { key: "minFat", value: nutrientRanges.fat[0] },
+        { key: "maxFat", value: nutrientRanges.fat[1] },
+        { key: "minProtein", value: nutrientRanges.protein[0] },
+        { key: "maxProtein", value: nutrientRanges.protein[1] },
+        { key: "offset", value: (pageNum - 1) * 10 },
+      ],
+      string: [{ key: "query", value: searchInput === "" ? searchTerm : searchInput }],
+    };
 
     let urlParameter = {};
 
@@ -210,6 +212,9 @@ export default function Search() {
     const apiUrl = `https://api.spoonacular.com/recipes/complexSearch?${params.toString()}`;
 
     setSearchParams(urlParameter);
+
+    console.log(apiUrl);
+    console.log(urlParameter);
 
     const fetchRecipeData = async () => {
       try {
@@ -245,7 +250,7 @@ export default function Search() {
     };
 
     fetchRecipeData();
-  }, [isTriggerSearch]);
+  }, [isTriggerSearch, searchParams.size]);
 
   function handlePagination(gotoPage) {
     if (gotoPage === pageNum) {
@@ -474,25 +479,37 @@ export default function Search() {
 
               {/* side 2 */}
               <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium uppercase">
-                <span className="font-semibold">{searchResults.totalResults}</span> recipes found
+                <span className="font-semibold">{searchResults.totalResults}</span> recipe
+                {`${searchResults.totalResults > 1 ? "s" : ""}`} found
               </h2>
             </div>
 
-            {/* Search */}
-            <div className="flex flex-col md:flex-row md:items-end justify-center gap-2 mb-20">
-              {/* form */}
-              <div className="w-full md:w-fit flex flex-col gap-2">
-                <Label name="Recipe name" required={true} />
-                <input
-                  type="text_name"
-                  placeholder="e.g. chicken, rice, broccoli"
-                  className={`border flex-1 md:w-fit border-black/50 rounded-lg px-4 py-3 lg:min-w-80`}
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                />
+            <div className="flex justify-center max-w-7xl mx-auto items-end mb-20">
+              {/* Filler/Spacer */}
+              <div className="w-10 hidden"></div>
+
+              {/* Search  */}
+              <div className="flex flex-col md:flex-row md:items-end justify-center gap-2">
+                {/* form */}
+                <div className="w-full md:w-fit flex flex-col gap-2">
+                  <Label name="Recipe name" required={true} />
+                  <input
+                    type="text_name"
+                    placeholder="e.g. chicken, rice, broccoli"
+                    className={`border flex-1 md:w-fit border-black/50 rounded-lg px-4 py-3 lg:min-w-80`}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                </div>
+                {/* button */}
+                <SearchButton onClick={handleSearch} />
               </div>
-              {/* button */}
-              <SearchButton onClick={handleSearch} />
+
+              <div className="hidden">
+                <div className=" px-4 py-3 bg-blue-600 text-white rounded-lg flex justify-center items-center">
+                  <FontAwesomeIcon icon={faGear} size="2xl" />
+                </div>
+              </div>
             </div>
 
             {/* Parent */}
