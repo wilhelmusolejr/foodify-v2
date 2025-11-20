@@ -16,7 +16,7 @@ import Paragraph from "@components/Paragraph";
 import RecipeItemSkeleton from "@components/RecipeItemSkeleton";
 import RecipeItem from "@components/RecipeItem";
 
-import recipeData from "./data.json";
+import recipeData from "./recipe.json";
 
 // Fontawesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -27,6 +27,7 @@ import axios from "axios";
 
 function Home() {
   const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
+  const runLocal = import.meta.env.VITE_RUN_LOCAL === "TRUE" ? true : false;
 
   const [isloading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -64,7 +65,9 @@ function Home() {
         setIsLoading(true);
         setError(null);
 
-        throw new Error("upgrade your plan");
+        if (runLocal) {
+          throw new Error("upgrade your plan");
+        }
 
         // 1. Axios handles the request
         const response = await axios.get(apiUrl);
@@ -78,14 +81,19 @@ function Home() {
       } catch (err) {
         // if reached 50 points
         if (err.message.includes("upgrade your plan")) {
+          let DATA_FROM_API = { recipes: [] };
+
+          for (let i = 0; i < 20; i++) {
+            DATA_FROM_API.recipes.push(recipeData);
+          }
+
           setRecipes({
-            popular: recipeData.slice(0, 8),
-            explore: recipeData.slice(7, 13),
-            heading: recipeData.slice(14, 17),
+            popular: DATA_FROM_API.recipes.slice(0, 8),
+            explore: DATA_FROM_API.recipes.slice(7, 13),
+            heading: DATA_FROM_API.recipes.slice(14, 17),
           });
         }
 
-        console.error("Error fetching recipe:", err);
         setError(err.response ? err.response.data.message : err.message);
       } finally {
         setIsLoading(false);
