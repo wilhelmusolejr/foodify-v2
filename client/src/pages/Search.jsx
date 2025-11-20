@@ -17,6 +17,7 @@ import RecipeItemSkeleton from "@components/RecipeItemSkeleton";
 import RecipeItem from "@components/RecipeItem";
 import PaginationButton from "@components/PaginationButton";
 import SearchButton from "@components/SearchButton";
+import Paragraph from "@components/Paragraph";
 
 import axios from "axios";
 
@@ -28,6 +29,7 @@ export default function Search() {
 
   const [searchType, setSearchType] = useState("recipe");
   const [searchInput, setSearchInput] = useState("");
+  const [isSearchInputValid, setIsSearchInputValid] = useState(true);
   const [isloading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchResults, setSearchResults] = useState({ recipes: [] });
@@ -43,6 +45,7 @@ export default function Search() {
 
   const [listIngredients, setListIngredients] = useState([]);
   const [ingredient, setIngredient] = useState("");
+  const [isIngredientInputValid, setIsIngredientValid] = useState(true);
 
   const [selectedDiet, setSelectedDiet] = useState([]);
   const [selectedIntolerances, setSelectedIntolerances] = useState([]);
@@ -67,11 +70,13 @@ export default function Search() {
   // ingredients
   function addIngredient(ingredient) {
     if (ingredient.trim() === "") {
+      setIsIngredientValid(false);
       return;
     }
 
     setListIngredients([...listIngredients, ingredient]);
     setIngredient("");
+    setIsIngredientValid(true);
   }
 
   function removeIngredient(indexToRemove) {
@@ -153,11 +158,18 @@ export default function Search() {
   }
 
   function handleSearch() {
+    if (searchInput.trim() === "" && searchType === "recipe") {
+      setIsSearchInputValid(false);
+      return;
+    }
+
     setIsTriggerSeach(true);
     setPageNum(1);
+    setIsSearchInputValid(true);
   }
 
   useEffect(() => {
+    console.log("sa");
     if (!isTriggerSearch && searchParams.size === 0) {
       return;
     }
@@ -301,14 +313,14 @@ export default function Search() {
               {/* SEARCY BY RECIPE */}
               <div className={`${searchType === "recipe" ? "block" : "hidden"}`}>
                 {/* search input */}
-                <div className="flex flex-col md:flex-row md:items-end gap-2 mb-10">
+                <div className="flex flex-col md:flex-row md:items-end gap-2 mb-10 ">
                   {/* form */}
-                  <div className="w-full flex flex-col gap-2">
+                  <div className="w-full flex flex-col gap-2 relative">
                     <Label name="Recipe name" required={true} />
                     <input
                       type="text_name"
                       placeholder="e.g. chicken, rice, broccoli"
-                      className={`border flex-1 border-black/50 rounded-lg px-4 py-3 lg:min-w-80`}
+                      className={`border flex-1 rounded-lg px-4 py-3 lg:min-w-80 ${isSearchInputValid ? "border-black/50" : "bg-red-100 border-red-400"}`}
                       value={searchInput}
                       onChange={(e) => setSearchInput(e.target.value)}
                     />
@@ -406,7 +418,7 @@ export default function Search() {
                       <input
                         type="text_name"
                         placeholder="e.g. chicken, rice, broccoli"
-                        className={`border flex-1 border-black/50 rounded-lg px-4 py-3`}
+                        className={`border flex-1 border-black/50 rounded-lg px-4 py-3 ${isIngredientInputValid ? "border-black/50" : "bg-red-100 border-red-400"}`}
                         onChange={(e) => setIngredient(e.target.value)}
                         value={ingredient}
                       />
@@ -514,6 +526,7 @@ export default function Search() {
 
             {/* Parent */}
             <div className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 min-h-[60vh]">
+              {/* 1. Loading State */}
               {isloading && (
                 <>
                   {[...Array(8)].map((_, index) => (
@@ -522,7 +535,7 @@ export default function Search() {
                 </>
               )}
 
-              {/* --- Conditional Rendering for Data Loaded State --- */}
+              {/* 2. Success State: Recipes Found */}
               {!isloading && searchResults.recipes.length > 0 && (
                 <>
                   {searchResults.recipes.map((recipe) => (
@@ -534,6 +547,21 @@ export default function Search() {
                     />
                   ))}
                 </>
+              )}
+
+              {/* 3. Empty State: No Recipes Found (New Block) */}
+              {!isloading && searchResults.recipes.length === 0 && (
+                // Note: The empty state should span the entire grid area.
+                <div className="col-span-full py-20 px-10 text-center border rounded-lg bg-white border-black/10">
+                  <FontAwesomeIcon icon={faBoxOpen} size="4x" />
+                  <h3 className="text-2xl font-semibold text-gray-700 mb-4 pt-10">
+                    No Recipes Found{" "}
+                  </h3>
+                  <Paragraph className="mx-auto">
+                    We couldn't find any recipes matching your criteria. Try adjusting your search
+                    query, diet, or nutrient filters.
+                  </Paragraph>
+                </div>
               )}
             </div>
 
