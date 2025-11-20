@@ -1,5 +1,6 @@
 import express from "express";
 import commentsRoutes from "./routes/commentsRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -21,6 +22,7 @@ connectDB();
 
 app.use(express.json()); // <--- Middleware
 app.use("/api/comment", commentsRoutes);
+app.use("/api/auth", authRoutes);
 
 app.listen(port, () => {
   console.log("Server started on PORT:", port);
