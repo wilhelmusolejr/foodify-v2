@@ -45,6 +45,8 @@ export default function Recipe() {
   const [isloading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [recipe, setRecipe] = useState(null);
+  const [comment, setComment] = useState("");
+  const [listComments, setListComments] = useState([]);
 
   // Get recipe information
   useEffect(() => {
@@ -325,6 +327,30 @@ export default function Recipe() {
     fetchRecipeData();
   }, []);
 
+  // Handler
+  function handleCommentSubmit() {
+    if (comment.trim() === "") {
+      // 1. Validation: Prevent submission if empty
+      alert("Please enter a comment.");
+      return;
+    }
+
+    // submit data to database
+
+    let newComment = {
+      user: "Wihelmus Ole",
+      profile_image: null,
+      comment_text: comment,
+      date: "42 mins ago",
+    };
+
+    // add current comment to list of comments
+    setListComments((prevdata) => [...prevdata, newComment]);
+    setComment("");
+  }
+
+  console.log(listComments);
+
   return (
     <>
       {/* Navigator */}
@@ -585,33 +611,38 @@ export default function Recipe() {
 
               {/* actual comments */}
               <div className="flex flex-col gap-14">
-                {/* item */}
-                <div className=" gap-5 border-t border-black/10 pt-14 hidden">
-                  <div className="w-10 h-10 rounded-full bg-black"></div>
-                  <div className="flex-1">
-                    <h4 className="text-xl font-medium">Wihelmus Ole</h4>
-                    <p className="text-sm">42 mins ago</p>
+                {listComments.length > 0 ? (
+                  <>
+                    {listComments.map((comment, index) => (
+                      <div
+                        key={index} // 2. Added key prop (REQUIRED in lists)
+                        className="gap-5 border-t border-black/10 pt-14 flex items-start"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-black"></div>
+                        <div className="flex-1">
+                          <h4 className="text-xl font-medium">{comment.user}</h4>
+                          <p className="text-sm">{comment.date}</p>
 
-                    <Paragraph className={"mt-3"}>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                      incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                      nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    </Paragraph>
+                          <Paragraph className={"mt-3"}>{comment.comment_text}</Paragraph>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  // **FALSE BLOCK: If no comments are present, render the empty state**
+                  <div className="py-10 text-center border border-dashed border-gray-300 rounded-lg">
+                    <h4 className="text-xl font-semibold text-gray-700 mb-2">
+                      Be the First to Share Your Feedback! 📝
+                    </h4>
+                    <p className="text-gray-500">
+                      There are no comments available for this recipe yet.
+                    </p>
+                    {/* You can optionally include a call to action */}
+                    <button className="mt-5 px-5 py-2 text-sm cursor-pointer text-white bg-green-800 rounded-lg hover:bg-green-700 transition duration-150 shadow-md">
+                      Write a Comment Now
+                    </button>
                   </div>
-                </div>
-
-                <div className="py-10 text-center  border border-dashed border-gray-300 rounded-lg">
-                  <h4 className="text-xl font-semibold text-gray-700 mb-2">
-                    Be the First to Share Your Feedback! 📝
-                  </h4>
-                  <p className="text-gray-500">
-                    There are no comments available for this recipe yet.
-                  </p>
-                  {/* You can optionally include a call to action */}
-                  <button className="mt-5 px-5 py-2 text-sm cursor-pointer text-white bg-green-800 rounded-lg hover:bg-green-700 transition duration-150 shadow-md">
-                    Write a Comment Now
-                  </button>
-                </div>
+                )}
               </div>
 
               {/* write a comment */}
@@ -629,10 +660,17 @@ export default function Recipe() {
                   <textarea
                     name=""
                     className="w-full min-h-[50vh] lg:min-h-[30vh] rounded-lg p-1"
-                    placeholder="Bonk"
+                    placeholder="Write your thoughts"
+                    value={comment}
+                    onChange={(e) => {
+                      setComment(e.target.value);
+                    }}
                   ></textarea>
 
-                  <button className="bg-black text-white px-5 py-3 rounded-lg absolute right-5 bottom-5">
+                  <button
+                    className="bg-black text-white px-5 py-3 rounded-lg absolute right-5 bottom-5"
+                    onClick={handleCommentSubmit}
+                  >
                     Comment
                   </button>
                 </div>
