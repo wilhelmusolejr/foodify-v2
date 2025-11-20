@@ -5,7 +5,7 @@ export default function MailLetter() {
     <div className="pb-20 pt-40 my-40 bg-black text-white relative box-out">
       <div className="box-in w-60 h-60 absolute left-1/2 -translate-x-1/2 -top-[25%] flex items-center justify-center">
         <img
-          src="images/burger.png"
+          src="/images/burger.png"
           alt="Burger"
           className="object-contain object-center w-full h-full"
         />
