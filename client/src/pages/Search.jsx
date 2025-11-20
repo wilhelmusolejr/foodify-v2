@@ -205,21 +205,11 @@ export default function Search() {
       }
     });
 
-    const apiKeyUrl = `&apiKey=${apiKey}`;
-    let initialUrl = `https://api.spoonacular.com/recipes/complexSearch?`;
+    const params = new URLSearchParams(urlParameter); // Pass the object directly
+    params.append("apiKey", apiKey);
+    const apiUrl = `https://api.spoonacular.com/recipes/complexSearch?${params.toString()}`;
 
-    for (let key in urlParameter) {
-      if (urlParameter.hasOwnProperty(key)) {
-        const value = urlParameter[key];
-        if (value != false || value) {
-          initialUrl += `&${key}=${value}`;
-        }
-      }
-    }
-
-    let apiUrl = (initialUrl += apiKeyUrl);
     setSearchParams(urlParameter);
-    console.log(searchParameters);
 
     const fetchRecipeData = async () => {
       try {
@@ -243,9 +233,6 @@ export default function Search() {
 
         // 2. Axios data is automatically parsed as JSON
         setSearchResults(tempRecipe);
-
-        console.log(tempRecipe);
-        console.log(apiUrl);
       } catch (err) {
         console.log(err);
         console.log(err.response.data.message);
