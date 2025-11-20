@@ -167,11 +167,7 @@ function Home() {
                 <>
                   {[...Array(3)].map((_, index) => (
                     <div className={`min-w-[200px] h-[150px] rounded-md animate-pulse`} key={index}>
-                      <div
-                        // This inner div mirrors the <img> tag's dimensions and styling:
-                        // w-full h-full rounded-sm object-cover object-center
-                        className="w-full h-full rounded-sm bg-gray-300"
-                      />
+                      <div className="w-full h-full rounded-sm bg-gray-300" />
                     </div>
                   ))}
                 </>
