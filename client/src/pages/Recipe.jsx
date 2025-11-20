@@ -54,9 +54,6 @@ export default function Recipe() {
 
     const apiUrl = `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
 
-    const randomIndex = Math.floor(Math.random() * recipeData.length);
-    const randomRecipe = recipeData[randomIndex];
-
     const fetchRecipeData = async () => {
       try {
         setIsLoading(true);
@@ -143,7 +140,6 @@ export default function Recipe() {
         });
 
         setRecipe(response.data);
-        console.log(response.data);
       } catch (err) {
         // if reached 50 points
         if (err.message.includes("upgrade your plan")) {
@@ -221,8 +217,6 @@ export default function Recipe() {
             tags.status = DATA_FROM_API[tags.name];
           });
 
-          console.log(DATA_FROM_API);
-
           setRecipe(DATA_FROM_API);
         }
 
@@ -265,8 +259,6 @@ export default function Recipe() {
           for (let i = 0; i < 6; i++) {
             DATA_FROM_API.push(recipeData);
           }
-
-          console.log(DATA_FROM_API);
 
           setRecipe((prevSettings) => ({
             ...prevSettings,
@@ -327,8 +319,27 @@ export default function Recipe() {
     fetchRecipeData();
   }, []);
 
-  // Handler
-  function handleCommentSubmit() {
+  // Get comments
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        // api url
+        const BACKEND_API = `http://localhost:5001/api/comment/${id}`;
+
+        // request
+        const response = await axios.get(BACKEND_API);
+
+        setListComments(response.data);
+      } catch (err) {
+        console.error("error getting comments:", err);
+      }
+    };
+
+    fetchComments();
+  }, [id]);
+
+  // Handler for posting a comment
+  async function handleCommentSubmit() {
     if (comment.trim() === "") {
       // 1. Validation: Prevent submission if empty
       alert("Please enter a comment.");
@@ -336,20 +347,34 @@ export default function Recipe() {
     }
 
     // submit data to database
+    const BACKEND_API = "http://localhost:5001/api/comment"; // Your backend endpoint
 
-    let newComment = {
-      user: "Wihelmus Ole",
-      profile_image: null,
-      comment_text: comment,
-      date: "42 mins ago",
+    const commentPayload = {
+      user_id: 1,
+      comment_text: comment.trim(),
+      recipe_id: Number(id),
     };
 
-    // add current comment to list of comments
-    setListComments((prevdata) => [...prevdata, newComment]);
-    setComment("");
-  }
+    try {
+      const response = await axios.post(BACKEND_API, commentPayload);
+      const newComment_api = response.data;
 
-  console.log(listComments);
+      let newComment = {
+        user: "Wihelmus Ole",
+        profile_image: null,
+        comment_text: comment,
+        date: "42 mins ago",
+      };
+
+      // Add the new comment to the list to update the UI
+      setListComments((prevComments) => [...prevComments, newComment]);
+      setComment(""); // Clear the input field
+    } catch (err) {
+      // 6. Error Handling
+      console.error("Comment submission failed:", err);
+      setError(err.response?.data?.message || "Failed to submit comment. Please try again.");
+    }
+  }
 
   return (
     <>
@@ -668,7 +693,7 @@ export default function Recipe() {
                   ></textarea>
 
                   <button
-                    className="bg-black text-white px-5 py-3 rounded-lg absolute right-5 bottom-5"
+                    className="bg-black cursor-pointer text-white px-5 py-3 rounded-lg absolute right-5 bottom-5"
                     onClick={handleCommentSubmit}
                   >
                     Comment
