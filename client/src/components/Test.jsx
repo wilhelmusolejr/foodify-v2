@@ -3,9 +3,7 @@ import React from "react";
 export default function Test({ name, image_name }) {
   let image_path = `images/category/${image_name}`;
 
-  // needs checking
   let link = `http://localhost:5173/search?query=${name}`;
-  // https://api.spoonacular.com/recipes/complexSearch?type=vegan&apiKey=fec93702d1534cee88b3bbfd66cae193
 
   return (
     <div className="text-center flex flex-col items-center gap-5 w-full">

@@ -1,8 +1,10 @@
 import React from "react";
 
 export default function CategoryItem({ image_path, title }) {
+  let link = `http://localhost:5173/search?query=${title}`;
+
   return (
-    <div className="text-center flex flex-col items-center gap-4">
+    <a href={link} className="text-center flex flex-col items-center gap-4">
       {/* image */}
       <div className="w-30 h-30 lg:w-40 lg:h-40 xl:w-[200px] xl:h-[200px] rounded-full">
         <img
@@ -13,6 +15,6 @@ export default function CategoryItem({ image_path, title }) {
       </div>
 
       <p className="md:text-xl">{title}</p>
-    </div>
+    </a>
   );
 }
