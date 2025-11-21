@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const commentSchema = new mongoose.Schema(
   {
     user_id: {
-      type: Number,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     comment_text: {
