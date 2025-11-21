@@ -13,8 +13,6 @@ import { useAuthStore } from "../stores/useAuthStore";
 import { useRef } from "react";
 
 export default function Navigator() {
-  const PLACEHOLDER_AVATAR = "https://placehold.co/40x40/4c3c3a/ffffff?text=U";
-
   // Ref for handling clicks outside the dropdown
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +24,8 @@ export default function Navigator() {
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const handleLogout = useAuthStore((state) => state.logout);
+
+  const PLACEHOLDER_AVATAR = `https://placehold.co/40x40/4c3c3a/ffffff?text=${user.firstName[0]}`;
 
   // HANDLE
   function handleButtonModal(modalType) {
