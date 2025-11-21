@@ -5,16 +5,17 @@ import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAppleWhole,
-  faBookmark,
   faDollarSign,
   faHeart,
   faLeaf,
   faSeedling,
   faStar,
   faTrophy,
+  faBookmark as faBookmarked,
   faUsers,
   faWheatAwn,
 } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark } from "@fortawesome/free-regular-svg-icons";
 
 // Components
 import Navigator from "@components/Navigator";
@@ -64,6 +65,7 @@ export default function Recipe() {
   const [recipe, setRecipe] = useState(null);
   const [comment, setComment] = useState("");
   const [listComments, setListComments] = useState([]);
+  const [hasBookmarked, setHasBookmarked] = useState(false);
 
   // Get recipe information
   useEffect(() => {
@@ -346,11 +348,41 @@ export default function Recipe() {
         // request
         const response = await axios.get(BACKEND_API);
 
-        console.log(response.data);
-
         setListComments(response.data);
       } catch (err) {
         console.error("error getting comments:", err);
+      }
+    };
+
+    fetchComments();
+  }, [id]);
+
+  // check if the recipe has been bookmarked by the user
+  useEffect(() => {
+    const fetchComments = async () => {
+      const token = useAuthStore.getState().token;
+
+      const payload = {
+        recipeId: id,
+      };
+
+      // Prevent unnecessary calls
+      if (!token || !id) return;
+
+      try {
+        // api url
+        const BACKEND_API = `http://localhost:5001/api/bookmark/status`;
+
+        // request
+        const response = await axios.get(BACKEND_API, {
+          params: payload,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setHasBookmarked(response.data.isBookmarked);
+      } catch (err) {
+        console.error("error getting recipe bookmark status:", err);
       }
     };
 
@@ -384,22 +416,41 @@ export default function Recipe() {
 
     try {
       const response = await axios.post(BACKEND_API, commentPayload, {
-        // 4. Send the JWT in the Authorization Header
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       const newComment_api = response.data.comment;
 
-      console.log(newComment_api);
-
-      // Add the new comment to the list to update the UI
       setListComments((prevComments) => [newComment_api, ...prevComments]);
-      setComment(""); // Clear the input field
+      setComment("");
     } catch (err) {
       // 6. Error Handling
       console.error("Comment submission failed:", err);
       setError(err.response?.data?.message || "Failed to submit comment. Please try again.");
+    }
+  }
+
+  async function handleAddToBookmark() {
+    const token = useAuthStore.getState().token;
+
+    const payload = {
+      recipeId: id,
+    };
+
+    const BACKEND_API = "http://localhost:5001/api/bookmark";
+
+    try {
+      const response = await axios.post(BACKEND_API, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setHasBookmarked(true);
+    } catch (error) {
+      console.error("Error adding bookmark:", error.response.data.message);
+      console.error("Error adding bookmark:", error);
     }
   }
 
@@ -514,7 +565,12 @@ export default function Recipe() {
 
               {/* side 2 */}
               <div className="absolute right-0 top-0 md:top-3 md:right-3 lg:top-5 lg:right-5 hidden md:block">
-                <FontAwesomeIcon icon={faBookmark} className="text-green-900 w-10 h-10" size="3x" />
+                <FontAwesomeIcon
+                  icon={hasBookmarked ? faBookmarked : faBookmark}
+                  className="text-green-900 w-10 h-10 cursor-pointer"
+                  size="3x"
+                  onClick={handleAddToBookmark}
+                />
               </div>
             </div>
 
@@ -538,7 +594,7 @@ export default function Recipe() {
             </div>
 
             {/* content */}
-            <div className="lg:flex gap-20 justify-between ">
+            <div className="lg:flex gap-10 justify-between ">
               {/* side 1 */}
               <div className="lg:w-8/12">
                 {/* paragraph */}
@@ -615,7 +671,7 @@ export default function Recipe() {
                 )}
 
                 {/* Nutrition Facts */}
-                <NutritionFacts className="block lg:hidden my-14" />
+                <NutritionFacts className="block lg:hidden my-14" data={recipe.nutrition} />
 
                 {/* feedback */}
                 <Feedback className="hidden lg:text-center lg:flex my-20" />
