@@ -32,10 +32,22 @@ export async function registerUser(req, res) {
     // 4. SAVE THE USER INSTANCE (Corrected Syntax)
     await newUser.save();
 
+    const userResponse = {
+      id: newUser._id,
+      email: newUser.email,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+    };
+
+    const token = jwt.sign(
+      { userId: newUser._id },
+      process.env.JWT_SECRET || "your_default_secret"
+    );
+
     res.status(201).json({
       message: "User registered successfully",
-      userId: newUser._id,
-      email: newUser.email,
+      token: token,
+      user: userResponse,
     });
   } catch (error) {
     // 6. GENERAL ERROR HANDLING
