@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import FormLabelInput from "./FormLabelInput";
+import { useAuthStore } from "../stores/useAuthStore";
 
 // Library
 import axios from "axios";
@@ -18,6 +19,9 @@ export default function LoginModal({ handleButtonModal }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Zustand
+  const login = useAuthStore((state) => state.login);
 
   // HANDLE
   const handleChange = (e, target) => {
@@ -48,6 +52,10 @@ export default function LoginModal({ handleButtonModal }) {
     try {
       let backend_api_url = `${backend_url}/api/auth/login`;
       const response = await axios.post(backend_api_url, formData);
+      const { token, user } = response.data;
+      login({ token, user });
+
+      console.log(response.data);
       setIsSuccess(true);
     } catch (apiError) {
       setError(apiError.response?.data?.message || "Registration failed.");
