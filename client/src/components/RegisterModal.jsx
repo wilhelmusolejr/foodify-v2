@@ -4,8 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUtensils, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 // Components
-import Logo from "./Logo";
-import NavLink from "./NavLink";
 import FormLabelInput from "./FormLabelInput";
 import FormLabel from "./FormLabel";
 
@@ -55,6 +53,7 @@ export default function RegisterModal({ handleButtonModal }) {
   const [error, setError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // EFFECT
   useEffect(() => {
     let timer;
     if (isSuccess) {
