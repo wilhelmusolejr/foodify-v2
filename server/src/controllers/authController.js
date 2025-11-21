@@ -1,5 +1,6 @@
 import User from "../models/User.js";
-import bcrypt from "bcryptjs"; // <-- ADD THIS LINE
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export async function registerUser(req, res) {
   try {
@@ -72,9 +73,25 @@ export async function loginUser(req, res) {
       return res.status(401).json({ message: "Invalid credentials." });
     }
 
-    res
-      .status(200)
-      .json({ message: "Login successful (Credentials are valid)." });
+    // 5. SUCCESS: Generate JSON Web Token (JWT)
+    // The token payload contains the minimum data needed to identify the user (the ID)
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET || "your_default_secret"
+    );
+
+    const userResponse = {
+      id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
+
+    return res.status(200).json({
+      message: "Login successful",
+      token: token,
+      user: userResponse,
+    });
   } catch (error) {
     // 1. Log the full error to the console for server debugging
     console.error("Internal server error during login:", error);
@@ -84,5 +101,30 @@ export async function loginUser(req, res) {
     res
       .status(500)
       .json({ message: "A technical error occurred. Please try again later." });
+  }
+}
+
+export async function getUser(req, res) {
+  try {
+    // authMiddleware runs first and attaches req.user (which contains userId)
+    const userId = req.user.userId;
+
+    // Find the user in the database, excluding the sensitive password hash
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // This is the data that hydrates your Zustand store's `user` object
+    res.json({
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
   }
 }
