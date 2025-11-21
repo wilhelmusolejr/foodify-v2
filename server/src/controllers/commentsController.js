@@ -8,9 +8,12 @@ export async function getCommentsByRecipeId(req, res) {
       return res.status(400).json({ message: "Recipe ID is required." });
     }
 
-    const comments = await Comment.find({ recipe_id: recipeId }).sort({
-      createdAt: -1,
-    });
+    const comments = await Comment.find({ recipe_id: recipeId })
+      .populate({
+        path: "user_id",
+        select: "firstName lastName profileUrl",
+      })
+      .sort({ createdAt: -1 }); // Show newest comments first
 
     res.status(200).json(comments);
   } catch (error) {
@@ -23,20 +26,55 @@ export async function getCommentsByRecipeId(req, res) {
 
 export async function createComment(req, res) {
   try {
-    const { user_id, comment_text, recipe_id } = req.body;
+    // 1. Get the securely attached userId from the JWT middleware (req.user is set by authMiddleware)
+    const userId = req.user.userId;
 
+    // 2. Get non-user-specific data from the request body
+    const { comment_text, recipe_id } = req.body;
+
+    // Basic validation
+    if (!comment_text || !recipe_id) {
+      return res
+        .status(400)
+        .json({ message: "Missing comment text or recipe ID." });
+    }
+
+    // 3. Create the comment instance
     const newComment = new Comment({
-      user_id: user_id,
+      user_id: userId, // Use the verified ID from the token
       comment_text: comment_text,
       recipe_id: recipe_id,
     });
 
+    // 4. Save the comment to the database
     await newComment.save();
-    res.status(201).json("Comment sent");
-  } catch (error) {
-    console.error("In creating comment controller", error);
-    res.status(500).json({
-      message: "Internall server error",
+
+    // 5. Populate the 'user_id' field to get the actual user document.
+    // This replaces the ObjectId with the User object, excluding the password.
+    const savedComment = await newComment.populate({
+      path: "user_id",
+      select: "firstName lastName profileUrl email",
     });
+
+    // 6. Return the fully populated comment to the frontend for UI update
+    // The frontend now receives the complete comment object, where 'user_id'
+    // is a full user object instead of just an ID.
+    res.status(201).json({
+      message: "Comment created successfully",
+      comment: savedComment,
+    });
+  } catch (error) {
+    // 7. Handle validation and server errors
+    console.error("Comment creation failed:", error);
+    // Check for Mongoose validation errors
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      return res.status(400).json({
+        message: "Invalid data provided for the comment.",
+        details: error.message,
+      });
+    }
+    res
+      .status(500)
+      .json({ message: "Server error during comment submission." });
   }
 }
