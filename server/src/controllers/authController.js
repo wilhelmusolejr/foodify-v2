@@ -6,7 +6,8 @@ export async function registerUser(req, res) {
     const { firstName, lastName, email, password, gender, bio } = req.body;
 
     // 1. CHECK FOR EXISTING USER
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+
     if (existingUser) {
       return res
         .status(409)
@@ -48,5 +49,40 @@ export async function registerUser(req, res) {
     res.status(500).json({
       message: "Internal server error during registration.",
     });
+  }
+}
+
+export async function loginUser(req, res) {
+  try {
+    const { email, password } = req.body;
+
+    // 1. Check if the user exists by email
+    const user = await User.findOne({ email: email.toLowerCase() });
+
+    // 2. Handle User Not Found
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials." });
+    }
+
+    // 3. Compare the provided password with the stored hash
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    // 4. Handle Incorrect Password
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials." });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Login successful (Credentials are valid)." });
+  } catch (error) {
+    // 1. Log the full error to the console for server debugging
+    console.error("Internal server error during login:", error);
+
+    // 2. Send a generic 500 status response to the client
+    // This hides sensitive server details from the user
+    res
+      .status(500)
+      .json({ message: "A technical error occurred. Please try again later." });
   }
 }
