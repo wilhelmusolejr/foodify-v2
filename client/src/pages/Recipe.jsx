@@ -28,6 +28,8 @@ import NutritionFacts from "@components/NutritionFacts";
 import Feedback from "@components/Recipe/Feedback";
 import SectionHeading from "@components/SectionHeading";
 
+import { useAuthStore } from "../stores/useAuthStore";
+
 // Library
 import axios from "axios";
 
@@ -35,6 +37,23 @@ import recipeData from "./recipe.json";
 import IconItem from "../components/IconItem";
 import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
+
+function formatCommentDate(isoDateString) {
+  if (!isoDateString) return "";
+
+  const date = new Date(isoDateString);
+
+  // Use the user's locale (optional) and specify formatting options
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  // Example locale: 'en-US' for "November 21, 2025"
+  // If you use undefined, it defaults to the user's browser locale.
+  return new Intl.DateTimeFormat("en-US", options).format(date);
+}
 
 export default function Recipe() {
   const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
@@ -329,6 +348,8 @@ export default function Recipe() {
         // request
         const response = await axios.get(BACKEND_API);
 
+        console.log(response.data);
+
         setListComments(response.data);
       } catch (err) {
         console.error("error getting comments:", err);
@@ -340,8 +361,17 @@ export default function Recipe() {
 
   // Handler for posting a comment
   async function handleCommentSubmit() {
-    if (comment.trim() === "") {
-      // 1. Validation: Prevent submission if empty
+    const token = useAuthStore.getState().token;
+    const trimmedComment = comment.trim();
+
+    // Check if the user is even logged in
+    if (!token) {
+      alert("You must be logged in to post a comment.");
+      return;
+    }
+
+    // Check if the comment is empty or not
+    if (trimmedComment === "") {
       alert("Please enter a comment.");
       return;
     }
@@ -350,24 +380,23 @@ export default function Recipe() {
     const BACKEND_API = "http://localhost:5001/api/comment"; // Your backend endpoint
 
     const commentPayload = {
-      user_id: 1,
-      comment_text: comment.trim(),
+      comment_text: trimmedComment,
       recipe_id: Number(id),
     };
 
     try {
-      const response = await axios.post(BACKEND_API, commentPayload);
-      const newComment_api = response.data;
+      const response = await axios.post(BACKEND_API, commentPayload, {
+        // 4. Send the JWT in the Authorization Header
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const newComment_api = response.data.comment;
 
-      let newComment = {
-        user: "Wihelmus Ole",
-        profile_image: null,
-        comment_text: comment,
-        date: "42 mins ago",
-      };
+      console.log(newComment_api);
 
       // Add the new comment to the list to update the UI
-      setListComments((prevComments) => [...prevComments, newComment]);
+      setListComments((prevComments) => [newComment_api, ...prevComments]);
       setComment(""); // Clear the input field
     } catch (err) {
       // 6. Error Handling
@@ -643,10 +672,16 @@ export default function Recipe() {
                         key={index} // 2. Added key prop (REQUIRED in lists)
                         className="gap-5 border-t border-black/10 pt-14 flex items-start"
                       >
-                        <div className="w-10 h-10 rounded-full bg-black"></div>
+                        <img
+                          src={`https://placehold.co/40x40/4c3c3a/ffffff?text=${comment.user_id.firstName[0]}`}
+                          alt={`${comment.user_id.firstName}'s profile`}
+                          className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-300 shadow-md"
+                        />
                         <div className="flex-1">
-                          <h4 className="text-xl font-medium">{comment.user}</h4>
-                          <p className="text-sm">{comment.date}</p>
+                          <h4 className="text-xl font-medium">
+                            {comment.user_id.firstName} {comment.user_id.lastName}
+                          </h4>
+                          <p className="text-sm">{formatCommentDate(comment.createdAt)}</p>
 
                           <Paragraph className={"mt-3"}>{comment.comment_text}</Paragraph>
                         </div>
