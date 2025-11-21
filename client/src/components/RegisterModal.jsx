@@ -6,6 +6,7 @@ import { faUtensils, faXmark } from "@fortawesome/free-solid-svg-icons";
 // Components
 import FormLabelInput from "./FormLabelInput";
 import FormLabel from "./FormLabel";
+import { useAuthStore } from "../stores/useAuthStore";
 
 // Library
 import axios from "axios";
@@ -52,6 +53,10 @@ export default function RegisterModal({ handleButtonModal }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  4;
+
+  // Zustand
+  const login = useAuthStore((state) => state.login);
 
   // EFFECT
   useEffect(() => {
@@ -104,9 +109,11 @@ export default function RegisterModal({ handleButtonModal }) {
     try {
       let backend_api_url = `${backend_url}/api/auth/register`;
       const response = await axios.post(backend_api_url, formData);
+      const { token, user } = response.data;
 
       if (response.status === 201) {
         setIsSuccess(true);
+        login({ token, user });
       }
     } catch (apiError) {
       setError(

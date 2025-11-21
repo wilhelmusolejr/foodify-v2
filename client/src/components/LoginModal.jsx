@@ -18,7 +18,6 @@ export default function LoginModal({ handleButtonModal }) {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
 
   // Zustand
   const login = useAuthStore((state) => state.login);
@@ -54,12 +53,10 @@ export default function LoginModal({ handleButtonModal }) {
       const response = await axios.post(backend_api_url, formData);
       const { token, user } = response.data;
       login({ token, user });
-
-      console.log(response.data);
-      setIsSuccess(true);
+      handleButtonModal("");
+      set;
     } catch (apiError) {
       setError(apiError.response?.data?.message || "Registration failed.");
-      setIsSuccess(false);
     } finally {
       setIsLoading(false);
     }

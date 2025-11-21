@@ -25,8 +25,7 @@ export default function Navigator() {
   // Zustand
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-
-  console.log(user);
+  const handleLogout = useAuthStore((state) => state.logout);
 
   // HANDLE
   function handleButtonModal(modalType) {
@@ -125,7 +124,7 @@ export default function Navigator() {
 
                     {/* Menu Items */}
                     <button
-                      // onClick={handleLogout}
+                      onClick={handleLogout}
                       className="flex items-center w-full p-5 text-red-600 cursor-pointer hover:bg-red-50 hover:text-red-700 transition duration-150"
                     >
                       {/* Logout Icon (Inline SVG) */}
