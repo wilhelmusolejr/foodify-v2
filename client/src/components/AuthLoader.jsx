@@ -38,8 +38,6 @@ export default function AuthLoader({ children }) {
       }
     }
 
-    console.log("asa");
-
     verifyAndLoadUser();
   }, [token, isLoggedIn, setUser, logout]); // Dependency array ensures it runs when these values change
 
