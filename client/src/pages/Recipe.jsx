@@ -50,8 +50,6 @@ function formatCommentDate(isoDateString) {
     day: "numeric",
   };
 
-  // Example locale: 'en-US' for "November 21, 2025"
-  // If you use undefined, it defaults to the user's browser locale.
   return new Intl.DateTimeFormat("en-US", options).format(date);
 }
 
