@@ -61,9 +61,30 @@ export async function deleteBookmark(req, res) {
   } catch (error) {}
 }
 
-export async function getBookmarksByUserId(req, res) {
+export async function getUserBookmarks(req, res) {
   try {
-  } catch (error) {}
+    const { user_id } = req.params;
+
+    if (!user_id) {
+      return res.status(400).json({ message: "User ID is required." });
+    }
+
+    const bookmarks = await Bookmark.find({ user_id: user_id }).lean();
+
+    return res.status(200).json({
+      bookmarks,
+      count: bookmarks.length,
+      success: true,
+    });
+  } catch (error) {
+    console.error(
+      `[Error in getUserBookmarks]: Failed to retrieve user bookmarks:`,
+      error
+    );
+    return res.status(500).json({
+      error: "An unexpected server error occurred while retrieving bookmarks.",
+    });
+  }
 }
 
 export async function hasUserBookmarked(req, res) {
