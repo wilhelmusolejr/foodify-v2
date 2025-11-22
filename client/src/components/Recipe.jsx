@@ -11,7 +11,7 @@ export default function Recipe({ image_path, link, name }) {
             className=" object-cover object-center w-full h-full rounded-sm"
           />
         </div>
-        <h2 className="capitalize mt-2 text-lg font-medium">{name}</h2>
+        <h2 className="capitalize mt-2 text-lg font-medium text-nowrap overflow-hidden">{name}</h2>
       </div>
     </>
   );
