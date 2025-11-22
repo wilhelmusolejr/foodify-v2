@@ -25,7 +25,11 @@ export default function Navigator() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const handleLogout = useAuthStore((state) => state.logout);
 
-  const PLACEHOLDER_AVATAR = `https://placehold.co/40x40/4c3c3a/ffffff?text=${user.firstName[0]}`;
+  let PLACEHOLDER_AVATAR;
+
+  if (isLoggedIn) {
+    PLACEHOLDER_AVATAR = `https://placehold.co/40x40/4c3c3a/ffffff?text=${user.firstName[0]}`;
+  }
 
   // HANDLE
   function handleButtonModal(modalType) {
