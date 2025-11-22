@@ -131,3 +131,9 @@ Stir cooked chicken into sauce.
 Mix together cornstarch and water, then stir into the sauce.
 Cook for 5 to 10 minutes, or until thickened.
 Top with cilantro, if desired."
+
+1. Blog model
+2. User model to get all bookmark of a user DONE
+3. User model to get all activities (send comment) of a user DONE
+4. recipe comment, user profile should be clickable DONE
+5.
