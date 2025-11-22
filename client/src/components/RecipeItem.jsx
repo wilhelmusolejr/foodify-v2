@@ -14,7 +14,7 @@ export default function RecipeItem({ image_name, id, name }) {
   return (
     <>
       <a href={recipe_link} className="">
-        <div className="aspect-square rounded-lg flex items-center justify-center ">
+        <div className="aspect-square rounded-lg flex items-center justify-center border border-black/10">
           <img
             src={image_path}
             alt={`Image for header food item`}
