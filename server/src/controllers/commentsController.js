@@ -78,3 +78,26 @@ export async function createComment(req, res) {
       .json({ message: "Server error during comment submission." });
   }
 }
+
+export async function getUserComments(req, res) {
+  try {
+    const { user_id } = req.params;
+
+    if (!user_id) {
+      return res.status(400).json({ message: "User ID is required." });
+    }
+
+    const comments = await Comment.find({ user_id: user_id }).lean();
+
+    return res.status(200).json({
+      comments,
+      count: comments.length,
+      success: true,
+    });
+  } catch (error) {
+    console.error(`[Error in getUserComments]: `, error);
+    return res.status(500).json({
+      error: "An unexpected server error occurred while retrieving comments.",
+    });
+  }
+}
