@@ -349,6 +349,8 @@ export default function Recipe() {
         const response = await axios.get(BACKEND_API);
 
         setListComments(response.data);
+
+        console.log(response.data);
       } catch (err) {
         console.error("error getting comments:", err);
       }
@@ -715,7 +717,9 @@ export default function Recipe() {
               <h2 className="text-2xl lg:text-3xl font-semibold mb-5">Already made this?</h2>
               <button className="px-7 py-4 border rounded-lg mb-10">Share your feedback</button>
               <div className="h-2 bg-green-900 mb-10"></div>
-              <h3 className="text-xl lg:text-2xl font-semibold mt-30 mb-10">(0) Comments</h3>
+              <h3 className="text-xl lg:text-2xl font-semibold mt-30 mb-10">
+                ({listComments.length}) Comments
+              </h3>
 
               {/* actual comments */}
               <div className="flex flex-col gap-14">
@@ -732,9 +736,11 @@ export default function Recipe() {
                           className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-300 shadow-md"
                         />
                         <div className="flex-1">
-                          <h4 className="text-xl font-medium">
-                            {comment.user_id.firstName} {comment.user_id.lastName}
-                          </h4>
+                          <a href={`/profile/${comment.user_id._id}`}>
+                            <h4 className="text-xl font-medium">
+                              {comment.user_id.firstName} {comment.user_id.lastName}
+                            </h4>
+                          </a>
                           <p className="text-sm">{formatCommentDate(comment.createdAt)}</p>
 
                           <Paragraph className={"mt-3"}>{comment.comment_text}</Paragraph>
