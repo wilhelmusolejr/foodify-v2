@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Navigator from "@components/Navigator";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faComment, faCommentDots } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faCheck, faComment, faCommentDots } from "@fortawesome/free-solid-svg-icons";
 import Recipe from "@components/Recipe";
 import Footer from "@components/Footer";
 import Heading from "@components/Heading";
@@ -156,7 +156,7 @@ export default function Profile() {
           <>
             {/* header */}
             <div className="bg-green-900">
-              <div className="w-10/12 mx-auto max-w-7xl py-20 mt-10 text-white min-h-[60vh] flex items-center">
+              <div className="w-10/12 mx-auto max-w-7xl py-20 mt-10 text-white min-h-[60vh] flex items-center border relative">
                 <div className="flex flex-col md:flex-row gap-10 md:max-w-[700px] mx-auto items-center">
                   {/* image */}
                   <div className="w-40 h-40 text-center flex justify-center items-center">
@@ -194,6 +194,14 @@ export default function Profile() {
                     </div>
                   </div>
                 </div>
+
+                {/* settings button */}
+                <div className="absolute bottom-10 right-10">
+                  {/* button */}
+                  <div className="px-5 py-3 rounded-lg border bg-white text-black cursor-pointer">
+                    Settings
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -201,14 +209,26 @@ export default function Profile() {
             <div className="w-10/12 mx-auto max-w-7xl">
               {/* favorites */}
               <div className="my-40">
-                <Heading type="h2" className="mb-10">
-                  Saved Recipes
-                </Heading>
+                <div className="flex justify-between items-center">
+                  <Heading type="h2" className="mb-10">
+                    Saved Recipes
+                  </Heading>
+
+                  <div className="flex items-center gap-2">
+                    <FontAwesomeIcon icon={faArrowRight} size="x" />
+                    <p>See more</p>
+                  </div>
+                </div>
 
                 {userBookmarks.length > 0 ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-h-[30vh] ">
                     {recipes.map((recipe, index) => (
-                      <RecipeItem image_name={recipe.image} id={recipe.id} name={recipe.title} />
+                      <RecipeItem
+                        key={index}
+                        image_name={recipe.image}
+                        id={recipe.id}
+                        name={recipe.title}
+                      />
                     ))}
                   </div>
                 ) : (
