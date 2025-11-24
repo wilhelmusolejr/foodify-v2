@@ -28,24 +28,32 @@ import Tags from "@components/Recipe/Tags";
 import NutritionFacts from "@components/NutritionFacts";
 import Feedback from "@components/Recipe/Feedback";
 import SectionHeading from "@components/SectionHeading";
+import recipeData from "./recipe.json";
+import IconItem from "@components/IconItem";
+import Footer from "@components/Footer";
+import MailLetter from "@components/MailLetter";
 
+// UTILS
 import { formatCommentDate } from "../utils/dateUtils";
+import { getRandomApiKey } from "../utils/apiUtils";
 
+// GLOBAL STATE
 import { useAuthStore } from "../stores/useAuthStore";
 
 // Library
 import axios from "axios";
 
-import recipeData from "./recipe.json";
-import IconItem from "../components/IconItem";
-import Footer from "@components/Footer";
-import MailLetter from "@components/MailLetter";
-
 export default function Recipe() {
-  const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
-  const runLocal = import.meta.env.VITE_RUN_LOCAL === "TRUE" ? true : false;
-
   const { id } = useParams();
+
+  const apiKey = getRandomApiKey();
+
+  // URL
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  const BACKEND_COMMENT_URL = `${BACKEND_URL}/api/comment`;
+  const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
+  const runLocal = import.meta.env.VITE_RUN_LOCAL === "TRUE" ? true : false;
+  const FOOD_API = import.meta.env.VITE_FOOD_API;
 
   const [isloading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,7 +66,7 @@ export default function Recipe() {
   useEffect(() => {
     if (!id) return;
 
-    const apiUrl = `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
+    const apiUrl = `${FOOD_API}/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
 
     const fetchRecipeData = async () => {
       try {
@@ -239,7 +247,7 @@ export default function Recipe() {
   useEffect(() => {
     if (!id) return;
 
-    const apiUrl = `https://api.spoonacular.com/recipes/${id}/similar?number=6&apiKey=${apiKey}`;
+    const apiUrl = `${FOOD_API}/recipes/${id}/similar?number=6&apiKey=${apiKey}`;
 
     const fetchRecipeData = async () => {
       try {
@@ -283,7 +291,7 @@ export default function Recipe() {
 
   // Get random recipe
   useEffect(() => {
-    const apiUrl = `https://api.spoonacular.com/recipes/random?number=8&apiKey=${apiKey}`;
+    const apiUrl = `${FOOD_API}/recipes/random?number=8&apiKey=${apiKey}`;
 
     const fetchRecipeData = async () => {
       try {
@@ -330,7 +338,7 @@ export default function Recipe() {
     const fetchComments = async () => {
       try {
         // api url
-        const BACKEND_API = `http://localhost:5001/api/comment/${id}`;
+        const BACKEND_API = `${BACKEND_COMMENT_URL}/${id}`;
 
         // request
         const response = await axios.get(BACKEND_API);
@@ -359,11 +367,8 @@ export default function Recipe() {
       if (!token || !id) return;
 
       try {
-        // api url
-        const BACKEND_API = `http://localhost:5001/api/bookmark/status`;
-
         // request
-        const response = await axios.get(BACKEND_API, {
+        const response = await axios.get(`${BACKEND_BOOKMARK_URL}/status`, {
           params: payload,
           headers: {
             Authorization: `Bearer ${token}`,
@@ -396,15 +401,13 @@ export default function Recipe() {
     }
 
     // submit data to database
-    const BACKEND_API = "http://localhost:5001/api/comment"; // Your backend endpoint
-
     const commentPayload = {
       comment_text: trimmedComment,
       recipe_id: Number(id),
     };
 
     try {
-      const response = await axios.post(BACKEND_API, commentPayload, {
+      const response = await axios.post(BACKEND_COMMENT_URL, commentPayload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -423,18 +426,18 @@ export default function Recipe() {
   async function handleAddToBookmark() {
     const token = useAuthStore.getState().token;
 
-    const payload = {
-      recipeId: id,
-    };
-
-    const BACKEND_API = "http://localhost:5001/api/bookmark";
-
     try {
-      const response = await axios.post(BACKEND_API, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.post(
+        BACKEND_BOOKMARK_URL,
+        {
+          recipeId: id,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setHasBookmarked(true);
     } catch (error) {

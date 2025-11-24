@@ -25,13 +25,20 @@ import { faPlus, faBoxOpen, faExclamationCircle } from "@fortawesome/free-solid-
 // Library
 import axios from "axios";
 
+// UTILS
+import { getRandomApiKey } from "../utils/apiUtils";
+
 function Home() {
-  const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
-  const runLocal = import.meta.env.VITE_RUN_LOCAL === "TRUE" ? true : false;
+  const apiKey = getRandomApiKey();
+  const runLocal = import.meta.env.VITE_RUN_LOCAL === "true" ? true : false;
+  const FOOD_API = import.meta.env.VITE_FOOD_API;
 
   const [isloading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [recipes, setRecipes] = useState(null);
+  const [currentIngredients, setCurrentIngredients] = useState([]);
+  const [ingredient, setIngredient] = useState("");
+  const [ingredientError, setIngredientError] = useState(false);
 
   let blogs = [
     {
@@ -57,8 +64,9 @@ function Home() {
     },
   ];
 
+  // get random recipes
   useEffect(() => {
-    const apiUrl = `https://api.spoonacular.com/recipes/random?number=17&apiKey=${apiKey}`;
+    const apiUrl = `${FOOD_API}/recipes/random?number=17&apiKey=${apiKey}`;
 
     const fetchRecipeData = async () => {
       try {
@@ -102,11 +110,6 @@ function Home() {
 
     fetchRecipeData();
   }, []);
-
-  // DATA
-  const [currentIngredients, setCurrentIngredients] = useState([]);
-  const [ingredient, setIngredient] = useState("");
-  const [ingredientError, setIngredientError] = useState(false);
 
   function addIngredient(ingredient) {
     if (ingredient.trim() === "") {

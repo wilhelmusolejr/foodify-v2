@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBoxOpen, faGear } from "@fortawesome/free-solid-svg-icons";
 
+// COMPONENTS
 import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
 import SearchTypeItem from "@components/SearchTypeItem";
@@ -21,8 +22,12 @@ import Paragraph from "@components/Paragraph";
 
 import axios from "axios";
 
+// UTILS
+import { getRandomApiKey } from "../utils/apiUtils";
+
 export default function Search() {
-  const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
+  const apiKey = getRandomApiKey();
+  const FOOD_API = import.meta.env.VITE_FOOD_API;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const searchTerm = searchParams.get("query");
@@ -169,7 +174,6 @@ export default function Search() {
   }
 
   useEffect(() => {
-    console.log("sa");
     if (!isTriggerSearch && searchParams.size === 0) {
       return;
     }
@@ -221,7 +225,7 @@ export default function Search() {
 
     const params = new URLSearchParams(urlParameter); // Pass the object directly
     params.append("apiKey", apiKey);
-    const apiUrl = `https://api.spoonacular.com/recipes/complexSearch?${params.toString()}`;
+    const apiUrl = `${FOOD_API}/recipes/complexSearch?${params.toString()}`;
 
     setSearchParams(urlParameter);
 
