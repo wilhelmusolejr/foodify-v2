@@ -5,7 +5,6 @@ import { faComment, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { formatCommentDate } from "../utils/dateUtils";
 
 export default function CommentItem({ userProfile, commentData }) {
-  console.log(userProfile);
   return (
     <>
       <div className="flex gap-4 p-5 bg-white shadow-md border border-gray-200 rounded-xl transition hover:shadow-lg">
