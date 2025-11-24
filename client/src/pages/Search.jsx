@@ -229,9 +229,6 @@ export default function Search() {
 
     setSearchParams(urlParameter);
 
-    console.log(apiUrl);
-    console.log(urlParameter);
-
     const fetchRecipeData = async () => {
       try {
         setIsLoading(true);
@@ -415,7 +412,7 @@ export default function Search() {
               >
                 <div className="text-left flex flex-col lg:flex-row items-start gap-10 mb-20">
                   {/* input */}
-                  <div className="flex flex-col md:flex-row md:items-end gap-2 lg:py-5 w-full lg:w-fit">
+                  <div className="flex flex-col md:flex-row md:items-end gap-2 lg:py-5 w-full lg:w-fit ">
                     {/* form */}
                     <div className="w-full flex flex-col gap-2">
                       <Label name="Enter Ingredient" required={true} />
@@ -505,9 +502,9 @@ export default function Search() {
               <div className="w-10 hidden"></div>
 
               {/* Search  */}
-              <div className="flex flex-col md:flex-row md:items-end justify-center gap-2">
+              <div className="flex flex-col md:flex-row md:items-end justify-center gap-2 w-full">
                 {/* form */}
-                <div className="w-full md:w-fit flex flex-col gap-2">
+                <div className="w-full md:w-fit flex flex-col gap-2 ">
                   <Label name="Recipe name" required={true} />
                   <input
                     type="text_name"
