@@ -1,38 +1,10 @@
 import React from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBacon,
-  faBowlRice,
-  faBreadSlice,
-  faBurger,
-  faCarrot,
-  faCheese,
-  faCookie,
-  faEgg,
-  faFish,
-  faIceCream,
-  faMartiniGlass,
-  faUtensils,
-} from "@fortawesome/free-solid-svg-icons";
+import { randomFoodIcon } from "../utils/foodLoaderUtils";
 
 export default function RecipeItemSkeleton() {
-  let icons = [
-    faBacon,
-    faBowlRice,
-    faBurger,
-    faCarrot,
-    faCheese,
-    faBreadSlice,
-    faUtensils,
-    faFish,
-    faCookie,
-    faIceCream,
-    faMartiniGlass,
-    faEgg,
-  ];
-
-  let icon = icons[Math.floor(Math.random() * icons.length)];
+  let icon = randomFoodIcon();
 
   return (
     <div className="animate-pulse">
