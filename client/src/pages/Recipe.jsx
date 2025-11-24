@@ -42,6 +42,7 @@ import { useAuthStore } from "../stores/useAuthStore";
 
 // Library
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Recipe() {
   const { id } = useParams();
@@ -52,7 +53,7 @@ export default function Recipe() {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const BACKEND_COMMENT_URL = `${BACKEND_URL}/api/comment`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
-  const runLocal = import.meta.env.VITE_RUN_LOCAL === "TRUE" ? true : false;
+  const runLocal = import.meta.env.VITE_RUN_LOCAL === "true" ? true : false;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
 
   const [isloading, setIsLoading] = useState(true);
@@ -61,6 +62,7 @@ export default function Recipe() {
   const [comment, setComment] = useState("");
   const [listComments, setListComments] = useState([]);
   const [hasBookmarked, setHasBookmarked] = useState(false);
+  const [showBookmarkToast, setShowBookmarkToast] = useState(false);
 
   // Get recipe information
   useEffect(() => {
@@ -154,6 +156,7 @@ export default function Recipe() {
         });
 
         setRecipe(response.data);
+        console.log(response.data);
       } catch (err) {
         // if reached 50 points
         if (err.message.includes("upgrade your plan")) {
@@ -344,8 +347,6 @@ export default function Recipe() {
         const response = await axios.get(BACKEND_API);
 
         setListComments(response.data);
-
-        console.log(response.data);
       } catch (err) {
         console.error("error getting comments:", err);
       }
@@ -440,6 +441,8 @@ export default function Recipe() {
       );
 
       setHasBookmarked(true);
+      toast.success("You’ve bookmarked this recipe.");
+      setShowBookmarkToast(true);
     } catch (error) {
       console.error("Error adding bookmark:", error.response.data.message);
       console.error("Error adding bookmark:", error);
@@ -511,6 +514,8 @@ export default function Recipe() {
       {recipe != null && (
         <div className="">
           <div className="w-10/12 max-w-7xl mx-auto mt-30 ">
+            {showBookmarkToast && <Toaster position="top-center" reverseOrder={false} />}
+
             {/* heading */}
             <div className="mb-10 relative">
               {/* side 1 */}
@@ -535,22 +540,29 @@ export default function Recipe() {
                   {/* tags */}
                   <div className="flex flex-wrap gap-5">
                     {/* item */}
-                    <div className="flex flex-row items-center gap-2 ">
-                      <FontAwesomeIcon icon={faDollarSign} className={``} />
-                      <span className="text-lg lg:text-xl">{recipe.pricePerServing}</span>
-                    </div>
 
-                    <div className="flex flex-row items-center gap-2 ">
-                      <FontAwesomeIcon icon={faTrophy} className={``} />
-                      <span className="text-lg lg:text-xl">
-                        {recipe.spoonacularScore.toFixed(2)}
-                      </span>
-                    </div>
+                    {recipe.pricePerServing && (
+                      <div className="flex flex-row items-center gap-2 ">
+                        <FontAwesomeIcon icon={faDollarSign} className={``} />
+                        <span className="text-lg lg:text-xl">{recipe.pricePerServing}</span>
+                      </div>
+                    )}
 
-                    <div className="flex flex-row items-center gap-2 ">
-                      <FontAwesomeIcon icon={faUsers} className={``} />
-                      <span className="text-lg lg:text-xl">{recipe.servings}</span>
-                    </div>
+                    {recipe.spoonacularScore && (
+                      <div className="flex flex-row items-center gap-2 ">
+                        <FontAwesomeIcon icon={faTrophy} className={``} />
+                        <span className="text-lg lg:text-xl">
+                          {recipe.spoonacularScore.toFixed(2)}
+                        </span>
+                      </div>
+                    )}
+
+                    {recipe.servings && (
+                      <div className="flex flex-row items-center gap-2 ">
+                        <FontAwesomeIcon icon={faUsers} className={``} />
+                        <span className="text-lg lg:text-xl">{recipe.servings}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -560,7 +572,7 @@ export default function Recipe() {
                 <FontAwesomeIcon
                   icon={hasBookmarked ? faBookmarked : faBookmark}
                   className="text-green-900 w-10 h-10 cursor-pointer"
-                  size="3x"
+                  size="2x"
                   onClick={handleAddToBookmark}
                 />
               </div>
