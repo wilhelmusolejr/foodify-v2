@@ -5,7 +5,7 @@ import "../App.css";
 import BlogItem from "@components/BlogItem";
 import CategoryItem from "@components/CategoryItem";
 import CategoryListItem from "@components/CategoryListItem";
-import HeadingImage from "@components/HeadingImage";
+import HeadingImage from "@components/Home/HeadingImage";
 import SectionHeading from "@components/SectionHeading";
 import StatCard from "@components/StatCard";
 import Navigator from "@components/Navigator";
