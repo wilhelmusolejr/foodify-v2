@@ -21,14 +21,12 @@ import { useAuthStore } from "../stores/useAuthStore";
 import axios from "axios";
 import ProfileHEaderSkeleton from "../components/Profile/ProfileHEaderSkeleton";
 
-// #
-// #
-// #
-// #
-// #
+import { getRandomApiKey } from "../utils/apiUtils"; // Import the helper
+
 export default function Profile() {
   const { id } = useParams();
-  const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
+
+  const apiKey = getRandomApiKey();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const BACKEND_USER_URL = `${BACKEND_URL}/api/user`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
@@ -111,7 +109,6 @@ export default function Profile() {
         setUserComments(response.data.comments);
 
         console.log("Run get user comments");
-        console.log(response.data.comments);
       } catch (err) {
         console.error("error getting comments:", err);
       }
