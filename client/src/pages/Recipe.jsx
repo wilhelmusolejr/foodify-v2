@@ -29,6 +29,8 @@ import NutritionFacts from "@components/NutritionFacts";
 import Feedback from "@components/Recipe/Feedback";
 import SectionHeading from "@components/SectionHeading";
 
+import { formatCommentDate } from "../utils/dateUtils";
+
 import { useAuthStore } from "../stores/useAuthStore";
 
 // Library
@@ -38,21 +40,6 @@ import recipeData from "./recipe.json";
 import IconItem from "../components/IconItem";
 import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
-
-function formatCommentDate(isoDateString) {
-  if (!isoDateString) return "";
-
-  const date = new Date(isoDateString);
-
-  // Use the user's locale (optional) and specify formatting options
-  const options = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-
-  return new Intl.DateTimeFormat("en-US", options).format(date);
-}
 
 export default function Recipe() {
   const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
