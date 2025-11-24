@@ -2,11 +2,20 @@ import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
 import {
   faBowlFood,
+  faBriefcase,
+  faF,
   faHeart,
   faListCheck,
   faShareNodes,
+  faUserTie,
   faUtensils,
 } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFacebookF,
+  faGithub,
+  faGithubAlt,
+  faLinkedinIn,
+} from "@fortawesome/free-brands-svg-icons";
 
 import FeatureItem from "@components/FeatureItem";
 import SocialItem from "@components/SocialItem";
@@ -54,6 +63,29 @@ export default function About() {
       title: "Share & Discover Recipes",
       description: `Explore community-created recipes and share your own masterpieces.
     Save your favorites, leave reviews, and inspire others with your creations.`,
+    },
+  ];
+
+  const socialLinks = [
+    {
+      icon: faUserTie,
+      name: "portfolio",
+      link: "https://wilhelmus.vercel.app",
+    },
+    {
+      icon: faFacebookF,
+      name: "facebook",
+      link: "https://facebook.com/wilhelmus.ole",
+    },
+    {
+      icon: faGithubAlt,
+      name: "GitHub",
+      link: "https://github.com/wilhelmusolejr",
+    },
+    {
+      icon: faLinkedinIn,
+      name: "LinkedIn",
+      link: "https://linkedin.com/wilhelmusolejr",
     },
   ];
 
@@ -194,13 +226,17 @@ export default function About() {
             </Paragraph>
 
             <div className="">
-              <h2 className="capitalize font-medium text-2xl">Follow Us</h2>
+              <h2 className="capitalize font-medium text-2xl">Connect With Us</h2>
 
               <div className="mt-5 flex flex-col gap-5">
-                {/* item */}
-                <SocialItem icon={faShareNodes} name="Facebook" />
-                <SocialItem icon={faShareNodes} name="Twitter" />
-                <SocialItem icon={faShareNodes} name="YouTube" />
+                {socialLinks.map((social, index) => (
+                  <SocialItem
+                    key={index}
+                    icon={social.icon}
+                    name={social.name}
+                    link={social.link}
+                  />
+                ))}
               </div>
             </div>
           </div>
