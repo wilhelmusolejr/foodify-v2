@@ -27,6 +27,7 @@ import axios from "axios";
 
 // UTILS
 import { getRandomApiKey } from "../utils/apiUtils";
+import { useSearchParams } from "react-router-dom";
 
 function Home() {
   const apiKey = getRandomApiKey();
@@ -37,8 +38,13 @@ function Home() {
   const [error, setError] = useState(null);
   const [recipes, setRecipes] = useState(null);
   const [currentIngredients, setCurrentIngredients] = useState([]);
-  const [ingredient, setIngredient] = useState("");
   const [ingredientError, setIngredientError] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchTerm = searchParams.get("query");
+  const [ingredient, setIngredient] = useState("");
+
+  const [pageNum, setPageNum] = useState(1);
 
   let blogs = [
     {
@@ -124,6 +130,29 @@ function Home() {
 
   function removeIngredient(indexToRemove) {
     setCurrentIngredients(currentIngredients.filter((_, index) => index !== indexToRemove));
+  }
+
+  // HANDLER
+  function handleSearch() {
+    const searchParameters = {
+      array: [{ key: "includeIngredients", value: currentIngredients, separator: "," }],
+    };
+
+    let urlParameter = {};
+
+    // 1. Process Array Filters (e.g., diet, intolerances)
+    searchParameters.array.forEach((filter) => {
+      // Check if the array exists and has elements
+      if (filter.value && filter.value.length > 0) {
+        urlParameter[filter.key] = filter.value.join(filter.separator);
+      }
+    });
+
+    let searchUrl = "http://localhost:5173/search";
+    let params = new URLSearchParams(urlParameter);
+
+    let finalUrl = `${searchUrl}?${params}`;
+    window.location.href = finalUrl;
   }
 
   return (
@@ -274,12 +303,17 @@ function Home() {
               </div>
 
               {/* box 2 */}
-              <div className="px-4 xl:px-10 py-10  md:px-5 bg-white min-h-80 lg:min-w-90 lg:max-w-90 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none overflow-hidden">
+              <div className="px-4 xl:px-10 py-10 relative md:px-5 bg-white min-h-80 lg:min-w-90 lg:max-w-90 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none overflow-hidden">
                 <h3 className="text-2xl mb-4">Your ingredients list</h3>
+                <button
+                  onClick={handleSearch}
+                  className="bg-black py-2 px-4 text-white rounded-lg absolute bottom-5 right-5"
+                >
+                  Seach
+                </button>
 
                 <div className="h-full ">
                   {/* content */}
-
                   {currentIngredients.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {currentIngredients.map((ingredient, index) => (
@@ -367,15 +401,18 @@ function Home() {
 
                 {/* button */}
                 <div className="md:w-2/3 max-w-70 ">
-                  <button className="bg-black uppercase text-white px-4 py-3 w-full rounded-lg ">
+                  <a
+                    href="/blog"
+                    className="bg-black uppercase text-white px-4 py-3 w-full rounded-lg "
+                  >
                     view more recent blogs
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
 
             {/* side 2 */}
-            <div className="flex flex-col gap-20 lg:w-[350px] ">
+            <div className="flex flex-col gap-20 lg:w-[300px] xl:w-[350px] ">
               {/* recipes */}
               <div className="">
                 <div className="mb-10">
