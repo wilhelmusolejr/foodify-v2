@@ -48,6 +48,7 @@ export default function Recipe() {
   const { id } = useParams();
 
   const apiKey = getRandomApiKey();
+  const token = useAuthStore.getState().token;
 
   // URL
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -386,7 +387,6 @@ export default function Recipe() {
 
   // Handler for posting a comment
   async function handleCommentSubmit() {
-    const token = useAuthStore.getState().token;
     const trimmedComment = comment.trim();
 
     // Check if the user is even logged in
