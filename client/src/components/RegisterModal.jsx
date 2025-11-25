@@ -7,9 +7,13 @@ import { faUtensils, faXmark } from "@fortawesome/free-solid-svg-icons";
 import FormLabelInput from "./FormLabelInput";
 import FormLabel from "./FormLabel";
 import { useAuthStore } from "../stores/useAuthStore";
+import ModalContainer from "./ModalContainer";
 
 // Library
 import axios from "axios";
+
+// Context
+import { useModal } from "../context/ModalContext";
 
 function generateRandomEmail() {
   const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -36,8 +40,9 @@ function generateRandomEmail() {
   return `${prefix}.${suffix}@${randomDomain}`;
 }
 
-export default function RegisterModal({ handleButtonModal }) {
+export default function RegisterModal({ onClose }) {
   let backend_url = import.meta.env.VITE_BACKEND_URL;
+  const { openModal, closeModal } = useModal();
 
   const randomEmail = generateRandomEmail();
 
@@ -63,7 +68,7 @@ export default function RegisterModal({ handleButtonModal }) {
     let timer;
     if (isSuccess) {
       timer = setTimeout(() => {
-        handleButtonModal("");
+        closeModal();
       }, 5000);
     }
 
@@ -75,11 +80,6 @@ export default function RegisterModal({ handleButtonModal }) {
   }, [isSuccess]);
 
   // HANDLER
-  const handleCloseModal = (e) => {
-    if (e.target.classList.contains("close-modal")) {
-      handleButtonModal("");
-    }
-  };
 
   const handleChange = (e, target) => {
     setFormData((prevData) => ({
@@ -126,10 +126,7 @@ export default function RegisterModal({ handleButtonModal }) {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex justify-center items-center bg-black/50 close-modal"
-      onClick={handleCloseModal}
-    >
+    <ModalContainer onClose={closeModal}>
       <div className="w-10/12 mx-auto max-w-[600px] bg-white rounded-lg ">
         {/* Heading */}
         <div className="p-5 py-7 border-b border-black/10 flex justify-between items-center">
@@ -138,7 +135,7 @@ export default function RegisterModal({ handleButtonModal }) {
             icon={faXmark}
             size="2x"
             className="cursor-pointer close-modal"
-            onClick={handleCloseModal}
+            onClick={closeModal}
           />
         </div>
 
@@ -160,7 +157,7 @@ export default function RegisterModal({ handleButtonModal }) {
 
               <button
                 // Assuming this calls the onClose function passed as a prop
-                onClick={handleCloseModal}
+                onClick={closeModal}
                 className="mt-2 px-8 py-3 cursor-pointer bg-green-700 text-white close-modal font-bold rounded-xl shadow-lg hover:bg-green-800 transition duration-200 uppercase tracking-wider"
               >
                 Start Exploring Recipes
@@ -289,7 +286,7 @@ export default function RegisterModal({ handleButtonModal }) {
                       <button
                         className="cursor-pointer uppercase"
                         onClick={() => {
-                          handleButtonModal("login");
+                          openModal("login");
                         }}
                       >
                         login now
@@ -302,6 +299,6 @@ export default function RegisterModal({ handleButtonModal }) {
           )}
         </div>
       </div>
-    </div>
+    </ModalContainer>
   );
 }

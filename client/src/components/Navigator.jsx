@@ -11,14 +11,14 @@ import LoginModal from "./LoginModal";
 
 import { useAuthStore } from "../stores/useAuthStore";
 import { useRef } from "react";
+import { useModal } from "../context/ModalContext";
 
 export default function Navigator() {
+  const { modalType, openModal, closeModal } = useModal();
+
   // Ref for handling clicks outside the dropdown
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-
-  // STATE
-  const [showModal, setShowModal] = useState("");
 
   // Zustand
   const user = useAuthStore((state) => state.user);
@@ -29,11 +29,6 @@ export default function Navigator() {
 
   if (isLoggedIn) {
     PLACEHOLDER_AVATAR = `https://placehold.co/40x40/4c3c3a/ffffff?text=${user.firstName[0]}`;
-  }
-
-  // HANDLE
-  function handleButtonModal(modalType) {
-    setShowModal(modalType);
   }
 
   return (
@@ -63,19 +58,12 @@ export default function Navigator() {
             <>
               {/* login and register */}
               <div className="hidden lg:flex items-center gap-4 ">
-                <button
-                  className="text-xl cursor-pointer"
-                  onClick={() => {
-                    handleButtonModal("login");
-                  }}
-                >
+                <button className="text-xl cursor-pointer" onClick={() => openModal("login")}>
                   Login
                 </button>
                 <button
                   className="bg-[#2B4A13] cursor-pointer text-white px-5 uppercase py-3 rounded-lg font-medium"
-                  onClick={() => {
-                    handleButtonModal("register");
-                  }}
+                  onClick={() => openModal("register")}
                 >
                   Register
                 </button>
@@ -178,9 +166,8 @@ export default function Navigator() {
         </div>
       </nav>
 
-      {/* modal for register */}
-      {showModal === "register" && <RegisterModal handleButtonModal={handleButtonModal} />}
-      {showModal === "login" && <LoginModal handleButtonModal={handleButtonModal} />}
+      {modalType === "login" && <LoginModal />}
+      {modalType === "register" && <RegisterModal />}
     </>
   );
 }

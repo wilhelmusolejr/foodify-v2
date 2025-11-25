@@ -1,14 +1,24 @@
 import React, { useState } from "react";
 
 import FormLabelInput from "./FormLabelInput";
-import { useAuthStore } from "../stores/useAuthStore";
+import ModalContainer from "./ModalContainer";
 
 // Library
 import axios from "axios";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
-export default function LoginModal({ handleButtonModal }) {
+// Context
+import { useModal } from "../context/ModalContext";
+
+// Auth
+import { useAuthStore } from "../stores/useAuthStore";
+
+export default function LoginModal() {
+  const { openModal, closeModal } = useModal();
+
+  // ENV
   let backend_url = import.meta.env.VITE_BACKEND_URL;
 
   // STATE
@@ -30,12 +40,6 @@ export default function LoginModal({ handleButtonModal }) {
     }));
   };
 
-  const handleCloseModal = (e) => {
-    if (e.target.classList.contains("close-modal")) {
-      handleButtonModal("");
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -53,7 +57,7 @@ export default function LoginModal({ handleButtonModal }) {
       const response = await axios.post(backend_api_url, formData);
       const { token, user } = response.data;
       login({ token, user });
-      handleButtonModal("");
+      closeModal();
       set;
     } catch (apiError) {
       setError(apiError.response?.data?.message || "Registration failed.");
@@ -65,10 +69,7 @@ export default function LoginModal({ handleButtonModal }) {
   return (
     <>
       {/* Modal for Login */}
-      <div
-        className="fixed inset-0 z-50 flex justify-center items-center bg-black/50 close-modal"
-        onClick={handleCloseModal}
-      >
+      <ModalContainer onClose={closeModal}>
         <div className="w-10/12 mx-auto max-w-[600px] bg-white rounded-lg">
           {/* Heading */}
           <div className="p-5 py-7 border-b border-black/10 flex justify-between items-center">
@@ -77,7 +78,7 @@ export default function LoginModal({ handleButtonModal }) {
               icon={faXmark}
               size="2x"
               className="cursor-pointer close-modal"
-              onClick={handleCloseModal}
+              onClick={closeModal}
             />
           </div>
 
@@ -146,7 +147,7 @@ export default function LoginModal({ handleButtonModal }) {
                         <button
                           className="cursor-pointer uppercase"
                           onClick={() => {
-                            handleButtonModal("register");
+                            openModal("register");
                           }}
                         >
                           Register now
@@ -159,7 +160,7 @@ export default function LoginModal({ handleButtonModal }) {
             )}
           </div>
         </div>
-      </div>
+      </ModalContainer>
     </>
   );
 }
