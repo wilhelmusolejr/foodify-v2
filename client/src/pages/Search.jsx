@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBoxOpen, faGear } from "@fortawesome/free-solid-svg-icons";
+import { faBoxOpen, faBug, faExclamation, faGear } from "@fortawesome/free-solid-svg-icons";
 
 // COMPONENTS
 import Navigator from "@components/Navigator";
@@ -24,6 +24,7 @@ import axios from "axios";
 
 // UTILS
 import { getRandomApiKey } from "../utils/apiUtils";
+import InputError from "../components/InputError";
 
 export default function Search() {
   const apiKey = getRandomApiKey();
@@ -34,9 +35,9 @@ export default function Search() {
 
   const [searchType, setSearchType] = useState("recipe");
   const [searchInput, setSearchInput] = useState("");
-  const [isSearchInputValid, setIsSearchInputValid] = useState(true);
   const [isloading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [inputError, setInputError] = useState("");
   const [searchResults, setSearchResults] = useState({ recipes: [] });
   const [isTriggerSearch, setIsTriggerSeach] = useState(false);
   const [pageNum, setPageNum] = useState(1);
@@ -160,17 +161,33 @@ export default function Search() {
   // USE CALLBACK
   function handleSearchTypeChange(type) {
     setSearchType(type);
+    setInputError("");
   }
 
   function handleSearch() {
+    // search type is recipe
     if (searchInput.trim() === "" && searchType === "recipe") {
-      setIsSearchInputValid(false);
+      setInputError("Invalid input");
+      return;
+    }
+
+    // search type is ingredient
+    if (listIngredients.length === 0 && searchType === "ingredient") {
+      setInputError("Invalid input");
+      return;
+    }
+
+    // search type is recipe
+    const areAllEmpty = Object.values(nutrientRanges).every((range) =>
+      range.every((v) => v === "")
+    );
+    if (areAllEmpty) {
+      setInputError("Invalid input");
       return;
     }
 
     setIsTriggerSeach(true);
     setPageNum(1);
-    setIsSearchInputValid(true);
   }
 
   useEffect(() => {
@@ -313,6 +330,8 @@ export default function Search() {
             <div className="py-20 lg:py-30 xl:py-40 px-10 bg-white border border-black/10 rounded-lg flex md:justify-center ">
               {/* SEARCY BY RECIPE */}
               <div className={`${searchType === "recipe" ? "block" : "hidden"}`}>
+                <InputError error={inputError} />
+
                 {/* search input */}
                 <div className="flex flex-col md:flex-row md:items-end gap-2 mb-10 ">
                   {/* form */}
@@ -321,7 +340,7 @@ export default function Search() {
                     <input
                       type="text_name"
                       placeholder="e.g. chicken, rice, broccoli"
-                      className={`border flex-1 rounded-lg px-4 py-3 lg:min-w-80 ${isSearchInputValid ? "border-black/50" : "bg-red-100 border-red-400"}`}
+                      className={`border flex-1 rounded-lg px-4 py-3 lg:min-w-80 border-black/50`}
                       value={searchInput}
                       onChange={(e) => setSearchInput(e.target.value)}
                     />
@@ -372,6 +391,8 @@ export default function Search() {
 
               {/* SEARCH BY NUTRIENTS */}
               <div className={`${searchType === "nutrient" ? "block" : "hidden"} text-center`}>
+                <InputError error={inputError} />
+
                 <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-5 max-w-[600px] text-left mb-20">
                   {/* Carbohydrates */}
                   <NutrientFormGroup
@@ -410,6 +431,8 @@ export default function Search() {
               <div
                 className={`${searchType === "ingredient" ? "block" : "hidden"} w-full md:w-fit text-center`}
               >
+                <InputError error={inputError} />
+
                 <div className="text-left flex flex-col lg:flex-row items-start gap-10 mb-20">
                   {/* input */}
                   <div className="flex flex-col md:flex-row md:items-end gap-2 lg:py-5 w-full lg:w-fit ">
