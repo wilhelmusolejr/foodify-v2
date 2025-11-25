@@ -28,6 +28,7 @@ import axios from "axios";
 // UTILS
 import { getRandomApiKey } from "../utils/apiUtils";
 import { useSearchParams } from "react-router-dom";
+import SearchButton from "@components/SearchButton";
 
 function Home() {
   const apiKey = getRandomApiKey();
@@ -292,7 +293,12 @@ function Home() {
                       />
                     </div>
                     <button
-                      className="bg-black min-w-30 w-full cursor-pointer lg:w-30 text-white px-4 py-3 rounded-lg uppercase flex gap-2 justify-center items-center"
+                      disabled={ingredient === ""}
+                      className={`bg-black min-w-30 w-full ${
+                        ingredient === ""
+                          ? "bg-gray-400 cursor-not-allowed opacity-70"
+                          : "bg-black hover:bg-gray-800 cursor-pointer"
+                      }} cursor-pointer lg:w-30 text-white px-4 py-3 rounded-lg uppercase flex gap-2 justify-center items-center`}
                       onClick={() => addIngredient(ingredient)}
                     >
                       <FontAwesomeIcon icon={faPlus} />
@@ -305,12 +311,11 @@ function Home() {
               {/* box 2 */}
               <div className="px-4 xl:px-10 py-10 relative md:px-5 bg-white min-h-80 lg:min-w-90 lg:max-w-90 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none overflow-hidden">
                 <h3 className="text-2xl mb-4">Your ingredients list</h3>
-                <button
+                <SearchButton
                   onClick={handleSearch}
-                  className="bg-black py-2 px-4 text-white rounded-lg absolute bottom-5 right-5"
-                >
-                  Seach
-                </button>
+                  className="absolute right-5 bottom-5"
+                  isDisabled={currentIngredients.length === 0}
+                />
 
                 <div className="h-full ">
                   {/* content */}
