@@ -44,11 +44,17 @@ import { useAuthStore } from "../stores/useAuthStore";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
+import { useModal } from "../context/ModalContext";
+import NeedLogin from "../components/Modal/NeedLogin";
+
 export default function Recipe() {
   const { id } = useParams();
 
   const apiKey = getRandomApiKey();
   const token = useAuthStore.getState().token;
+  const isLoggedIn = useAuthStore.getState().isLoggedIn;
+
+  const { modalType, openModal } = useModal();
 
   // URL
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -387,13 +393,13 @@ export default function Recipe() {
 
   // Handler for posting a comment
   async function handleCommentSubmit() {
-    const trimmedComment = comment.trim();
-
     // Check if the user is even logged in
     if (!token) {
-      alert("You must be logged in to post a comment.");
+      openModal("need-login");
       return;
     }
+
+    const trimmedComment = comment.trim();
 
     // Check if the comment is empty or not
     if (trimmedComment === "") {
@@ -425,8 +431,6 @@ export default function Recipe() {
   }
 
   async function handleAddToBookmark() {
-    const token = useAuthStore.getState().token;
-
     try {
       const response = await axios.post(
         BACKEND_BOOKMARK_URL,
@@ -774,7 +778,11 @@ export default function Recipe() {
                     <h5 className="text-2xl lg:text-3xl font-bold">Write a comment</h5>
                   </div>
                   <div className="">
-                    <p className="underline">Login</p>
+                    {!isLoggedIn && (
+                      <p className="underline" onClick={() => openModal("login")}>
+                        Login
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -842,6 +850,8 @@ export default function Recipe() {
           <Footer />
         </div>
       )}
+
+      {modalType === "need-login" && <NeedLogin />}
     </>
   );
 }
