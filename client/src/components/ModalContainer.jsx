@@ -1,16 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-export default function ModalContainer({ children, handleModal }) {
-  const handleCloseModal = (e) => {
-    if (e.target.classList.contains("close-modal")) {
-      handleModal("");
-    }
+export default function ModalContainer({ children, onClose }) {
+  // remove scroll
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) onClose();
   };
 
   return (
     <div
       className="fixed inset-0 z-50 flex justify-center items-center bg-black/50 close-modal"
-      onClick={handleCloseModal}
+      onClick={handleOverlayClick}
     >
       {children}
     </div>
