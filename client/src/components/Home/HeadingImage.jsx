@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 
+import { randomFoodIcon } from "../../utils/foodLoaderUtils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 export default function HeadingImage({ image_name = "", id }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const icon = randomFoodIcon();
 
   let image_path;
 
@@ -22,8 +26,9 @@ export default function HeadingImage({ image_name = "", id }) {
       {/* Skeleton / Placeholder (Conditionally rendered) */}
       {shouldShowSkeleton && (
         <div
-          className={`${sizeClasses} bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center`}
+          className={`${sizeClasses} bg-gray-200  animate-pulse flex items-center justify-center `}
         >
+          <FontAwesomeIcon icon={icon} size="2x" className="text-black/50" />
           {/* Optional: Add a simple icon or text for a failed state */}
           {hasError && <span className="text-sm text-gray-500">Error</span>}
         </div>
