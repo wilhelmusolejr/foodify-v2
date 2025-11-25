@@ -346,7 +346,7 @@ export default function Search() {
                     />
                   </div>
                   {/* button */}
-                  <SearchButton onClick={handleSearch} />
+                  <SearchButton onClick={handleSearch} isDisabled={searchInput.length === 0} />
                 </div>
 
                 {/* filter */}
@@ -449,7 +449,12 @@ export default function Search() {
                     </div>
                     {/* button */}
                     <button
-                      className="bg-black w-full cursor-pointer text-white px-4 py-3 rounded-lg uppercase"
+                      disabled={ingredient === ""}
+                      className={`bg-black w-full cursor-pointer text-white px-4 py-3 rounded-lg uppercase ${
+                        ingredient === ""
+                          ? "bg-gray-400 cursor-not-allowed opacity-70"
+                          : "bg-black hover:bg-gray-800 cursor-pointer"
+                      }`}
                       onClick={() => addIngredient(ingredient)}
                     >
                       <p>Add</p>
@@ -492,7 +497,7 @@ export default function Search() {
                 </div>
 
                 {/* button */}
-                <SearchButton onClick={handleSearch} />
+                <SearchButton onClick={handleSearch} isDisabled={listIngredients.length === 0} />
               </div>
             </div>
           </div>
