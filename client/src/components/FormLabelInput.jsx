@@ -8,6 +8,7 @@ export default function FormLabelInput({
   id,
   onChange,
   value,
+  isDisabled = false,
 }) {
   return (
     <div className="capitalize flex flex-col gap-2">
@@ -16,6 +17,7 @@ export default function FormLabelInput({
         type={inputType}
         name={id}
         id={id}
+        disabled={isDisabled}
         value={value}
         onChange={(e) => {
           onChange(e, id);
