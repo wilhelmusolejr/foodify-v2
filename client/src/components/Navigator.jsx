@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faL, faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -14,7 +15,10 @@ import { useRef } from "react";
 import { useModal } from "../context/ModalContext";
 
 export default function Navigator() {
-  const { modalType, openModal, closeModal } = useModal();
+  const { modalType, openModal } = useModal();
+  const location = useLocation();
+
+  console.log(location);
 
   // Ref for handling clicks outside the dropdown
   const dropdownRef = useRef(null);
