@@ -7,8 +7,8 @@ export default function NavLink({ url = "#", label }) {
 
   let className =
     location.pathname === url
-      ? "text-green-500 font-semibold"
-      : "text-gray-500 hover:text-green-400";
+      ? "text-green-600 font-semibold"
+      : "text-gray-500 hover:text-green-500";
 
   return (
     <li className={`list-none text-xl ${className}`}>
