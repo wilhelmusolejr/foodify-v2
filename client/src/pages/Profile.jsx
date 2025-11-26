@@ -98,6 +98,7 @@ export default function Profile() {
     enabled: !!id,
     retry: 1,
     staleTime: 1000 * 60 * 2,
+    select: (bookmark = []) => bookmark.slice(0, 8),
   });
 
   // Get user comments
@@ -232,11 +233,11 @@ export default function Profile() {
 
                   {/* See more */}
 
-                  {userBookmarks.length > MAX_RECIPES_DISPLAY && (
-                    <div className="flex items-center gap-2">
+                  {userBookmarks.length >= MAX_RECIPES_DISPLAY && (
+                    <a href="#" className="flex items-center gap-2">
                       <FontAwesomeIcon icon={faArrowRight} size="1x" />
                       <p className="text-xl">See more</p>
-                    </div>
+                    </a>
                   )}
                 </div>
 
