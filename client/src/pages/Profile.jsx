@@ -201,19 +201,13 @@ export default function Profile() {
                         <FontAwesomeIcon icon={faCommentAlt} />
                         <p>{userComments.length} activities</p>
                       </div>
-
-                      {/* item */}
-                      <div className="flex items-center gap-2 font-light  text-[#f4f4f4]">
-                        <FontAwesomeIcon icon={faCheck} />
-                        <p>35 recipes saved</p>
-                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* settings button */}
                 {!isVisitor && (
-                  <div className="absolute bottom-10 right-10">
+                  <div className="absolute bottom-5 right-5 md:bottom-10 md:right-10">
                     {/* button */}
                     <button
                       onClick={() => {
