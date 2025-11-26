@@ -13,6 +13,7 @@ import LoginModal from "./LoginModal";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useRef } from "react";
 import { useModal } from "../context/ModalContext";
+import Button from "./Global/Button";
 
 export default function Navigator() {
   const { modalType, openModal } = useModal();
@@ -62,15 +63,16 @@ export default function Navigator() {
             <>
               {/* login and register */}
               <div className="hidden lg:flex items-center gap-4 ">
-                <button className="text-xl cursor-pointer" onClick={() => openModal("login")}>
+                <button
+                  className="text-xl cursor-pointer hover:underline"
+                  onClick={() => openModal("login")}
+                >
                   Login
                 </button>
-                <button
-                  className="bg-[#2B4A13] cursor-pointer text-white px-5 uppercase py-3 rounded-lg font-medium"
-                  onClick={() => openModal("register")}
-                >
-                  Register
-                </button>
+
+                <div className="" onClick={() => openModal("register")}>
+                  <Button>Register</Button>
+                </div>
               </div>
             </>
           ) : (
