@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Component
 import ModalContainer from "@components/ModalContainer";
 import FormLabel from "@components/FormLabel";
 import FormLabelInput from "@components/FormLabelInput";
 
+// Icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faUtensils, faXmark } from "@fortawesome/free-solid-svg-icons";
+
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useModal } from "../../context/ModalContext";
+
+import axios from "axios";
 
 export default function EditProfileModal({ data }) {
   const { closeModal } = useModal();
@@ -29,6 +33,14 @@ export default function EditProfileModal({ data }) {
     gender: data.gender,
     bio: data.bio,
   });
+
+  useEffect(() => {
+    if (!isSuccess) return;
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
+  }, [isSuccess]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,8 +71,6 @@ export default function EditProfileModal({ data }) {
     setIsLoading(true);
     setError("");
 
-    console.log(token);
-
     try {
       let backend_api_url = `${backend_url}/api/user/updateProfile`;
       const response = await axios.post(backend_api_url, formData, {
@@ -70,10 +80,7 @@ export default function EditProfileModal({ data }) {
       });
       console.log(response.data);
 
-      if (response.status === 201) {
-        setIsSuccess(true);
-        login({ token, user });
-      }
+      setIsSuccess(true);
     } catch (apiError) {
       console.log(apiError);
       console.log(apiError.response.data.message);
@@ -111,26 +118,24 @@ export default function EditProfileModal({ data }) {
           {isSuccess ? (
             // --- SUCCESS MESSAGE DISPLAY ---
             <div className="absolute inset-0 h-full w-full z-10 flex flex-col justify-center items-center bg-white rounded-lg shadow-2xl p-8 text-center">
-              {/* Replaced generic SVG with Font Awesome Utensils Icon */}
               <FontAwesomeIcon
                 icon={faUtensils}
-                className="text-6xl text-amber-500 mb-6 animate-pulse"
+                className="text-6xl text-green-500 mb-6 animate-pulse"
               />
 
-              <h3 className="text-2xl font-semibold text-green-600 mb-6">Registration Complete!</h3>
+              <h3 className="text-2xl font-semibold text-green-600 mb-6">Profile Updated!</h3>
+
               <p className="text-base text-gray-600 mb-4">
-                Your account is ready. Get cooking with your first recipe!
+                Your profile information has been successfully saved.
               </p>
-              <p className="text-sm text-gray-500 mb-6">Closing in 5 seconds...</p>
+
+              <p className="text-sm text-gray-500 mb-6">Closing in 3 seconds...</p>
 
               <button
-                // Assuming this calls the onClose function passed as a prop
-                onClick={() => {
-                  handleButtonModal("");
-                }}
-                className="mt-2 px-8 py-3 cursor-pointer bg-green-700 text-white close-modal font-bold rounded-xl shadow-lg hover:bg-green-800 transition duration-200 uppercase tracking-wider"
+                onClick={() => window.location.reload()}
+                className="mt-2 px-8 py-3 cursor-pointer bg-green-700 text-white font-bold rounded-xl shadow-lg hover:bg-green-800 transition duration-200 uppercase tracking-wider"
               >
-                Okay
+                Done
               </button>
             </div>
           ) : isLoading ? (
