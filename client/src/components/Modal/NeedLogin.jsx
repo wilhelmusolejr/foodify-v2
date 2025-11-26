@@ -5,7 +5,7 @@ import ModalContainer from "../ModalContainer";
 import { useModal } from "../../context/ModalContext";
 
 export default function NeedLogin() {
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
 
   return (
     <ModalContainer>
@@ -16,11 +16,11 @@ export default function NeedLogin() {
         <p className="mt-2">You must be signed in to post a comment.</p>
 
         <div className="mt-4 flex gap-2 justify-end">
-          <button className="px-3 py-2" onClick={closeModal}>
+          <button className="px-3 py-2 cursor-pointer" onClick={closeModal}>
             Cancel
           </button>
           <button
-            className="px-3 py-2 bg-black text-white rounded"
+            className="px-3 py-2 bg-black text-white rounded cursor-pointer"
             onClick={() => openModal("login")}
           >
             Sign in
