@@ -15,108 +15,51 @@ import MailLetter from "@components/MailLetter";
 import Paragraph from "@components/Paragraph";
 import RecipeItemSkeleton from "@components/RecipeItemSkeleton";
 import RecipeItem from "@components/RecipeItem";
-
-import recipeData from "./recipe.json";
+import SearchButton from "@components/SearchButton";
 
 // Fontawesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faBoxOpen, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { faBoxOpen, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
 // Library
 import axios from "axios";
 
 // UTILS
 import { getRandomApiKey } from "../utils/apiUtils";
-import { useSearchParams } from "react-router-dom";
-import SearchButton from "@components/SearchButton";
+
+import { useQuery } from "@tanstack/react-query";
+
+let blogs = [
+  {
+    header: "10 Quick and Easy Dinner Recipes for Busy Weeknights",
+    date: "November 15, 2025",
+    image_name: "blog1.jpg",
+    description:
+      "Discover simple, tasty dinner ideas that you can make in under 30 minutes—perfect for those busy evenings when time is short but flavor still matters.",
+  },
+  {
+    header: "5 Delicious One-Pot Meals to Simplify Your Cooking",
+    date: "November 18, 2025",
+    image_name: "blog2.jpg",
+    description:
+      "Cut down on cleanup without sacrificing taste. These one-pot meals are hearty, comforting, and incredibly easy to make on any night of the week.",
+  },
+  {
+    header: "Healthy Breakfast Ideas to Kickstart Your Morning",
+    date: "November 20, 2025",
+    image_name: "blog3.jpg",
+    description:
+      "Start your day right with these nutritious and energizing breakfast ideas that blend convenience with wholesome ingredients.",
+  },
+];
 
 function Home() {
   const apiKey = getRandomApiKey();
-  const runLocal = import.meta.env.VITE_RUN_LOCAL === "true" ? true : false;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
 
-  const [isloading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [recipes, setRecipes] = useState(null);
   const [currentIngredients, setCurrentIngredients] = useState([]);
   const [ingredientError, setIngredientError] = useState(false);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const searchTerm = searchParams.get("query");
   const [ingredient, setIngredient] = useState("");
-
-  const [pageNum, setPageNum] = useState(1);
-
-  let blogs = [
-    {
-      header: "10 Quick and Easy Dinner Recipes for Busy Weeknights",
-      date: "November 15, 2025",
-      image_name: "blog1.jpg",
-      description:
-        "Discover simple, tasty dinner ideas that you can make in under 30 minutes—perfect for those busy evenings when time is short but flavor still matters.",
-    },
-    {
-      header: "5 Delicious One-Pot Meals to Simplify Your Cooking",
-      date: "November 18, 2025",
-      image_name: "blog2.jpg",
-      description:
-        "Cut down on cleanup without sacrificing taste. These one-pot meals are hearty, comforting, and incredibly easy to make on any night of the week.",
-    },
-    {
-      header: "Healthy Breakfast Ideas to Kickstart Your Morning",
-      date: "November 20, 2025",
-      image_name: "blog3.jpg",
-      description:
-        "Start your day right with these nutritious and energizing breakfast ideas that blend convenience with wholesome ingredients.",
-    },
-  ];
-
-  // get random recipes
-  useEffect(() => {
-    const apiUrl = `${FOOD_API}/recipes/random?number=17&apiKey=${apiKey}`;
-
-    const fetchRecipeData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        if (runLocal) {
-          throw new Error("upgrade your plan");
-        }
-
-        // 1. Axios handles the request
-        const response = await axios.get(apiUrl);
-
-        // 2. Axios data is automatically parsed as JSON
-        setRecipes({
-          popular: response.data.recipes.slice(0, 8),
-          explore: response.data.recipes.slice(7, 13),
-          heading: response.data.recipes.slice(14, 17),
-        });
-      } catch (err) {
-        // if reached 50 points
-        if (err.message.includes("upgrade your plan")) {
-          let DATA_FROM_API = { recipes: [] };
-
-          for (let i = 0; i < 20; i++) {
-            DATA_FROM_API.recipes.push(recipeData);
-          }
-
-          setRecipes({
-            popular: DATA_FROM_API.recipes.slice(0, 8),
-            explore: DATA_FROM_API.recipes.slice(7, 13),
-            heading: DATA_FROM_API.recipes.slice(14, 17),
-          });
-        }
-
-        setError(err.response ? err.response.data.message : err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecipeData();
-  }, []);
 
   function addIngredient(ingredient) {
     if (ingredient.trim() === "") {
@@ -124,7 +67,7 @@ function Home() {
       return;
     }
 
-    setCurrentIngredients([...currentIngredients, ingredient]);
+    setCurrentIngredients((prev) => [...prev, ingredient]);
     setIngredient("");
     setIngredientError(false);
   }
@@ -155,6 +98,31 @@ function Home() {
     let finalUrl = `${searchUrl}?${params}`;
     window.location.href = finalUrl;
   }
+
+  //
+  const fetchRecipesFromApi = async ({ signal }) => {
+    const apiKey = getRandomApiKey();
+    const url = `${FOOD_API}/recipes/random?number=17&apiKey=${apiKey}`;
+    const res = await axios.get(url, { signal });
+    return Array.isArray(res.data?.recipes) ? res.data.recipes : [];
+  };
+
+  const {
+    data: recipes = {},
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["recipes"],
+    queryFn: fetchRecipesFromApi,
+    enabled: !!FOOD_API && !!apiKey, // only run if config exists
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+    select: (recipesData = []) => ({
+      popular: recipesData.slice(0, 8),
+      explore: recipesData.slice(8, 13),
+      heading: recipesData.slice(13, 16),
+    }),
+  });
 
   return (
     <>
@@ -196,7 +164,7 @@ function Home() {
 
             {/* images */}
             <div className="flex gap-5 overflow-auto md pb-5">
-              {isloading && (
+              {isLoading ? (
                 <>
                   {[...Array(3)].map((_, index) => (
                     <div className={`min-w-[200px] h-[150px] rounded-md animate-pulse`} key={index}>
@@ -204,9 +172,7 @@ function Home() {
                     </div>
                   ))}
                 </>
-              )}
-
-              {!isloading && recipes && (
+              ) : (
                 <>
                   {recipes.heading.map((headingRecipe, index) => (
                     <HeadingImage
@@ -294,14 +260,10 @@ function Home() {
                     </div>
                     <button
                       disabled={ingredient === ""}
-                      className={`bg-black min-w-30 w-full ${
-                        ingredient === ""
-                          ? "bg-gray-400 cursor-not-allowed opacity-70"
-                          : "bg-black hover:bg-gray-800 cursor-pointer"
+                      className={`bg-black min-w-30 w-full hover:bg-gray-800 cursor-pointer
                       }} cursor-pointer lg:w-30 text-white px-4 py-3 rounded-lg uppercase flex gap-2 justify-center items-center`}
                       onClick={() => addIngredient(ingredient)}
                     >
-                      <FontAwesomeIcon icon={faPlus} />
                       <p>add</p>
                     </button>
                   </div>
@@ -311,11 +273,10 @@ function Home() {
               {/* box 2 */}
               <div className="px-4 xl:px-10 py-10 relative md:px-5 bg-white min-h-80 lg:min-w-90 lg:max-w-90 text-black rounded-lg rounded-t-none lg:rounded-e-lg lg:rounded-s-none overflow-hidden">
                 <h3 className="text-2xl mb-4">Your ingredients list</h3>
-                <SearchButton
-                  onClick={handleSearch}
-                  className="absolute right-5 bottom-5"
-                  isDisabled={currentIngredients.length === 0}
-                />
+
+                {currentIngredients.length > 0 && (
+                  <SearchButton onClick={handleSearch} className="absolute right-5 bottom-5" />
+                )}
 
                 <div className="h-full ">
                   {/* content */}
@@ -356,15 +317,13 @@ function Home() {
 
           {/* parent */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
-            {isloading && (
+            {isLoading ? (
               <>
                 {[...Array(8)].map((_, index) => (
                   <RecipeItemSkeleton key={index} />
                 ))}
               </>
-            )}
-
-            {!isloading && recipes && (
+            ) : (
               <>
                 {recipes.popular.map((popularRecipe, index) => (
                   <RecipeItem
@@ -426,15 +385,13 @@ function Home() {
 
                 {/* parent */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-6">
-                  {isloading && (
+                  {isLoading ? (
                     <>
                       {[...Array(6)].map((_, index) => (
                         <RecipeItemSkeleton key={index} />
                       ))}
                     </>
-                  )}
-
-                  {!isloading && recipes && (
+                  ) : (
                     <>
                       {recipes.explore.map((exploreRecipe, index) => (
                         <RecipeItem

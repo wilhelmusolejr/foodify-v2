@@ -1,94 +1,89 @@
+import React from "react";
+
+// Components
 import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
+import FeatureItem from "@components/FeatureItem";
+import SocialItem from "@components/SocialItem";
+import Footer from "@components/Footer";
+import MailLetter from "@components/MailLetter";
+import TextImageBlock from "@components/TextImageBlock";
+import TeamItem from "@components/TeamItem";
+import Paragraph from "@components/Paragraph";
+
 import {
   faBowlFood,
-  faBriefcase,
-  faF,
   faHeart,
   faListCheck,
   faShareNodes,
   faUserTie,
   faUtensils,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  faFacebookF,
-  faGithub,
-  faGithubAlt,
-  faLinkedinIn,
-} from "@fortawesome/free-brands-svg-icons";
+import { faFacebookF, faGithubAlt, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
 
-import FeatureItem from "@components/FeatureItem";
-import SocialItem from "@components/SocialItem";
-import Footer from "@components/Footer";
-import MailLetter from "@components/MailLetter";
-import TextImageBlock from "@components/TextImageBlock";
-import React from "react";
-import TeamItem from "../components/TeamItem";
-import Paragraph from "../components/Paragraph";
-
-export default function About() {
-  let featureList = [
-    {
-      id: 1,
-      icon: faHeart,
-      title: "Recipe Management",
-      description: `Easily organize and categorize your recipes with our intuitive management tools.
+let featureList = [
+  {
+    id: 1,
+    icon: faHeart,
+    title: "Recipe Management",
+    description: `Easily organize and categorize your recipes with our intuitive management tools.
     Create collections, tag ingredients, and access your favorite dishes anytime,
     anywhere.`,
-    },
-    {
-      id: 2,
-      icon: faUtensils,
-      title: "Smart Ingredient Tracking",
-      description: `Track ingredients you have on hand and never miss an essential item again.
+  },
+  {
+    id: 2,
+    icon: faUtensils,
+    title: "Smart Ingredient Tracking",
+    description: `Track ingredients you have on hand and never miss an essential item again.
     Get suggestions based on your pantry to reduce waste and cook smarter.`,
-    },
-    {
-      id: 3,
-      icon: faListCheck,
-      title: "Automated Meal Planning",
-      description: `Plan your meals for the week with ease. Our system generates balanced meal
+  },
+  {
+    id: 3,
+    icon: faListCheck,
+    title: "Automated Meal Planning",
+    description: `Plan your meals for the week with ease. Our system generates balanced meal
     schedules based on your preferences, dietary needs, and available ingredients.`,
-    },
-    {
-      id: 4,
-      icon: faBowlFood,
-      title: "Step-by-Step Cooking Mode",
-      description: `Follow recipes effortlessly with a clean, step-by-step view optimized for
+  },
+  {
+    id: 4,
+    icon: faBowlFood,
+    title: "Step-by-Step Cooking Mode",
+    description: `Follow recipes effortlessly with a clean, step-by-step view optimized for
     cooking. No distractions — just clear instructions and visual guidance.`,
-    },
-    {
-      id: 5,
-      icon: faShareNodes,
-      title: "Share & Discover Recipes",
-      description: `Explore community-created recipes and share your own masterpieces.
+  },
+  {
+    id: 5,
+    icon: faShareNodes,
+    title: "Share & Discover Recipes",
+    description: `Explore community-created recipes and share your own masterpieces.
     Save your favorites, leave reviews, and inspire others with your creations.`,
-    },
-  ];
+  },
+];
 
-  const socialLinks = [
-    {
-      icon: faUserTie,
-      name: "portfolio",
-      link: "https://wilhelmus.vercel.app",
-    },
-    {
-      icon: faFacebookF,
-      name: "facebook",
-      link: "https://facebook.com/wilhelmus.ole",
-    },
-    {
-      icon: faGithubAlt,
-      name: "GitHub",
-      link: "https://github.com/wilhelmusolejr",
-    },
-    {
-      icon: faLinkedinIn,
-      name: "LinkedIn",
-      link: "https://linkedin.com/wilhelmusolejr",
-    },
-  ];
+const socialLinks = [
+  {
+    icon: faUserTie,
+    name: "portfolio",
+    link: "https://wilhelmus.vercel.app",
+  },
+  {
+    icon: faFacebookF,
+    name: "facebook",
+    link: "https://facebook.com/wilhelmus.ole",
+  },
+  {
+    icon: faGithubAlt,
+    name: "GitHub",
+    link: "https://github.com/wilhelmusolejr",
+  },
+  {
+    icon: faLinkedinIn,
+    name: "LinkedIn",
+    link: "https://linkedin.com/wilhelmusolejr",
+  },
+];
 
+export default function About() {
   return (
     <>
       {/* Navigator */}

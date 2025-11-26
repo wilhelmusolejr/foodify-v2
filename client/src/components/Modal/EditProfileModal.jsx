@@ -1,104 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+
+// Component
+import ModalContainer from "@components/ModalContainer";
+import FormLabel from "@components/FormLabel";
+import FormLabelInput from "@components/FormLabelInput";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUtensils, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { useModal } from "../../context/ModalContext";
 
-// Components
-import FormLabelInput from "./FormLabelInput";
-import FormLabel from "./FormLabel";
-import { useAuthStore } from "../stores/useAuthStore";
-import ModalContainer from "./ModalContainer";
+export default function EditProfileModal({ data }) {
+  const { closeModal } = useModal();
 
-// Library
-import axios from "axios";
-
-// Context
-import { useModal } from "../context/ModalContext";
-
-function generateRandomEmail() {
-  const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-  const domains = ["gmail.com", "yahoo.com", "outlook.net", "mailservice.co"];
-
-  // Helper function to generate a random string of a given length
-  const generateRandomString = (length) => {
-    let result = "";
-    const charLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charLength));
-    }
-    return result;
-  };
-
-  // 1. Generate username parts (e.g., "user" and "id73")
-  const prefix = generateRandomString(Math.floor(Math.random() * 4) + 4); // 4-7 chars
-  const suffix = generateRandomString(Math.floor(Math.random() * 3) + 2); // 2-4 chars
-
-  // 2. Select a random domain
-  const randomDomain = domains[Math.floor(Math.random() * domains.length)];
-
-  // 3. Combine parts
-  return `${prefix}.${suffix}@${randomDomain}`;
-}
-
-export default function RegisterModal() {
   let backend_url = import.meta.env.VITE_BACKEND_URL;
-  const { openModal, closeModal } = useModal();
+  const token = useAuthStore.getState().token;
 
-  const randomEmail = generateRandomEmail();
-
-  // STATE
-  const [formData, setFormData] = useState({
-    firstName: "Elias",
-    lastName: "Vance",
-    email: randomEmail,
-    password: "SecureP@ssword123",
-    gender: "Male",
-    bio: "Passionate baker and recipe tester, specializing in gluten-free desserts and low-carb meal prep. Always looking for new culinary challenges.",
-  });
+  const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-  4;
 
-  // Zustand
-  const login = useAuthStore((state) => state.login);
-
-  // EFFECT
-  useEffect(() => {
-    let timer;
-    if (isSuccess) {
-      timer = setTimeout(() => {
-        closeModal();
-      }, 5000);
-    }
-
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
-  }, [isSuccess]);
-
-  // HANDLER
-
-  const handleChange = (e, target) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [target]: e.target.value,
-    }));
-  };
+  const [formData, setFormData] = useState({
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    current_password: "",
+    new_password: "",
+    gender: data.gender,
+    bio: data.bio,
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!token) {
+      alert("You must be logged in");
+      return;
+    }
+
     // Basic Client-Side Validation (e.g., check required fields)
-    if (!formData.firstName || !formData.email || !formData.password) {
-      setError("Please fill in all required fields (Name, Email, Password).");
+    if (!formData.firstName || !formData.email) {
+      setError("Please fill in all required fields (Name, Email).");
       return;
     }
 
     // Check password minimum length (Schema minlength: 6)
-    if (formData.password.length < 6) {
+    if (formData.current_password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
+    // Check password minimum length (Schema minlength: 6)
+    if (formData.new_password.length < 6 && formData.new_password) {
       setError("Password must be at least 6 characters long.");
       return;
     }
@@ -106,16 +59,24 @@ export default function RegisterModal() {
     setIsLoading(true);
     setError("");
 
+    console.log(token);
+
     try {
-      let backend_api_url = `${backend_url}/api/auth/register`;
-      const response = await axios.post(backend_api_url, formData);
-      const { token, user } = response.data;
+      let backend_api_url = `${backend_url}/api/user/updateProfile`;
+      const response = await axios.post(backend_api_url, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
 
       if (response.status === 201) {
         setIsSuccess(true);
         login({ token, user });
       }
     } catch (apiError) {
+      console.log(apiError);
+      console.log(apiError.response.data.message);
       setError(
         apiError.response?.data?.message || "Registration failed. Please try a different email."
       );
@@ -125,12 +86,19 @@ export default function RegisterModal() {
     }
   };
 
+  const handleChange = (e, target) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [target]: e.target.value,
+    }));
+  };
+
   return (
     <ModalContainer>
       <div className="w-10/12 mx-auto max-w-[600px] bg-white rounded-lg ">
         {/* Heading */}
         <div className="p-5 py-7 border-b border-black/10 flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Create Your Account</h2>
+          <h2 className="text-2xl font-bold">Update profile</h2>
           <FontAwesomeIcon
             icon={faXmark}
             size="2x"
@@ -157,10 +125,12 @@ export default function RegisterModal() {
 
               <button
                 // Assuming this calls the onClose function passed as a prop
-                onClick={closeModal}
+                onClick={() => {
+                  handleButtonModal("");
+                }}
                 className="mt-2 px-8 py-3 cursor-pointer bg-green-700 text-white close-modal font-bold rounded-xl shadow-lg hover:bg-green-800 transition duration-200 uppercase tracking-wider"
               >
-                Start Exploring Recipes
+                Okay
               </button>
             </div>
           ) : isLoading ? (
@@ -179,7 +149,7 @@ export default function RegisterModal() {
             <>
               <form
                 onSubmit={handleSubmit}
-                id="registerForm"
+                id="updateForm"
                 className={`p-5 flex flex-col gap-5 overflow-y-auto grow `}
               >
                 {/* Error Message */}
@@ -192,7 +162,6 @@ export default function RegisterModal() {
                 {/* input */}
                 <FormLabelInput
                   labelName={"First name"}
-                  isRequired={true}
                   inputType={"text"}
                   id={"firstName"}
                   value={formData.firstName}
@@ -202,7 +171,6 @@ export default function RegisterModal() {
                 {/* input */}
                 <FormLabelInput
                   labelName={"Last name"}
-                  isRequired={true}
                   inputType={"text"}
                   id={"lastName"}
                   value={formData.lastName}
@@ -212,20 +180,29 @@ export default function RegisterModal() {
                 {/* input */}
                 <FormLabelInput
                   labelName={"Email"}
-                  isRequired={true}
                   inputType={"email"}
                   id={"email"}
+                  isDisabled={true}
                   value={formData.email}
                   onChange={handleChange}
                 />
 
                 {/* input */}
                 <FormLabelInput
-                  labelName={"Password"}
+                  labelName={"Current Password"}
                   isRequired={true}
                   inputType={"password"}
-                  id={"password"}
-                  value={formData.password}
+                  id={"current_password"}
+                  value={formData.current_password}
+                  onChange={handleChange}
+                />
+
+                {/* input */}
+                <FormLabelInput
+                  labelName={"New Password"}
+                  inputType={"password"}
+                  id={"new_password"}
+                  value={formData.new_password}
                   onChange={handleChange}
                 />
 
@@ -273,27 +250,12 @@ export default function RegisterModal() {
               {/* FOOTER - Fixed at the bottom of the modal */}
               <div className="p-5 border-t border-gray-200 bg-white sticky bottom-0 z-20">
                 <button
-                  form="registerForm"
+                  form="updateForm"
                   type="submit"
                   className="w-full cursor-pointer flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150"
                 >
-                  Register
+                  Update profile
                 </button>
-                <div className="text-center pt-4">
-                  <p className="text-sm">
-                    Already registered?{" "}
-                    <span className="text-green-800 font-medium underline ">
-                      <button
-                        className="cursor-pointer uppercase"
-                        onClick={() => {
-                          openModal("login");
-                        }}
-                      >
-                        login now
-                      </button>
-                    </span>
-                  </p>
-                </div>
               </div>
             </>
           )}

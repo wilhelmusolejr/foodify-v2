@@ -5,10 +5,10 @@ import ModalContainer from "../ModalContainer";
 import { useModal } from "../../context/ModalContext";
 
 export default function NeedLogin() {
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
 
   return (
-    <ModalContainer onClose={closeModal}>
+    <ModalContainer>
       <div className="bg-white p-6 rounded max-w-md w-full">
         <h2 id="login-title" className="text-lg font-semibold">
           Sign in to comment

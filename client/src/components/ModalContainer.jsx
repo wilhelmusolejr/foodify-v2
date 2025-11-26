@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
+import { useModal } from "../context/ModalContext";
 
-export default function ModalContainer({ children, onClose }) {
+export default function ModalContainer({ children }) {
+  const { closeModal } = useModal();
+
   // remove scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -10,7 +13,7 @@ export default function ModalContainer({ children, onClose }) {
   }, []);
 
   const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) onClose();
+    if (e.target === e.currentTarget) closeModal();
   };
 
   return (

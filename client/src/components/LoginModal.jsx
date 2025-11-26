@@ -69,7 +69,7 @@ export default function LoginModal() {
   return (
     <>
       {/* Modal for Login */}
-      <ModalContainer onClose={closeModal}>
+      <ModalContainer>
         <div className="w-10/12 mx-auto max-w-[600px] bg-white rounded-lg">
           {/* Heading */}
           <div className="p-5 py-7 border-b border-black/10 flex justify-between items-center">

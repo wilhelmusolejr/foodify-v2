@@ -6,6 +6,7 @@ export default function SocialItem({ icon, name, link }) {
     <a
       href={link}
       target="_blank"
+      rel="noopener noreferrer"
       className="p-3 border border-black/10 rounded-lg flex items-center gap-3 bg-gray-100 md:w-1/2"
     >
       {/* icon */}
