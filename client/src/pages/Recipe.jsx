@@ -32,6 +32,7 @@ import recipeData from "./recipe.json";
 import IconItem from "@components/IconItem";
 import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
+import NeedLogin from "@components/Modal/NeedLogin";
 
 // UTILS
 import { formatCommentDate } from "../utils/dateUtils";
@@ -45,7 +46,6 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useModal } from "../context/ModalContext";
-import NeedLogin from "../components/Modal/NeedLogin";
 
 export default function Recipe() {
   const { id } = useParams();
@@ -69,7 +69,6 @@ export default function Recipe() {
   const [comment, setComment] = useState("");
   const [listComments, setListComments] = useState([]);
   const [hasBookmarked, setHasBookmarked] = useState(false);
-  const [showBookmarkToast, setShowBookmarkToast] = useState(false);
 
   // Get recipe information
   useEffect(() => {
@@ -403,7 +402,7 @@ export default function Recipe() {
 
     // Check if the comment is empty or not
     if (trimmedComment === "") {
-      alert("Please enter a comment.");
+      toast.error("Please enter a comment.");
       return;
     }
 
@@ -446,7 +445,6 @@ export default function Recipe() {
 
       setHasBookmarked(true);
       toast.success("You’ve bookmarked this recipe.");
-      setShowBookmarkToast(true);
     } catch (error) {
       console.error("Error adding bookmark:", error.response.data.message);
       console.error("Error adding bookmark:", error);
@@ -518,7 +516,7 @@ export default function Recipe() {
       {recipe != null && (
         <div className="">
           <div className="w-10/12 max-w-7xl mx-auto mt-30 ">
-            {showBookmarkToast && <Toaster position="top-center" reverseOrder={false} />}
+            <Toaster position="top-center" reverseOrder={false} />
 
             {/* heading */}
             <div className="mb-10 relative">
@@ -644,7 +642,7 @@ export default function Recipe() {
                 </div>
 
                 {/* Equipments */}
-                <div className="my-14">
+                <div className="my-14 hidden">
                   {/* heading */}
                   <Heading name="Equipments" step="0/12" />
 
@@ -779,9 +777,12 @@ export default function Recipe() {
                   </div>
                   <div className="">
                     {!isLoggedIn && (
-                      <p className="underline" onClick={() => openModal("login")}>
-                        Login
-                      </p>
+                      <button
+                        className="underline cursor-pointer"
+                        onClick={() => openModal("login")}
+                      >
+                        Login to comment
+                      </button>
                     )}
                   </div>
                 </div>
