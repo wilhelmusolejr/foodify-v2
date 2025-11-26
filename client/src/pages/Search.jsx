@@ -165,25 +165,29 @@ export default function Search() {
   }
 
   function handleSearch() {
-    // search type is recipe
-    if (searchInput.trim() === "" && searchType === "recipe") {
-      setInputError("Invalid input");
-      return;
-    }
-
-    // search type is ingredient
-    if (listIngredients.length === 0 && searchType === "ingredient") {
-      setInputError("Invalid input");
-      return;
-    }
-
-    // search type is recipe
-    const areAllEmpty = Object.values(nutrientRanges).every((range) =>
-      range.every((v) => v === "")
-    );
-    if (areAllEmpty) {
-      setInputError("Invalid input");
-      return;
+    switch (searchType) {
+      case "recipe":
+        if (searchInput.trim() === "") {
+          setInputError("Invalid input");
+          return;
+        }
+        break;
+      case "ingredient":
+        if (listIngredients.length === 0) {
+          setInputError("Invalid input");
+          return;
+        }
+        break;
+      case "nutrient":
+        console.log("ccc");
+        const areAllEmpty = Object.values(nutrientRanges).every((range) =>
+          range.every((v) => v === "")
+        );
+        if (areAllEmpty && sea) {
+          setInputError("Invalid input");
+          return;
+        }
+        break;
     }
 
     setIsTriggerSeach(true);
