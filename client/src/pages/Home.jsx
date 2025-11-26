@@ -28,6 +28,7 @@ import axios from "axios";
 import { getRandomApiKey } from "../utils/apiUtils";
 
 import { useQuery } from "@tanstack/react-query";
+import Button from "../components/Global/Button";
 
 let blogs = [
   {
@@ -365,12 +366,9 @@ function Home() {
 
                 {/* button */}
                 <div className="md:w-2/3 max-w-70 ">
-                  <a
-                    href="/blog"
-                    className="bg-black uppercase text-white px-4 py-3 w-full rounded-lg "
-                  >
-                    view more recent blogs
-                  </a>
+                  <Button color="bg-black" hoverColor="hover:bg-black/90">
+                    View more recent blogs
+                  </Button>
                 </div>
               </div>
             </div>
