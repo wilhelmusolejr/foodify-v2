@@ -8,6 +8,51 @@ import Pagination from "../components/Pagination";
 import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
 
+let blogs = [
+  {
+    header: "10 Quick and Easy Dinner Recipes for Busy Weeknights",
+    date: "November 15, 2025",
+    image_name: "blog1.jpg",
+    description:
+      "Discover simple, tasty dinner ideas that you can make in under 30 minutes—perfect for those busy evenings when time is short but flavor still matters.",
+  },
+  {
+    header: "5 Delicious One-Pot Meals to Simplify Your Cooking",
+    date: "November 18, 2025",
+    image_name: "blog2.jpg",
+    description:
+      "Cut down on cleanup without sacrificing taste. These one-pot meals are hearty, comforting, and incredibly easy to make on any night of the week.",
+  },
+  {
+    header: "Healthy Breakfast Ideas to Kickstart Your Morning",
+    date: "November 20, 2025",
+    image_name: "blog3.jpg",
+    description:
+      "Start your day right with these nutritious and energizing breakfast ideas that blend convenience with wholesome ingredients.",
+  },
+  {
+    header: "10 Quick and Easy Dinner Recipes for Busy Weeknights",
+    date: "November 15, 2025",
+    image_name: "blog4.jpg",
+    description:
+      "Discover simple, tasty dinner ideas that you can make in under 30 minutes—perfect for those busy evenings when time is short but flavor still matters.",
+  },
+  {
+    header: "5 Delicious One-Pot Meals to Simplify Your Cooking",
+    date: "November 18, 2025",
+    image_name: "blog5.jpg",
+    description:
+      "Cut down on cleanup without sacrificing taste. These one-pot meals are hearty, comforting, and incredibly easy to make on any night of the week.",
+  },
+  {
+    header: "Healthy Breakfast Ideas to Kickstart Your Morning",
+    date: "November 20, 2025",
+    image_name: "blog6.jpg",
+    description:
+      "Start your day right with these nutritious and energizing breakfast ideas that blend convenience with wholesome ingredients.",
+  },
+];
+
 export default function Blog() {
   return (
     <>
@@ -37,13 +82,9 @@ export default function Blog() {
 
         {/* parent */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-20">
-          {/* item */}
-          <BlogItemV2 />
-          <BlogItemV2 />
-          <BlogItemV2 />
-          <BlogItemV2 />
-          <BlogItemV2 />
-          <BlogItemV2 />
+          {blogs.map((blog, index) => (
+            <BlogItemV2 data={blog} />
+          ))}
         </div>
 
         <Pagination />
