@@ -25,6 +25,10 @@ import axios from "axios";
 import { getRandomApiKey } from "../utils/apiUtils";
 import { useQuery } from "@tanstack/react-query";
 import { useModal } from "../context/ModalContext";
+import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
+
+// Skeleton data
+let skeletonRecipes = Array.from({ length: 8 }, () => <RecipeItemSkeleton />);
 
 export default function Profile() {
   const { modalType, openModal } = useModal();
@@ -140,7 +144,7 @@ export default function Profile() {
     return res.data;
   };
   const {
-    data: recipes = [],
+    data: recipeData = [],
     isLoading: recipesLoading,
     error: recipesError,
   } = useQuery({
@@ -150,6 +154,8 @@ export default function Profile() {
     retry: 1,
     staleTime: 1000 * 60 * 2,
   });
+
+  let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
 
   //
   //
@@ -161,7 +167,7 @@ export default function Profile() {
       <Navigator />
 
       <div className="">
-        {isLoading ? (
+        {userProfileLoading ? (
           <ProfileHEaderSkeleton />
         ) : (
           <>
@@ -226,13 +232,13 @@ export default function Profile() {
             <div className="w-10/12 mx-auto max-w-7xl">
               {/* favorites */}
               <div className="my-40">
+                {/* Heading */}
                 <div className="flex justify-between items-center mb-10">
                   <Heading type="h2" className="">
                     Saved Recipes
                   </Heading>
 
                   {/* See more */}
-
                   {userBookmarks.length >= MAX_RECIPES_DISPLAY && (
                     <a href="#" className="flex items-center gap-2">
                       <FontAwesomeIcon icon={faArrowRight} size="1x" />
@@ -241,6 +247,7 @@ export default function Profile() {
                   )}
                 </div>
 
+                {/* Content */}
                 {userBookmarks.length > 0 ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-h-[40vh] ">
                     {recipes.map((recipe, index) => (
