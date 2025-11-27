@@ -234,7 +234,7 @@ export default function Profile() {
 
                   {/* See more */}
                   {userBookmarks.length >= MAX_RECIPES_DISPLAY && (
-                    <a href="#" className="flex items-center gap-2">
+                    <a href={`/bookmark/${id}`} className="flex items-center gap-2">
                       <FontAwesomeIcon icon={faArrowRight} size="1x" />
                       <p className="text-xl">See more</p>
                     </a>
