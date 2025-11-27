@@ -7,6 +7,7 @@ import Search from "@pages/Search";
 import Blog from "@pages/Blog";
 import Recipe from "@pages/Recipe";
 import Profile from "@pages/Profile";
+import Bookmark from "@pages/Bookmark";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/recipe/:id" element={<Recipe />} />
           <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/bookmark/:id" element={<Bookmark />} />
         </Routes>
       </AuthLoader>
     </BrowserRouter>
