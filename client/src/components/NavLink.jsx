@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 
 export default function NavLink({ url = "#", label }) {
   const location = useLocation();
-  console.log(location.pathname);
 
   let className =
     location.pathname === url
