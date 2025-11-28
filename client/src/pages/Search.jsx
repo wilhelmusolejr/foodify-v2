@@ -509,6 +509,9 @@ export default function Search() {
       ) : (
         <>
           {/* heading */}
+          {/* heading */}
+          {/* heading */}
+          {/* heading */}
           <div className="w-10/12 mx-auto">
             {/* Heading */}
             <div className="text-center my-20 md:my-28 lg:my-32 flex flex-col md:flex-row justify-between items-center gap-10">
