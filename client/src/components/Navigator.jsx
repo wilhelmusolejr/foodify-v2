@@ -38,6 +38,7 @@ export default function Navigator() {
       {navIsOpen && (
         <div className="fixed inset-0 z-60 bg-black/90 flex items-center justify-center">
           {/* nav link */}
+          {/* nav link */}
           <div className="">
             <ul className="uppercase flex gap-10 flex-col items-center ">
               <NavLink label={"Home"} url="/" />
