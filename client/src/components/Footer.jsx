@@ -73,7 +73,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t text-center text-white border border-black/10 bg-green-900">
+      <div className="border-t text-center text-white border border-black/10 bg-green-900 rounded-b-lg">
         <p className="uppercase py-5">all right reserved.</p>
       </div>
     </footer>
