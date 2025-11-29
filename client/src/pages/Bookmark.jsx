@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faDownLong } from "@fortawesome/free-solid-svg-icons";
@@ -12,23 +12,42 @@ import RecipeItem from "@components/RecipeItem";
 import Label from "@components/Label";
 import SearchButton from "@components/SearchButton";
 import Footer from "@components/Footer";
+import PaginationButton from "@components/PaginationButton";
 
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getRandomApiKey } from "../utils/apiUtils";
 
+// GLOBAL STATE
+import { useAuthStore } from "../stores/useAuthStore";
+
+import EmptyRecipe from "@components/Profile/EmptyRecipe";
+
 const skeletonRecipes = Array.from({ length: 12 }, () => <RecipeItemSkeleton />);
 
 export default function Bookmark() {
+  // if no user id found show UI
+  // if no recipe or bookmark found, show UI
+  // Pagination
+  // Search function
+
+  const { id } = useParams();
+  const [pageNum, setPageNum] = useState(1);
+  const [bookmarkType, setBookmarkType] = useState("recipe");
+
+  const user = useAuthStore((state) => state.user);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const isVisitor = isLoggedIn ? user.id !== id : true;
+
   const apiKey = getRandomApiKey();
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  const BACKEND_USER_URL = `${BACKEND_URL}/api/user`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
 
-  const { id } = useParams();
-
+  // Fetch userbookmarks
   const fetchUserBookmarks = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
     if (!id) throw new Error("Missing user id");
@@ -80,10 +99,41 @@ export default function Bookmark() {
     staleTime: 1000 * 60 * 2,
   });
 
+  // Get user profile
+  const fetchUserProfile = async ({ queryKey, signal }) => {
+    const [, id] = queryKey;
+    if (!id) throw new Error("Missing user id");
+
+    const BACKEND_API = `${BACKEND_USER_URL}/profile/${id}`;
+    const res = await axios.get(BACKEND_API, { signal });
+
+    const user = res?.data?.user ?? {};
+
+    const initial = (user.firstName?.[0] ?? "U").toUpperCase();
+    const profile_path = `https://placehold.co/40x40/4c3c3a/ffffff?text=${encodeURIComponent(initial)}`;
+
+    return {
+      ...user,
+      profile_path,
+    };
+  };
+  const {
+    data: userProfile = {},
+    isLoading: userProfileLoading,
+    error: userProfileError,
+  } = useQuery({
+    queryKey: ["user-profile", id],
+    queryFn: fetchUserProfile,
+    enabled: !!id,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  });
+
   let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
 
-  console.log(recipes);
-  console.log(recipeData.length);
+  console.log(isVisitor);
+  console.log(userProfile);
+
   return (
     <>
       {/* navigator */}
@@ -100,7 +150,7 @@ export default function Bookmark() {
           <div className="flex flex-col gap-3 md:flex-row w-full md:justify-between lg:justify-start">
             {/* drop down */}
             <div className="relative">
-              <select className="appearance-none px-4 py-3 w-fullborder border-black/30 rounded-md pr-1 cursor-pointer">
+              <select className="appearance-none px-4 py-3 w-full border border-black/30 rounded-md pr-1 lg:pr-14 cursor-pointer">
                 <option value="recipe" selected>
                   Recipe
                 </option>
@@ -123,7 +173,7 @@ export default function Bookmark() {
           <div className="flex flex-col md:flex-row md:items-end justify-center gap-2">
             {/* form */}
             <div className="w-full md:w-fit flex flex-col gap-2 ">
-              <Label name="Recipe name" required={true} />
+              <Label name={`${bookmarkType} name`} required={true} />
               <input
                 type="text_name"
                 placeholder="e.g. chicken, rice, broccoli"
@@ -137,40 +187,36 @@ export default function Bookmark() {
           </div>
         </div>
 
+        {recipeData.length === 0 ? (
+          <>
+            <div className="max-w-7xl mx-auto mb-20 min-h-[60vh]">
+              <EmptyRecipe isVisitor={isVisitor} userProfile={userProfile} />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 min-h-[60vh]">
+              {recipes.map((recipe, index) => (
+                <RecipeItem
+                  key={index}
+                  image_name={recipe.image}
+                  id={recipe.id}
+                  name={recipe.title}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
         {/* recipe */}
-        <div className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 min-h-[60vh]">
-          {recipeData.length === 0 ? (
-            <>
-              {recipes.map((recipe, index) => (
-                <RecipeItem
-                  key={index}
-                  image_name={recipe.image}
-                  id={recipe.id}
-                  name={recipe.title}
-                />
-              ))}
-            </>
-          ) : (
-            <>
-              {recipes.map((recipe, index) => (
-                <RecipeItem
-                  key={index}
-                  image_name={recipe.image}
-                  id={recipe.id}
-                  name={recipe.title}
-                />
-              ))}
-            </>
-          )}
-        </div>
 
         {/* Pagination */}
-        {searchResults.totalResults > 10 && (
+        {recipeData.length > 5 && (
           <div className="flex justify-center items-center gap-3 my-30">
             {pageNum > 1 && (
               <PaginationButton
                 pageNum={pageNum - 1}
-                onClick={handlePagination}
+                // onClick={handlePagination}
                 className="px-3"
                 isDisabled={pageNum <= 1}
                 text={"Previous"}
@@ -180,7 +226,7 @@ export default function Bookmark() {
               <PaginationButton
                 pageNum={pageNum - 1}
                 text={pageNum - 1}
-                onClick={handlePagination}
+                // onClick={handlePagination}
               />
             )}
 
@@ -191,17 +237,17 @@ export default function Bookmark() {
               className={"bg-black text-white"}
             />
 
-            {pageNum < searchResults.pageLimit && (
+            {pageNum < 80 && (
               <>
                 <PaginationButton
                   pageNum={pageNum + 1}
                   text={pageNum + 1}
-                  onClick={handlePagination}
+                  // onClick={handlePagination}
                 />
                 <PaginationButton
                   pageNum={pageNum + 1}
                   text={"Next"}
-                  onClick={handlePagination}
+                  // onClick={handlePagination}
                   className="px-3"
                 />
               </>
