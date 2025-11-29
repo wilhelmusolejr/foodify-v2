@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faL, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faL, faSearch, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 // Components
 import Logo from "./Logo";
@@ -20,6 +20,7 @@ export default function Navigator() {
   // Ref for handling clicks outside the dropdown
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [navIsOpen, navSetIsOpen] = useState(false);
 
   // Zustand
   const user = useAuthStore((state) => state.user);
@@ -34,6 +35,35 @@ export default function Navigator() {
 
   return (
     <>
+      {navIsOpen && (
+        <div className="fixed inset-0 z-60 bg-black/90 flex items-center justify-center">
+          {/* nav link */}
+          <div className="">
+            <ul className="uppercase flex gap-10 flex-col items-center ">
+              <NavLink label={"Home"} url="/" />
+              <NavLink label={"About"} url="/about" />
+              <NavLink label={"Category"} url="/category" />
+              <NavLink label={"Blog"} url="/blog" />
+              <NavLink label={"Faq"} url="/faq" />
+              <li className="text-gray-500">
+                <a href="/search">
+                  <FontAwesomeIcon icon={faSearch} className="text-base" />
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <FontAwesomeIcon
+            icon={faXmark}
+            size="2x"
+            className="absolute top-10 right-10 text-white"
+            onClick={() => {
+              navSetIsOpen(false);
+            }}
+          />
+        </div>
+      )}
+
       <nav className="bg-white w-10/12 mx-auto mt-10 p-5 rounded-lg border border-black/20 flex justify-between items-center gap-20 lg:gap-10 sticky top-5 z-50 shadow-2xl">
         <div className="flex-1">
           <Logo />
@@ -164,7 +194,13 @@ export default function Navigator() {
 
         {/* BAR */}
         <div className="lg:hidden">
-          <FontAwesomeIcon icon={faBars} className="text-3xl" />
+          <FontAwesomeIcon
+            icon={faBars}
+            className="text-3xl"
+            onClick={() => {
+              navSetIsOpen(true);
+            }}
+          />
         </div>
       </nav>
 
