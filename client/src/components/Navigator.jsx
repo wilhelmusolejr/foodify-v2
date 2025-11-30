@@ -23,6 +23,9 @@ export default function Navigator() {
   const [navIsOpen, navSetIsOpen] = useState(false);
 
   // Zustand
+  // Zustand
+  // Zustand
+  // Zustand
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const handleLogout = useAuthStore((state) => state.logout);
