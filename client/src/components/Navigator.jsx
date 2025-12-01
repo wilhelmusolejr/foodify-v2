@@ -4,6 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faL, faSearch, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 // Components
+// Components
+// Components
+// Components
 import Logo from "./Logo";
 import NavLink from "./NavLink";
 import RegisterModal from "./RegisterModal";
