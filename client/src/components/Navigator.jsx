@@ -21,6 +21,9 @@ export default function Navigator() {
   const { modalType, openModal } = useModal();
 
   // Ref for handling clicks outside the dropdown
+  // Ref for handling clicks outside the dropdown
+  // Ref for handling clicks outside the dropdown
+  // Ref for handling clicks outside the dropdown
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [navIsOpen, navSetIsOpen] = useState(false);
