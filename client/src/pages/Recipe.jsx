@@ -252,6 +252,19 @@ export default function Recipe() {
     fetchRecipeData();
   }, [id]);
 
+  // PENDING
+  // PENDING
+  // PENDING
+  // PENDING
+  const fetchRecipe = async ({ queryKey, signal }) => {
+    const [, id] = queryKey;
+    if (!id) throw new Error("Missing recipe id");
+
+    const apiUrl = `${FOOD_API}/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
+
+    const res = await axios.get(apiUrl, { signal });
+  };
+
   // Get similar Recipe
   useEffect(() => {
     if (!id) return;
