@@ -33,6 +33,7 @@ import IconItem from "@components/IconItem";
 import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
 import NeedLogin from "@components/Modal/NeedLogin";
+import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
 
 // UTILS
 import { formatCommentDate } from "../utils/dateUtils";
@@ -47,10 +48,14 @@ import toast, { Toaster } from "react-hot-toast";
 
 import { useModal } from "../context/ModalContext";
 
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Button from "../components/Global/Button";
+
 export default function Recipe() {
   const { id } = useParams();
 
   const apiKey = getRandomApiKey();
+  const queryClient = useQueryClient();
   const token = useAuthStore.getState().token;
   const isLoggedIn = useAuthStore.getState().isLoggedIn;
 
@@ -60,348 +65,268 @@ export default function Recipe() {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const BACKEND_COMMENT_URL = `${BACKEND_URL}/api/comment`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
-  const runLocal = import.meta.env.VITE_RUN_LOCAL === "true" ? true : false;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
 
-  const [isloading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [recipe, setRecipe] = useState(null);
   const [comment, setComment] = useState("");
-  const [listComments, setListComments] = useState([]);
-  const [hasBookmarked, setHasBookmarked] = useState(false);
 
   // Get recipe information
-  useEffect(() => {
-    if (!id) return;
-
-    const apiUrl = `${FOOD_API}/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
-
-    const fetchRecipeData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        if (runLocal) {
-          throw new Error("upgrade your plan");
-        }
-
-        // 1. Axios handles the request
-        const response = await axios.get(apiUrl);
-
-        // 2. Axios data is automatically parsed as JSON
-        response.data.groupedByAisle = response.data.extendedIngredients.reduce(
-          (accumulator, ingredient) => {
-            const aisle = ingredient.aisle;
-
-            // If the aisle doesn't exist in the accumulator, initialize it as an array
-            if (!accumulator[aisle]) {
-              accumulator[aisle] = [];
-            }
-
-            // Push the ingredient object (or a subset of its properties)
-            accumulator[aisle].push({
-              id: ingredient.id,
-              name: ingredient.name,
-              original: ingredient.original,
-            });
-
-            return accumulator;
-          },
-          {}
-        );
-
-        response.data.finalIngredientsArray = Object.entries(response.data.groupedByAisle).map(
-          ([aisleName, ingredientList]) => {
-            return {
-              name: aisleName, // The key becomes the 'name' property
-              list: ingredientList, // The value (the array of ingredients) becomes the 'list' property
-            };
-          }
-        );
-
-        response.data.tags = [
-          {
-            heading: "Cheap",
-            name: "cheap",
-            icon: faDollarSign,
-          },
-          {
-            heading: "Gluten Free",
-            name: "glutenFree",
-            icon: faWheatAwn,
-          },
-          {
-            heading: "Sustainable",
-            name: "sustainable",
-            icon: faSeedling,
-          },
-          {
-            heading: "Vegan",
-            name: "vegan",
-            icon: faLeaf,
-          },
-          {
-            heading: "Vegetarian",
-            name: "vegetarian",
-            icon: faAppleWhole,
-          },
-          {
-            heading: "Very Healthy",
-            name: "veryHealthy",
-            icon: faHeart,
-          },
-          {
-            heading: "Very Popular",
-            name: "veryPopular",
-            icon: faStar,
-          },
-        ];
-
-        response.data.tags.forEach((tags) => {
-          tags.status = response.data[tags.name];
-        });
-
-        setRecipe(response.data);
-        console.log(response.data);
-      } catch (err) {
-        // if reached 50 points
-        if (err.message.includes("upgrade your plan")) {
-          let DATA_FROM_API = recipeData;
-
-          DATA_FROM_API.groupedByAisle = DATA_FROM_API.extendedIngredients.reduce(
-            (accumulator, ingredient) => {
-              const aisle = ingredient.aisle;
-
-              // If the aisle doesn't exist in the accumulator, initialize it as an array
-              if (!accumulator[aisle]) {
-                accumulator[aisle] = [];
-              }
-
-              // Push the ingredient object (or a subset of its properties)
-              accumulator[aisle].push({
-                id: ingredient.id,
-                name: ingredient.name,
-                original: ingredient.original,
-              });
-
-              return accumulator;
-            },
-            {}
-          );
-
-          DATA_FROM_API.finalIngredientsArray = Object.entries(DATA_FROM_API.groupedByAisle).map(
-            ([aisleName, ingredientList]) => {
-              return {
-                name: aisleName, // The key becomes the 'name' property
-                list: ingredientList, // The value (the array of ingredients) becomes the 'list' property
-              };
-            }
-          );
-
-          DATA_FROM_API.tags = [
-            {
-              heading: "Cheap",
-              name: "cheap",
-              icon: faDollarSign,
-            },
-            {
-              heading: "Gluten Free",
-              name: "glutenFree",
-              icon: faWheatAwn,
-            },
-            {
-              heading: "Sustainable",
-              name: "sustainable",
-              icon: faSeedling,
-            },
-            {
-              heading: "Vegan",
-              name: "vegan",
-              icon: faLeaf,
-            },
-            {
-              heading: "Vegetarian",
-              name: "vegetarian",
-              icon: faAppleWhole,
-            },
-            {
-              heading: "Very Healthy",
-              name: "veryHealthy",
-              icon: faHeart,
-            },
-            {
-              heading: "Very Popular",
-              name: "veryPopular",
-              icon: faStar,
-            },
-          ];
-
-          DATA_FROM_API.tags.forEach((tags) => {
-            tags.status = DATA_FROM_API[tags.name];
-          });
-
-          setRecipe(DATA_FROM_API);
-        }
-
-        setError(err.response ? err.response.data.message : err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecipeData();
-  }, [id]);
-
-  // PENDING
-  // PENDING
-  // PENDING
-  // PENDING
   const fetchRecipe = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
     if (!id) throw new Error("Missing recipe id");
-
     const apiUrl = `${FOOD_API}/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
 
     const res = await axios.get(apiUrl, { signal });
+
+    // 2. Axios data is automatically parsed as JSON
+    res.data.groupedByAisle = res.data.extendedIngredients.reduce((accumulator, ingredient) => {
+      const aisle = ingredient.aisle;
+
+      // If the aisle doesn't exist in the accumulator, initialize it as an array
+      if (!accumulator[aisle]) {
+        accumulator[aisle] = [];
+      }
+
+      // Push the ingredient object (or a subset of its properties)
+      accumulator[aisle].push({
+        id: ingredient.id,
+        name: ingredient.name,
+        original: ingredient.original,
+      });
+
+      return accumulator;
+    }, {});
+
+    res.data.finalIngredientsArray = Object.entries(res.data.groupedByAisle).map(
+      ([aisleName, ingredientList]) => {
+        return {
+          name: aisleName, // The key becomes the 'name' property
+          list: ingredientList, // The value (the array of ingredients) becomes the 'list' property
+        };
+      }
+    );
+
+    res.data.tags = [
+      {
+        heading: "Cheap",
+        name: "cheap",
+        icon: faDollarSign,
+      },
+      {
+        heading: "Gluten Free",
+        name: "glutenFree",
+        icon: faWheatAwn,
+      },
+      {
+        heading: "Sustainable",
+        name: "sustainable",
+        icon: faSeedling,
+      },
+      {
+        heading: "Vegan",
+        name: "vegan",
+        icon: faLeaf,
+      },
+      {
+        heading: "Vegetarian",
+        name: "vegetarian",
+        icon: faAppleWhole,
+      },
+      {
+        heading: "Very Healthy",
+        name: "veryHealthy",
+        icon: faHeart,
+      },
+      {
+        heading: "Very Popular",
+        name: "veryPopular",
+        icon: faStar,
+      },
+    ];
+
+    res.data.tags.forEach((tags) => {
+      tags.status = res.data[tags.name];
+    });
+
+    return res.data;
   };
+  const {
+    data: recipe = {},
+    isLoading: recipeLoading,
+    error: recipeError,
+  } = useQuery({
+    queryKey: ["recipe", id],
+    queryFn: fetchRecipe,
+    enabled: !!id,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  });
 
   // Get similar Recipe
-  useEffect(() => {
-    if (!id) return;
+  const fetchSimilarRecipe = async ({ queryKey, signal }) => {
+    const [, id] = queryKey;
+    if (!id) throw new Error("Missing recipe id");
 
     const apiUrl = `${FOOD_API}/recipes/${id}/similar?number=6&apiKey=${apiKey}`;
+    const res = await axios.get(apiUrl, { signal });
+    return res.data;
+  };
 
-    const fetchRecipeData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        if (runLocal) {
-          throw new Error("upgrade your plan");
-        }
-
-        // 1. Axios handles the request
-        const response = await axios.get(apiUrl);
-
-        setRecipe((prevSettings) => ({
-          ...prevSettings,
-          ["similarRecipe"]: response.data,
-        }));
-      } catch (err) {
-        // if reached 50 points
-        if (err.message.includes("upgrade your plan")) {
-          let DATA_FROM_API = [];
-
-          for (let i = 0; i < 6; i++) {
-            DATA_FROM_API.push(recipeData);
-          }
-
-          setRecipe((prevSettings) => ({
-            ...prevSettings,
-            ["similarRecipe"]: DATA_FROM_API,
-          }));
-        }
-
-        setError(err.response ? err.response.data.message : err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecipeData();
-  }, [id]);
+  const {
+    data: similarRecipe = [],
+    isLoading: similarRecipeLoading,
+    error: similarRecipeError,
+  } = useQuery({
+    queryKey: ["similar-recipe", id],
+    queryFn: fetchSimilarRecipe,
+    enabled: !!id,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  });
 
   // Get random recipe
-  useEffect(() => {
+  const fetchRandomRecipe = async ({ signal }) => {
     const apiUrl = `${FOOD_API}/recipes/random?number=8&apiKey=${apiKey}`;
-
-    const fetchRecipeData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        if (runLocal) {
-          throw new Error("upgrade your plan");
-        }
-
-        // 1. Axios handles the request
-        const response = await axios.get(apiUrl);
-
-        // 2. Axios data is automatically parsed as JSON
-        setRecipe((prevSettings) => ({
-          ...prevSettings,
-          ["random"]: response.data.recipes,
-        }));
-      } catch (err) {
-        // if reached 50 points
-        if (err.message.includes("upgrade your plan")) {
-          let DATA_FROM_API = [];
-
-          for (let i = 0; i < 8; i++) {
-            DATA_FROM_API.push(recipeData);
-          }
-
-          setRecipe((prevSettings) => ({
-            ...prevSettings,
-            ["random"]: DATA_FROM_API,
-          }));
-        }
-        setError(err.response ? err.response.data.message : err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecipeData();
-  }, []);
+    const res = await axios.get(apiUrl, { signal });
+    return res.data.recipes;
+  };
+  const {
+    data: randomRecipe = [],
+    isLoading: randomRecipeLoading,
+    error: randomRecipeError,
+  } = useQuery({
+    queryKey: ["random-recipe"],
+    queryFn: fetchRandomRecipe,
+    enabled: recipe.id != null,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  });
 
   // Get comments
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        // api url
-        const BACKEND_API = `${BACKEND_COMMENT_URL}/${id}`;
+  const fetchComments = async ({ queryKey, signal }) => {
+    const [, id] = queryKey;
+    if (!id) throw new Error("Missing id");
 
-        // request
-        const response = await axios.get(BACKEND_API);
+    const BACKEND_API = `${BACKEND_COMMENT_URL}/${id}`;
+    const res = await axios.get(BACKEND_API, { signal });
+    return res.data;
+  };
 
-        setListComments(response.data);
-      } catch (err) {
-        console.error("error getting comments:", err);
-      }
-    };
-
-    fetchComments();
-  }, [id]);
+  const {
+    data: listComments,
+    isLoading: listCommentsLoading,
+    error: listCommentsError,
+  } = useQuery({
+    queryKey: ["list-comment", id],
+    queryFn: fetchComments,
+    enabled: !!id,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  });
 
   // check if the recipe has been bookmarked by the user
-  useEffect(() => {
-    const fetchComments = async () => {
-      const token = useAuthStore.getState().token;
+  const checkRecipeBookmarked = async ({ queryKey, signal }) => {
+    const [, id] = queryKey;
+    if (!id) throw new Error("Missing id");
 
-      const payload = {
-        recipeId: id,
-      };
+    if (!token) {
+      // Not logged in → treat as not bookmarked
+      return { isBookmarked: false, message: "User not logged in" };
+    }
 
-      // Prevent unnecessary calls
-      if (!token || !id) return;
+    const res = await axios.get(`${BACKEND_BOOKMARK_URL}/status`, {
+      params: { recipeId: id },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      signal,
+    });
 
-      try {
-        // request
-        const response = await axios.get(`${BACKEND_BOOKMARK_URL}/status`, {
-          params: payload,
+    return res.data.isBookmarked; // { isBookmarked, message }
+  };
+
+  const {
+    data: hasBookmarked = false,
+    isLoading: hasBookmarkedLoading,
+    error: hasBookmarkedError,
+  } = useQuery({
+    queryKey: ["has-bookmarked", id],
+    queryFn: checkRecipeBookmarked,
+    enabled: !!id && !!token, // only run if logged in
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  });
+
+  const addBookmarkMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axios.post(
+        BACKEND_BOOKMARK_URL,
+        { recipeId: id },
+        {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-        setHasBookmarked(response.data.isBookmarked);
-      } catch (err) {
-        console.error("error getting recipe bookmark status:", err);
-      }
+        }
+      );
+
+      // assume backend returns the new bookmark or status
+      return response.data;
+    },
+
+    onSuccess: () => {
+      // Option 1: directly set the cached status to true
+      queryClient.setQueryData(["has-bookmarked", id], true);
+
+      // Option 2 (alternative): invalidate so it refetches from backend
+      // queryClient.invalidateQueries({ queryKey: ["has-bookmarked", id] });
+
+      toast.success("You’ve bookmarked this recipe.");
+    },
+
+    onError: (error) => {
+      console.error("Error adding bookmark:", error);
+      const msg = error.response?.data?.message || "Failed to add bookmark.";
+      toast.error(msg);
+    },
+  });
+
+  const isAddingBookmark = addBookmarkMutation.isPending;
+
+  //
+  //
+
+  const submitComment = async (commentText) => {
+    const commentPayload = {
+      comment_text: commentText,
+      recipe_id: Number(id),
     };
 
-    fetchComments();
-  }, [id]);
+    const response = await axios.post(BACKEND_COMMENT_URL, commentPayload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // assuming your backend returns the new comment here:
+    return response.data.comment;
+  };
+
+  const commentMutation = useMutation({
+    mutationFn: submitComment,
+    onSuccess: (newComment_api) => {
+      // Update cache for ["list-comment", id]
+      queryClient.setQueryData(["list-comment", id], (oldComments) => {
+        if (!oldComments) return [newComment_api];
+        return [newComment_api, ...oldComments];
+      });
+
+      setComment(""); // clear textarea/input
+    },
+    onError: (err) => {
+      console.error("Comment submission failed:", err);
+      const msg = err.response?.data?.message || "Failed to submit comment. Please try again.";
+      setError(msg); // or toast.error(msg)
+    },
+  });
 
   // Handler for posting a comment
   async function handleCommentSubmit() {
@@ -419,49 +344,16 @@ export default function Recipe() {
       return;
     }
 
-    // submit data to database
-    const commentPayload = {
-      comment_text: trimmedComment,
-      recipe_id: Number(id),
-    };
-
-    try {
-      const response = await axios.post(BACKEND_COMMENT_URL, commentPayload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const newComment_api = response.data.comment;
-
-      setListComments((prevComments) => [newComment_api, ...prevComments]);
-      setComment("");
-    } catch (err) {
-      // 6. Error Handling
-      console.error("Comment submission failed:", err);
-      setError(err.response?.data?.message || "Failed to submit comment. Please try again.");
-    }
+    commentMutation.mutate(trimmedComment);
   }
 
   async function handleAddToBookmark() {
-    try {
-      const response = await axios.post(
-        BACKEND_BOOKMARK_URL,
-        {
-          recipeId: id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setHasBookmarked(true);
-      toast.success("You’ve bookmarked this recipe.");
-    } catch (error) {
-      console.error("Error adding bookmark:", error.response.data.message);
-      console.error("Error adding bookmark:", error);
+    if (!token) {
+      openModal("need-login");
+      return;
     }
+
+    addBookmarkMutation.mutate();
   }
 
   return (
@@ -469,7 +361,7 @@ export default function Recipe() {
       {/* Navigator */}
       <Navigator />
 
-      {isloading && (
+      {recipeLoading && (
         <div className="max-w-7xl mx-auto px-4 mt-30 sm:px-6 lg:px-8 py-10 animate-pulse">
           {/* 1. Header Section: Title and Quick Info */}
           <div className="mb-10">
@@ -526,7 +418,7 @@ export default function Recipe() {
         </div>
       )}
 
-      {recipe != null && (
+      {recipe?.id != null && (
         <div className="">
           <div className="w-10/12 max-w-7xl mx-auto mt-30 ">
             <Toaster position="top-center" reverseOrder={false} />
@@ -584,12 +476,16 @@ export default function Recipe() {
 
               {/* side 2 */}
               <div className="absolute right-0 top-0 md:top-3 md:right-3 lg:top-5 lg:right-5 hidden md:block">
-                <FontAwesomeIcon
-                  icon={hasBookmarked ? faBookmarked : faBookmark}
-                  className="text-green-900 w-10 h-10 cursor-pointer"
-                  size="2x"
-                  onClick={handleAddToBookmark}
-                />
+                {isAddingBookmark ? (
+                  <span className="animate-spin mr-2 border-t-2 border-green-900 rounded-full w-4 h-4 inline-block"></span>
+                ) : (
+                  <FontAwesomeIcon
+                    icon={hasBookmarked ? faBookmarked : faBookmark}
+                    className="text-green-900 w-10 h-10 cursor-pointer"
+                    size="2x"
+                    onClick={handleAddToBookmark}
+                  />
+                )}
               </div>
             </div>
 
@@ -713,7 +609,7 @@ export default function Recipe() {
 
                   {/* parent */}
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-5">
-                    {recipe.similarRecipe?.map((recipee, index) => (
+                    {similarRecipe.map((recipee, index) => (
                       <RecipeItem
                         key={index}
                         name={recipee.title}
@@ -811,12 +707,9 @@ export default function Recipe() {
                     }}
                   ></textarea>
 
-                  <button
-                    className="bg-black cursor-pointer text-white px-5 py-3 rounded-lg absolute right-5 bottom-5"
-                    onClick={handleCommentSubmit}
-                  >
+                  <Button className="absolute right-5 bottom-5" onClick={handleCommentSubmit}>
                     Comment
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -833,17 +726,15 @@ export default function Recipe() {
 
               {/* parent */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
-                {isloading && (
+                {randomRecipeLoading ? (
                   <>
                     {[...Array(8)].map((_, index) => (
                       <RecipeItemSkeleton key={index} />
                     ))}
                   </>
-                )}
-
-                {!isloading && recipe?.random?.length > 0 && (
+                ) : (
                   <>
-                    {recipe.random.map((popularRecipe, index) => (
+                    {randomRecipe.map((popularRecipe, index) => (
                       <RecipeItem
                         key={index}
                         name={popularRecipe.title}
