@@ -4,9 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faL, faSearch, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 // Components
-// Components
-// Components
-// Components
 import Logo from "./Logo";
 import NavLink from "./NavLink";
 import RegisterModal from "./RegisterModal";
@@ -21,16 +18,10 @@ export default function Navigator() {
   const { modalType, openModal } = useModal();
 
   // Ref for handling clicks outside the dropdown
-  // Ref for handling clicks outside the dropdown
-  // Ref for handling clicks outside the dropdown
-  // Ref for handling clicks outside the dropdown
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [navIsOpen, navSetIsOpen] = useState(false);
 
-  // Zustand
-  // Zustand
-  // Zustand
   // Zustand
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -46,7 +37,6 @@ export default function Navigator() {
     <>
       {navIsOpen && (
         <div className="fixed inset-0 z-60 bg-black/90 flex items-center justify-center">
-          {/* nav link */}
           {/* nav link */}
           <div className="">
             <ul className="uppercase flex gap-10 flex-col items-center ">
