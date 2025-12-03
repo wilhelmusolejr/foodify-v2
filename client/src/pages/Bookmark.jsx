@@ -86,6 +86,7 @@ export default function Bookmark() {
 
     const BACKEND_API = `${BACKEND_BOOKMARK_URL}/getUserBookmarks/${id}`;
     const res = await axios.get(BACKEND_API, { signal });
+
     return res.data.bookmarks;
   };
   const {
