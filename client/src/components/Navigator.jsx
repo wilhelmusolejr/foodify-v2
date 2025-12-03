@@ -78,11 +78,17 @@ export default function Navigator() {
                 {/* Dropdown Menu */}
                 {isOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden z-20 transition-opacity duration-200 origin-top-right animate-fade-in">
+                    {/* item */}
                     <a href={`/profile/${user.id}`} className="block p-5 border-b border-gray-100">
                       <p className="font-medium text-gray-900 truncate">Profile</p>
                     </a>
 
-                    {/* Menu Items */}
+                    {/* item */}
+                    <a href={`/bookmark/${user.id}`} className="block p-5 border-b border-gray-100">
+                      <p className="font-medium text-gray-900 truncate">Bookmark</p>
+                    </a>
+
+                    {/*  Items */}
                     <button
                       onClick={handleLogout}
                       className="flex items-center w-full p-5 text-red-600 cursor-pointer hover:bg-red-50 hover:text-red-700 transition duration-150"
@@ -249,11 +255,17 @@ export default function Navigator() {
                 {/* Dropdown Menu */}
                 {isOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden z-20 transition-opacity duration-200 origin-top-right animate-fade-in">
+                    {/* item */}
                     <a href={`/profile/${user.id}`} className="block p-5 border-b border-gray-100">
                       <p className="font-medium text-gray-900 truncate">Profile</p>
                     </a>
 
-                    {/* Menu Items */}
+                    {/* item */}
+                    <a href={`/bookmark/${user.id}`} className="block p-5 border-b border-gray-100">
+                      <p className="font-medium text-gray-900 truncate">Bookmark</p>
+                    </a>
+
+                    {/* Item */}
                     <button
                       onClick={handleLogout}
                       className="flex items-center w-full p-5 text-red-600 cursor-pointer hover:bg-red-50 hover:text-red-700 transition duration-150"
