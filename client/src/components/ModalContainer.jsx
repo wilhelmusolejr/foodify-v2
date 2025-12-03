@@ -18,7 +18,7 @@ export default function ModalContainer({ children }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-center items-center bg-black/50 close-modal"
+      className="fixed inset-0 z-60 flex justify-center items-center bg-black/50 close-modal"
       onClick={handleOverlayClick}
     >
       {children}
