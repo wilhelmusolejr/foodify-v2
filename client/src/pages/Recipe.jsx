@@ -46,6 +46,7 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useModal } from "../context/ModalContext";
+import offlineRecipeData from "./recipe.json";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Button from "../components/Global/Button";
@@ -66,6 +67,7 @@ export default function Recipe() {
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
   const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
 
   const [comment, setComment] = useState("");
 
@@ -73,81 +75,172 @@ export default function Recipe() {
   const fetchRecipe = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
     if (!id) throw new Error("Missing recipe id");
-    const apiUrl = `${FOOD_API}/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
 
-    const res = await axios.get(apiUrl, { signal });
-
-    // 2. Axios data is automatically parsed as JSON
-    res.data.groupedByAisle = res.data.extendedIngredients.reduce((accumulator, ingredient) => {
-      const aisle = ingredient.aisle;
-
-      // If the aisle doesn't exist in the accumulator, initialize it as an array
-      if (!accumulator[aisle]) {
-        accumulator[aisle] = [];
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      if (signal?.aborted) {
+        throw new Error("Request was aborted");
       }
 
-      // Push the ingredient object (or a subset of its properties)
-      accumulator[aisle].push({
-        id: ingredient.id,
-        name: ingredient.name,
-        original: ingredient.original,
-      });
+      const apiKey = getRandomApiKey();
+      const apiUrl = `${FOOD_API}/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
 
-      return accumulator;
-    }, {});
+      try {
+        const res = await axios.get(apiUrl, { signal });
 
-    res.data.finalIngredientsArray = Object.entries(res.data.groupedByAisle).map(
-      ([aisleName, ingredientList]) => {
-        return {
-          name: aisleName, // The key becomes the 'name' property
-          list: ingredientList, // The value (the array of ingredients) becomes the 'list' property
-        };
+        // 2. Axios data is automatically parsed as JSON
+        res.data.groupedByAisle = res.data.extendedIngredients.reduce((accumulator, ingredient) => {
+          const aisle = ingredient.aisle;
+
+          // If the aisle doesn't exist in the accumulator, initialize it as an array
+          if (!accumulator[aisle]) {
+            accumulator[aisle] = [];
+          }
+
+          // Push the ingredient object (or a subset of its properties)
+          accumulator[aisle].push({
+            id: ingredient.id,
+            name: ingredient.name,
+            original: ingredient.original,
+          });
+
+          return accumulator;
+        }, {});
+
+        res.data.finalIngredientsArray = Object.entries(res.data.groupedByAisle).map(
+          ([aisleName, ingredientList]) => {
+            return {
+              name: aisleName, // The key becomes the 'name' property
+              list: ingredientList, // The value (the array of ingredients) becomes the 'list' property
+            };
+          }
+        );
+
+        res.data.tags = [
+          {
+            heading: "Cheap",
+            name: "cheap",
+            icon: faDollarSign,
+          },
+          {
+            heading: "Gluten Free",
+            name: "glutenFree",
+            icon: faWheatAwn,
+          },
+          {
+            heading: "Sustainable",
+            name: "sustainable",
+            icon: faSeedling,
+          },
+          {
+            heading: "Vegan",
+            name: "vegan",
+            icon: faLeaf,
+          },
+          {
+            heading: "Vegetarian",
+            name: "vegetarian",
+            icon: faAppleWhole,
+          },
+          {
+            heading: "Very Healthy",
+            name: "veryHealthy",
+            icon: faHeart,
+          },
+          {
+            heading: "Very Popular",
+            name: "veryPopular",
+            icon: faStar,
+          },
+        ];
+
+        res.data.tags.forEach((tags) => {
+          tags.status = res.data[tags.name];
+        });
+
+        return res.data;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          // 2. Axios data is automatically parsed as JSON
+          offlineRecipeData.groupedByAisle = offlineRecipeData.extendedIngredients.reduce(
+            (accumulator, ingredient) => {
+              const aisle = ingredient.aisle;
+
+              // If the aisle doesn't exist in the accumulator, initialize it as an array
+              if (!accumulator[aisle]) {
+                accumulator[aisle] = [];
+              }
+
+              // Push the ingredient object (or a subset of its properties)
+              accumulator[aisle].push({
+                id: ingredient.id,
+                name: ingredient.name,
+                original: ingredient.original,
+              });
+
+              return accumulator;
+            },
+            {}
+          );
+
+          offlineRecipeData.finalIngredientsArray = Object.entries(
+            offlineRecipeData.groupedByAisle
+          ).map(([aisleName, ingredientList]) => {
+            return {
+              name: aisleName, // The key becomes the 'name' property
+              list: ingredientList, // The value (the array of ingredients) becomes the 'list' property
+            };
+          });
+
+          offlineRecipeData.tags = [
+            {
+              heading: "Cheap",
+              name: "cheap",
+              icon: faDollarSign,
+            },
+            {
+              heading: "Gluten Free",
+              name: "glutenFree",
+              icon: faWheatAwn,
+            },
+            {
+              heading: "Sustainable",
+              name: "sustainable",
+              icon: faSeedling,
+            },
+            {
+              heading: "Vegan",
+              name: "vegan",
+              icon: faLeaf,
+            },
+            {
+              heading: "Vegetarian",
+              name: "vegetarian",
+              icon: faAppleWhole,
+            },
+            {
+              heading: "Very Healthy",
+              name: "veryHealthy",
+              icon: faHeart,
+            },
+            {
+              heading: "Very Popular",
+              name: "veryPopular",
+              icon: faStar,
+            },
+          ];
+
+          offlineRecipeData.tags.forEach((tags) => {
+            tags.status = offlineRecipeData[tags.name];
+          });
+
+          return offlineRecipeData;
+        }
       }
-    );
-
-    res.data.tags = [
-      {
-        heading: "Cheap",
-        name: "cheap",
-        icon: faDollarSign,
-      },
-      {
-        heading: "Gluten Free",
-        name: "glutenFree",
-        icon: faWheatAwn,
-      },
-      {
-        heading: "Sustainable",
-        name: "sustainable",
-        icon: faSeedling,
-      },
-      {
-        heading: "Vegan",
-        name: "vegan",
-        icon: faLeaf,
-      },
-      {
-        heading: "Vegetarian",
-        name: "vegetarian",
-        icon: faAppleWhole,
-      },
-      {
-        heading: "Very Healthy",
-        name: "veryHealthy",
-        icon: faHeart,
-      },
-      {
-        heading: "Very Popular",
-        name: "veryPopular",
-        icon: faStar,
-      },
-    ];
-
-    res.data.tags.forEach((tags) => {
-      tags.status = res.data[tags.name];
-    });
-
-    return res.data;
+    }
   };
   const {
     data: recipe = {},
@@ -157,22 +250,43 @@ export default function Recipe() {
     queryKey: ["recipe", id],
     queryFn: fetchRecipe,
     enabled: !!id,
-    retry: 1,
+    retry: 0,
     staleTime: 1000 * 60 * 2,
   });
-
-  console.log(recipe);
 
   // Get similar Recipe
   const fetchSimilarRecipe = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
     if (!id) throw new Error("Missing recipe id");
 
-    const apiUrl = `${FOOD_API}/recipes/${id}/similar?number=6&apiKey=${apiKey}`;
-    const res = await axios.get(apiUrl, { signal });
-    return res.data;
-  };
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      if (signal?.aborted) {
+        throw new Error("Request was aborted");
+      }
 
+      const apiKey = getRandomApiKey();
+      const apiUrl = `${FOOD_API}/recipes/${id}/similar?number=6&apiKey=${apiKey}`;
+
+      try {
+        const res = await axios.get(apiUrl, { signal });
+        return res.data;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          const localRecipes = Array.from({ length: 6 }, () => ({
+            ...offlineRecipeData,
+          }));
+
+          toast.error("Showing offline data. API LIMIT");
+
+          return localRecipes;
+        }
+      }
+    }
+  };
   const {
     data: similarRecipe = [],
     isLoading: similarRecipeLoading,
@@ -187,9 +301,33 @@ export default function Recipe() {
 
   // Get random recipe
   const fetchRandomRecipe = async ({ signal }) => {
-    const apiUrl = `${FOOD_API}/recipes/random?number=8&apiKey=${apiKey}`;
-    const res = await axios.get(apiUrl, { signal });
-    return res.data.recipes;
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      if (signal?.aborted) {
+        throw new Error("Request was aborted");
+      }
+
+      const apiKey = getRandomApiKey();
+      const apiUrl = `${FOOD_API}/recipes/random?number=8&apiKey=${apiKey}`;
+
+      try {
+        const res = await axios.get(apiUrl, { signal });
+        return res.data.recipes;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          const localRecipes = Array.from({ length: 8 }, () => ({
+            ...offlineRecipeData,
+          }));
+
+          toast.error("Showing offline data. API LIMIT");
+
+          return localRecipes;
+        }
+      }
+    }
   };
   const {
     data: randomRecipe = [],

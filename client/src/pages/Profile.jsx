@@ -27,8 +27,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useModal } from "../context/ModalContext";
 import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
 
+import toast, { Toaster } from "react-hot-toast";
+
 // Skeleton data
 let skeletonRecipes = Array.from({ length: 8 }, () => <RecipeItemSkeleton />);
+
+import offlineRecipeData from "./recipe.json";
 
 export default function Profile() {
   const { modalType, openModal } = useModal();
@@ -42,6 +46,7 @@ export default function Profile() {
   const BACKEND_COMMENT_URL = `${BACKEND_URL}/api/comment`;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
   const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
 
   const MAX_RECIPES_DISPLAY = 8;
 
@@ -137,12 +142,35 @@ export default function Profile() {
         .join(",") ?? ""
     );
   }, [userBookmarks]);
+
   const fetchRecipe = async ({ queryKey, signal }) => {
     // queryKey: ["recipes", id, idsString]
     const [, id, idsString] = queryKey;
-    const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
-    const res = await axios.get(apiUrl, { signal });
-    return res.data;
+
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      try {
+        const apiKey = getRandomApiKey();
+
+        const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
+
+        const res = await axios.get(apiUrl, { signal });
+        return res.data;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          const localRecipes = Array.from({ length: userBookmarks.length }, () => ({
+            ...offlineRecipeData,
+          }));
+
+          toast.error("Showing offline data. API LIMIT");
+
+          return localRecipes;
+        }
+      }
+    }
   };
   const {
     data: recipeData = [],
@@ -152,7 +180,7 @@ export default function Profile() {
     queryKey: ["recipes", id, bookmarkIds],
     queryFn: fetchRecipe,
     enabled: !!id && bookmarkIds.length > 0,
-    retry: 1,
+    retry: 0,
     staleTime: 1000 * 60 * 2,
   });
 
@@ -174,6 +202,8 @@ export default function Profile() {
     <>
       {/* Navigator */}
       <Navigator />
+
+      <Toaster position="top-center" reverseOrder={false} />
 
       <div className="">
         {userProfileLoading ? (

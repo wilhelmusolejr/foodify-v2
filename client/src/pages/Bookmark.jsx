@@ -19,6 +19,9 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getRandomApiKey } from "../utils/apiUtils";
 
+import toast, { Toaster } from "react-hot-toast";
+import offlineRecipeData from "./recipe.json";
+
 // GLOBAL STATE
 import { useAuthStore } from "../stores/useAuthStore";
 
@@ -40,13 +43,12 @@ export default function Bookmark() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const isVisitor = isLoggedIn ? user.id !== id : true;
 
-  const apiKey = getRandomApiKey();
-
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const BACKEND_USER_URL = `${BACKEND_URL}/api/user`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
   const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
 
   // Get user profile
   const fetchUserProfile = async ({ queryKey, signal }) => {
@@ -115,11 +117,34 @@ export default function Bookmark() {
   }, [userBookmarks]);
 
   const fetchRecipe = async ({ queryKey, signal }) => {
-    // queryKey: ["recipes", id, idsString]
     const [, id, idsString] = queryKey;
-    const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
-    const res = await axios.get(apiUrl, { signal });
-    return res.data;
+
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      try {
+        if (signal?.aborted) {
+          throw new Error("Request was aborted");
+        }
+
+        const apiKey = getRandomApiKey();
+        const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
+        const res = await axios.get(apiUrl, { signal });
+        return res.data;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          const localRecipes = Array.from({ length: userBookmarks.length }, () => ({
+            ...offlineRecipeData,
+          }));
+
+          toast.error("Showing offline data. API LIMIT");
+
+          return localRecipes;
+        }
+      }
+    }
   };
   const {
     data: recipeData = [],
@@ -148,6 +173,7 @@ export default function Bookmark() {
     <>
       {/* navigator */}
       <Navigator />
+      <Toaster position="top-center" reverseOrder={false} />
 
       {userProfileError && (
         <div className="flex flex-col items-center justify-center my-50 pb-20 text-center w-10/12 mx-auto">
