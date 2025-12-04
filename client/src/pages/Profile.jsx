@@ -69,12 +69,8 @@ export default function Profile() {
 
     const user = res?.data?.user ?? {};
 
-    const initial = (user.firstName?.[0] ?? "U").toUpperCase();
-    const profile_path = `https://placehold.co/40x40/4c3c3a/ffffff?text=${encodeURIComponent(initial)}`;
-
     return {
       ...user,
-      profile_path,
     };
   };
   const {
@@ -215,11 +211,11 @@ export default function Profile() {
               <div className="w-10/12 mx-auto max-w-7xl py-20 mt-10 text-white min-h-[60vh] flex items-center  relative">
                 <div className="flex flex-col md:flex-row gap-10 md:max-w-[700px] mx-auto items-center">
                   {/* image */}
-                  <div className="w-40 h-40 text-center flex justify-center items-center">
+                  <div className="w-40 h-40 text-center flex justify-center items-center ">
                     <img
-                      src={userProfile.profile_path}
+                      src={userProfile.profile_image}
                       alt={`${userProfile.firstName}'s profile`}
-                      className="w-full h-full rounded-full object-cover shadow-md"
+                      className="w-full h-full rounded-full object-cover shadow-md border border-white/10"
                     />
                   </div>
                   {/* data */}

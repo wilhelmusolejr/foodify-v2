@@ -225,7 +225,7 @@ export default function Navigator() {
                 >
                   {/* Profile Picture (Avatar) */}
                   <img
-                    src={user?.profileUrl || PLACEHOLDER_AVATAR}
+                    src={user.profile_image}
                     alt={`${user.firstName}'s profile`}
                     className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-300 shadow-md"
                   />

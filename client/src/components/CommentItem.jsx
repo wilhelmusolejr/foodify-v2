@@ -13,7 +13,7 @@ export default function CommentItem({ userProfile, commentData }) {
           {/* Placeholder or actual user image */}
           {true ? (
             <img
-              src={userProfile.profile_path}
+              src={userProfile.profile_image}
               alt={`s profile`}
               className="w-10 h-10 rounded-full object-cover border border-gray-300"
             />

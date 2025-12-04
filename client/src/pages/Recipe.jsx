@@ -861,7 +861,7 @@ export default function Recipe() {
                         className="gap-5 border-t border-black/10 pt-14 flex items-start"
                       >
                         <img
-                          src={`https://placehold.co/40x40/4c3c3a/ffffff?text=${comment.user_id.firstName[0]}`}
+                          src={comment.user_id.profile_image}
                           alt={`${comment.user_id.firstName}'s profile`}
                           className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-300 shadow-md"
                         />
