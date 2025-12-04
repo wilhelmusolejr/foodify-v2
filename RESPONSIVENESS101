@@ -60,21 +60,50 @@ f547819e2e124a0b827e56462ce23f46
 
 BOOKMARK PAGE
 
-1. Pagination
-2. Search engine a. Stay or b. Remove
-3. Dropdown a. Recipe b. Blog
+1. Pagination // infinite - when user pressed loadmore, then fetch recipe data and add in the current recipes
+2. Search engine a. Stay or b. Remove - only search that is currently visible, search by name
+3. Dropdown a. Recipe b. Blog - show empty UI for dropdown and loader
 
 RECIPE PAGE
 
-1. Wine Pairing
-
-2. Handle error UI in all pages
-
-3. Set page name
+1. Wine Pairing -- DONE
+2. Handle error UI in all pages -- DONE
+3. Set page name -- DONE
 
 4. Page loader/spinner
+
+5. figma update design
 
 BACKEND
 USER
 
 1. Image a. Upload actual image b. Save placeholder instead
+
+DEC 5
+
+- Handle error when mongo db is offline. // SHOW INFORMATION, make the page for frontend only. save to local storage instead
+  make json of users. (extract data in the database)
+
+- ui final check
+
+DEC 6
+
+- MEAL PLANNER PAGE UI
+  --- show data
+  --- delete data
+
+- Recipe page -> add to planner -> MODAL UI
+  --- select data
+
+DEC 7.
+DATABASE
+
+- MEAL PLANNER LOGIC
+  ---- show data
+  ---- delete data
+
+DEC 8
+Finalize
+
+DEC 9
+Figma
