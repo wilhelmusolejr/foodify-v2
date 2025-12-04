@@ -37,6 +37,14 @@ const userSchema = new mongoose.Schema(
       required: false,
       maxlength: 500,
     },
+    profile_image: {
+      type: String,
+      required: false,
+      trim: true,
+      default: function () {
+        return `https://api.dicebear.com/7.x/avataaars/svg?seed=${this._id}`;
+      },
+    },
   },
   { timestamps: true }
 );
