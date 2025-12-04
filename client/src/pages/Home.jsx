@@ -57,6 +57,7 @@ let blogs = [
 function Home() {
   const apiKey = getRandomApiKey();
   const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
 
   const [currentIngredients, setCurrentIngredients] = useState([]);
   const [ingredientError, setIngredientError] = useState(false);
@@ -124,6 +125,10 @@ function Home() {
       heading: recipesData.slice(13, 16),
     }),
   });
+
+  useEffect(() => {
+    document.title = `Discover | ${PAGE_NAME}`;
+  }, []);
 
   return (
     <>

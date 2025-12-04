@@ -28,7 +28,6 @@ import Tags from "@components/Recipe/Tags";
 import NutritionFacts from "@components/NutritionFacts";
 import Feedback from "@components/Recipe/Feedback";
 import SectionHeading from "@components/SectionHeading";
-import recipeData from "./recipe.json";
 import IconItem from "@components/IconItem";
 import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
@@ -66,6 +65,7 @@ export default function Recipe() {
   const BACKEND_COMMENT_URL = `${BACKEND_URL}/api/comment`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
 
   const [comment, setComment] = useState("");
 
@@ -160,6 +160,8 @@ export default function Recipe() {
     retry: 1,
     staleTime: 1000 * 60 * 2,
   });
+
+  console.log(recipe);
 
   // Get similar Recipe
   const fetchSimilarRecipe = async ({ queryKey, signal }) => {
@@ -356,6 +358,11 @@ export default function Recipe() {
     addBookmarkMutation.mutate();
   }
 
+  // Page title
+  useEffect(() => {
+    document.title = `Recipe Name | ${PAGE_NAME}`;
+  }, []);
+
   return (
     <>
       {/* Navigator */}
@@ -550,40 +557,112 @@ export default function Recipe() {
                   </div>
                 </div>
 
-                {/* Equipments */}
-                <div className="my-14 hidden">
-                  {/* heading */}
-                  <Heading name="Equipments" step="0/12" />
+                {/* Wine Pairing */}
+                <div className="my-20">
+                  <Heading name="Wine Pairing" />
 
-                  {/* item */}
-                  <ul className="flex flex-col gap-3 mt-5 ms-2">
-                    <ListItem>
-                      <div className="rounded-full border w-5 h-5"></div>
-                      <p>120 extra virgin olive oil</p>
-                    </ListItem>
-                  </ul>
+                  {/* If no wine data */}
+                  {!recipe?.winePairing?.pairedWines?.length && (
+                    <ListItem>No wine pairings available for this recipe.</ListItem>
+                  )}
+
+                  {/* Paired Wines */}
+                  {recipe?.winePairing?.pairedWines?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {recipe.winePairing.pairedWines.map((wine) => (
+                        <span
+                          key={wine}
+                          className="px-3 py-1 text-sm rounded-full bg-rose-100 text-rose-700 font-medium"
+                        >
+                          {wine}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Pairing Text */}
+                  {recipe?.winePairing?.pairingText && (
+                    <p className="mt-6 text-gray-700 leading-relaxed">
+                      {recipe.winePairing.pairingText}
+                    </p>
+                  )}
+
+                  {/* Product Match */}
+                  {recipe?.winePairing?.productMatches?.length > 0 && (
+                    <div className="mt-10">
+                      <h3 className="text-lg font-semibold mb-4">Featured Wine</h3>
+
+                      {recipe.winePairing.productMatches.map((product) => (
+                        <div
+                          key={product.id}
+                          className="border border-black/10 rounded-xl p-4 flex gap-4 shadow-sm hover:shadow-md transition"
+                        >
+                          {/* Image */}
+                          <img
+                            src={product.imageUrl}
+                            alt={product.title}
+                            className="w-32 h-24 object-cover rounded-md"
+                          />
+
+                          {/* Info */}
+                          <div className="flex-1">
+                            <h4 className="text-lg font-semibold">{product.title}</h4>
+
+                            <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                              <span className="font-medium text-rose-600">{product.price}</span>
+                              <span>•</span>
+                              <span>
+                                ⭐ {product.averageRating} ({product.ratingCount} reviews)
+                              </span>
+                            </div>
+
+                            {/* Description */}
+                            <p className="text-gray-600 text-sm mt-2 line-clamp-3">
+                              {product.description}
+                            </p>
+
+                            {/* Button */}
+                            <a
+                              href={product.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block mt-3 text-sm bg-rose-600 text-white px-3 py-1.5 rounded-lg hover:bg-rose-700"
+                            >
+                              View Product
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {recipe?.analyzedInstructions?.[0]?.steps?.length > 0 && (
-                  <div className="my-14">
-                    {/* heading */}
-                    <Heading name="Instructions" />
+                {/* Instructions */}
+                <div className="my-20">
+                  {/* heading */}
+                  <Heading name="Instructions" />
 
-                    {/* list */}
-                    <ul className="flex flex-col gap-5">
-                      {recipe?.analyzedInstructions[0]?.steps?.map((step, index) => (
-                        <li className="flex gap-5 items-start" key={index}>
-                          {/* numbering */}
-                          <div className="w-7 h-7 rounded-full bg-green-900 text-white font-bold flex justify-center items-center">
-                            <p>{step.number}</p>
-                          </div>
+                  {/* If no instructions */}
+                  {recipe?.analyzedInstructions.length === 0 && (
+                    <p className="text-gray-500 italic mt-4">
+                      No instructions available for this recipe.
+                    </p>
+                  )}
 
-                          <Paragraph className={"flex-1"}>{step.step}</Paragraph>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                  {/* list */}
+                  <ul className="flex flex-col gap-5">
+                    {recipe?.analyzedInstructions[0]?.steps?.map((step, index) => (
+                      <li className="flex gap-5 items-start" key={index}>
+                        {/* numbering */}
+                        <div className="w-7 h-7 rounded-full bg-green-900 text-white font-bold flex justify-center items-center">
+                          <p>{step.number}</p>
+                        </div>
+
+                        <Paragraph className={"flex-1"}>{step.step}</Paragraph>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
                 {/* Nutrition Facts */}
                 <NutritionFacts className="block lg:hidden my-14" data={recipe.nutrition} />

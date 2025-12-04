@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faDownLong } from "@fortawesome/free-solid-svg-icons";
@@ -46,6 +46,7 @@ export default function Bookmark() {
   const BACKEND_USER_URL = `${BACKEND_URL}/api/user`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
 
   // Get user profile
   const fetchUserProfile = async ({ queryKey, signal }) => {
@@ -133,6 +134,15 @@ export default function Bookmark() {
   });
 
   let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
+
+  // Page title
+  useEffect(() => {
+    if (isVisitor) {
+      document.title = `${userProfile.firstName} ${userProfile.lastName} Bookmark | ${PAGE_NAME}`;
+    } else {
+      document.title = `My Bookmark | ${PAGE_NAME}`;
+    }
+  }, [userProfile]);
 
   return (
     <>

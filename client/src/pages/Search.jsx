@@ -29,6 +29,7 @@ import InputError from "../components/InputError";
 export default function Search() {
   const apiKey = getRandomApiKey();
   const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const searchTerm = searchParams.get("query");
@@ -294,6 +295,12 @@ export default function Search() {
     setPageNum(gotoPage);
     setIsTriggerSeach(true);
   }
+
+  // Page title
+  useEffect(() => {
+    let pageName = isTriggerSearch ? "Search Results" : "Find Recipes";
+    document.title = `${pageName} | ${PAGE_NAME}`;
+  }, [isTriggerSearch]);
 
   return (
     <>

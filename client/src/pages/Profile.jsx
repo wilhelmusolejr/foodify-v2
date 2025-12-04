@@ -41,6 +41,7 @@ export default function Profile() {
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
   const BACKEND_COMMENT_URL = `${BACKEND_URL}/api/comment`;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
 
   const MAX_RECIPES_DISPLAY = 8;
 
@@ -159,7 +160,15 @@ export default function Profile() {
 
   //
   //
-  //
+
+  // Page title
+  useEffect(() => {
+    if (isVisitor) {
+      document.title = `${userProfile.firstName} ${userProfile.lastName} Profile | ${PAGE_NAME}`;
+    } else {
+      document.title = `My Profile | ${PAGE_NAME}`;
+    }
+  }, [userProfile]);
 
   return (
     <>

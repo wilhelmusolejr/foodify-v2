@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
@@ -8,6 +8,8 @@ import Footer from "@components/Footer";
 import Test from "../components/Test";
 
 export default function Category() {
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+
   let listCategory = [
     {
       id: 1,
@@ -80,6 +82,11 @@ export default function Category() {
       image_name: "drink.jpg",
     },
   ];
+
+  // Page title
+  useEffect(() => {
+    document.title = `Explore Categories | ${PAGE_NAME}`;
+  }, []);
 
   return (
     <>
