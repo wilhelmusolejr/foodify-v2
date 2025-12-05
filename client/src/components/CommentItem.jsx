@@ -33,7 +33,7 @@ export default function CommentItem({ userProfile, commentData }) {
                 {`${userProfile.firstName} ${userProfile.lastName}`}
               </p>
               {/* Date */}
-              <p className="text-xs text-gray-500">{formatCommentDate(commentData.createdAt)}</p>
+              {/* <p className="text-xs text-gray-500">{formatCommentDate(commentData.createdAt)}</p> */}
             </div>
 
             {/* Recipe Link */}
