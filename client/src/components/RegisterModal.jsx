@@ -42,6 +42,8 @@ function generateRandomEmail() {
 
 export default function RegisterModal() {
   let backend_url = import.meta.env.VITE_BACKEND_URL;
+  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
+
   const { openModal, closeModal } = useModal();
 
   const randomEmail = generateRandomEmail();
@@ -91,6 +93,10 @@ export default function RegisterModal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // INPUT VALIDATION
+    // INPUT VALIDATION
+    // INPUT VALIDATION
+
     // Basic Client-Side Validation (e.g., check required fields)
     if (!formData.firstName || !formData.email || !formData.password) {
       setError("Please fill in all required fields (Name, Email, Password).");
@@ -103,10 +109,51 @@ export default function RegisterModal() {
       return;
     }
 
-    setIsLoading(true);
-    setError("");
+    // DEMO MODE
+    // DEMO MODE
+    // DEMO MODE
+    if (DEMO_MODE) {
+      setError("");
+      setIsLoading(true);
 
+      // Optional: fake a tiny delay so it feels real
+      setTimeout(() => {
+        // You can also store demo user in localStorage here if you want
+        // localStorage.setItem("demo_user", JSON.stringify(formData));
+
+        setIsLoading(false);
+        setIsSuccess(true);
+
+        let generatedId = Date.now();
+
+        // You can also call login() with a fake token/user if you want the app to behave "logged in"
+        login({
+          token: "demo-token",
+          user: {
+            id: generatedId,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            gender: formData.gender,
+            bio: formData.bio,
+            profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${generatedId}`,
+          },
+        });
+
+        // Show demo note
+        setError("Demo mode: this account exists only in your browser (no real backend/database).");
+      }, 700);
+
+      return;
+    }
+
+    // BACKEND
+    // BACKEND
+    // BACKEND
     try {
+      setIsLoading(true);
+      setError("");
+
       let backend_api_url = `${backend_url}/api/auth/register`;
       const response = await axios.post(backend_api_url, formData);
       const { token, user } = response.data;
@@ -116,10 +163,34 @@ export default function RegisterModal() {
         login({ token, user });
       }
     } catch (apiError) {
-      setError(
-        apiError.response?.data?.message || "Registration failed. Please try a different email."
-      );
-      setIsSuccess(false); // Ensure success state is false on error
+      console.error("Registration error:", apiError);
+
+      // Backend offline / network issue
+      if (!apiError.response) {
+        // No response at all from server: network error, CORS, server down, etc.
+        setError(
+          "The server is currently unavailable. Please try again later or run the backend locally."
+        );
+        setIsSuccess(false);
+        return;
+      }
+
+      // Backend is up but returned an error (4xx/5xx)
+      const status = apiError.response.status;
+      const messageFromServer = apiError.response.data?.message;
+
+      if (status >= 500) {
+        setError("Server error. Please try again later.");
+      } else if (status === 400 || status === 409) {
+        // validation / conflict / duplicate email, etc.
+        setError(
+          messageFromServer || "Registration failed due to invalid data. Please check your input."
+        );
+      } else {
+        setError(messageFromServer || "Registration failed. Please try again.");
+      }
+
+      setIsSuccess(false);
     } finally {
       setIsLoading(false);
     }

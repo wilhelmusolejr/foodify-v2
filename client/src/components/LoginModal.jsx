@@ -20,6 +20,7 @@ export default function LoginModal() {
 
   // ENV
   let backend_url = import.meta.env.VITE_BACKEND_URL;
+  let DEMO_MODE = import.meta.env.VITE_DEMO_MODE;
 
   // STATE
   const [formData, setFormData] = useState({
@@ -84,6 +85,15 @@ export default function LoginModal() {
 
           {/* Height-Controlled Body */}
           <div className="h-[70vh] relative flex flex-col">
+            {DEMO_MODE && (
+              <div className="bg-amber-500 text-white text-sm text-center p-5 ">
+                <p className="w-8/12 mx-auto">
+                  Demo mode: Data is stored only in your browser (localStorage). The backend is
+                  offline.
+                </p>
+              </div>
+            )}
+
             {isLoading ? (
               // --- LOADING SPINNER ---
               <div className="bg-green-200/50 absolute inset-0 h-full w-full z-10 flex justify-center items-center">
