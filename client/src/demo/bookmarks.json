@@ -1,0 +1,320 @@
+[{
+  "_id": {
+    "$oid": "692084d8e8bd0e2a7bfb4e10"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "recipe_id": 636158,
+  "createdAt": {
+    "$date": "2025-11-21T15:27:20.903Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T15:27:20.903Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692084fae8bd0e2a7bfb4e3d"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "recipe_id": 1095826,
+  "createdAt": {
+    "$date": "2025-11-21T15:27:54.365Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T15:27:54.365Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69208518e8bd0e2a7bfb4e5a"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "recipe_id": 661925,
+  "createdAt": {
+    "$date": "2025-11-21T15:28:24.156Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T15:28:24.156Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6920861ae8bd0e2a7bfb4e6e"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "recipe_id": 661740,
+  "createdAt": {
+    "$date": "2025-11-21T15:32:42.461Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T15:32:42.461Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6920864be8bd0e2a7bfb4e87"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "recipe_id": 660227,
+  "createdAt": {
+    "$date": "2025-11-21T15:33:31.801Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T15:33:31.801Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692199a402315a0390fa9e50"
+  },
+  "user_id": {
+    "$oid": "69216f0eb16aa20a664a5836"
+  },
+  "recipe_id": 643775,
+  "createdAt": {
+    "$date": "2025-11-22T11:08:20.851Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-22T11:08:20.851Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6921a02598cbc3d3fb2a18bf"
+  },
+  "user_id": {
+    "$oid": "69216f0eb16aa20a664a5836"
+  },
+  "recipe_id": 665285,
+  "createdAt": {
+    "$date": "2025-11-22T11:36:05.819Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-22T11:36:05.819Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692414b8d786015b61160b59"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "recipe_id": 660405,
+  "createdAt": {
+    "$date": "2025-11-24T08:18:00.786Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-24T08:18:00.786Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6924418fd786015b61160bc5"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "recipe_id": 646651,
+  "createdAt": {
+    "$date": "2025-11-24T11:29:19.929Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-24T11:29:19.929Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692441abd786015b61160bce"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "recipe_id": 661948,
+  "createdAt": {
+    "$date": "2025-11-24T11:29:47.627Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-24T11:29:47.627Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692539a8fa6b8fe1c7517efa"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "recipe_id": 684981,
+  "createdAt": {
+    "$date": "2025-11-25T05:07:52.178Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T05:07:52.178Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692fe48bbec2b78638c34a67"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "recipe_id": 622598,
+  "createdAt": {
+    "$date": "2025-12-03T07:19:39.405Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T07:19:39.405Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692fe897bec2b78638c34abd"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "recipe_id": 636589,
+  "createdAt": {
+    "$date": "2025-12-03T07:36:55.577Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T07:36:55.577Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692feac0bec2b78638c34ad4"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "recipe_id": 636576,
+  "createdAt": {
+    "$date": "2025-12-03T07:46:08.997Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T07:46:08.997Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692feae5bec2b78638c34add"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "recipe_id": 639337,
+  "createdAt": {
+    "$date": "2025-12-03T07:46:45.815Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T07:46:45.815Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692febc6bec2b78638c34aec"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "recipe_id": 715957,
+  "createdAt": {
+    "$date": "2025-12-03T07:50:30.542Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T07:50:30.542Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692fecd6bec2b78638c34b06"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "recipe_id": 652722,
+  "createdAt": {
+    "$date": "2025-12-03T07:55:02.480Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T07:55:02.480Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692feedabec2b78638c34b19"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "recipe_id": 157375,
+  "createdAt": {
+    "$date": "2025-12-03T08:03:38.017Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T08:03:38.017Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692ff211bec2b78638c34b39"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "recipe_id": 637930,
+  "createdAt": {
+    "$date": "2025-12-03T08:17:21.373Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T08:17:21.373Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693168bfd6b68e9f47a5224c"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "recipe_id": 636158,
+  "createdAt": {
+    "$date": "2025-12-04T10:56:00.003Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-04T10:56:00.003Z"
+  },
+  "__v": 0
+}]
