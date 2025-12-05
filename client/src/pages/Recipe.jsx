@@ -51,12 +51,16 @@ import offlineRecipeData from "./recipe.json";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Button from "../components/Global/Button";
 
+import bookmarkData from "../demo/bookmarks.json";
+import userData from "../demo/users.json";
+import commentData from "../demo/comments.json";
+
 export default function Recipe() {
   const { id } = useParams();
 
-  const apiKey = getRandomApiKey();
   const queryClient = useQueryClient();
   const token = useAuthStore.getState().token;
+  const user = useAuthStore.getState().user;
   const isLoggedIn = useAuthStore.getState().isLoggedIn;
 
   const { modalType, openModal } = useModal();
@@ -68,6 +72,7 @@ export default function Recipe() {
   const FOOD_API = import.meta.env.VITE_FOOD_API;
   const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
   const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
+  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
   const [comment, setComment] = useState("");
 
@@ -342,6 +347,7 @@ export default function Recipe() {
   });
 
   // Get comments
+  // Get comments
   const fetchComments = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
     if (!id) throw new Error("Missing id");
@@ -350,15 +356,38 @@ export default function Recipe() {
     const res = await axios.get(BACKEND_API, { signal });
     return res.data;
   };
+  const demoFetchComments = () => {
+    let listComments = [];
 
+    for (let comment in commentData) {
+      let recipeId = commentData[comment].recipe_id.toString();
+      if (recipeId === id) {
+        for (let user in userData) {
+          if (userData[user]._id.$oid === commentData[comment].user_id.$oid) {
+            let temp_data = { ...userData[user] };
+            temp_data._id = userData[user]._id.$oid;
+            commentData[comment].user_id = temp_data;
+            break;
+          }
+        }
+
+        commentData[comment].createdAt = commentData[comment].createdAt.$date;
+
+        listComments.push(commentData[comment]);
+      }
+    }
+
+    return listComments;
+  };
   const {
-    data: listComments,
+    data: listComments = [],
     isLoading: listCommentsLoading,
     error: listCommentsError,
   } = useQuery({
     queryKey: ["list-comment", id],
     queryFn: fetchComments,
-    enabled: !!id,
+    initialData: demoFetchComments,
+    enabled: !!id && !DEMO_MODE,
     retry: 1,
     staleTime: 1000 * 60 * 2,
   });
@@ -384,6 +413,19 @@ export default function Recipe() {
     return res.data.isBookmarked; // { isBookmarked, message }
   };
 
+  const demoCheckRecipeBookmarked = () => {
+    if (isLoggedIn) {
+      for (let bookmark in user?.bookmark) {
+        console.log(user.bookmark[bookmark].recipe_id);
+        if (id === user.bookmark[bookmark].recipe_id) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
   const {
     data: hasBookmarked = false,
     isLoading: hasBookmarkedLoading,
@@ -391,13 +433,53 @@ export default function Recipe() {
   } = useQuery({
     queryKey: ["has-bookmarked", id],
     queryFn: checkRecipeBookmarked,
-    enabled: !!id && !!token, // only run if logged in
+    enabled: !!id && !!token && !DEMO_MODE, // only run if logged in
     retry: 1,
     staleTime: 1000 * 60 * 2,
+    initialData: demoCheckRecipeBookmarked,
   });
+
+  const addDemoBookmark = () => {
+    if (!isLoggedIn || !user?.id) {
+      return false;
+    }
+
+    // Clone user, avoid mutation
+    const updatedUser = structuredClone(user);
+
+    // Ensure bookmark array exists
+    if (!Array.isArray(updatedUser.bookmark)) {
+      updatedUser.bookmark = [];
+    }
+
+    // Create a new bookmark entry
+    const newBookmark = {
+      id: Date.now(), // unique ID
+      user_id: updatedUser.id, // user reference
+      recipe_id: id, // recipe being saved
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Prevent duplicates
+    const alreadyBookmarked = updatedUser.bookmark.some((b) => b.recipe_id === id);
+    if (!alreadyBookmarked) {
+      updatedUser.bookmark.unshift(newBookmark);
+    }
+
+    // Save to localStorage
+    localStorage.setItem("authUser", JSON.stringify(updatedUser));
+
+    // Return updated user
+    return true;
+  };
 
   const addBookmarkMutation = useMutation({
     mutationFn: async () => {
+      if (DEMO_MODE) {
+        return addDemoBookmark(id);
+      }
+
       const response = await axios.post(
         BACKEND_BOOKMARK_URL,
         { recipeId: id },
@@ -434,7 +516,50 @@ export default function Recipe() {
   //
   //
 
+  const demoSubmitComment = () => {
+    if (!isLoggedIn || !user?.id) {
+      return false; // user not logged in
+    }
+
+    // Clone the user object to avoid mutation
+    const updatedUser = structuredClone(user);
+
+    // Ensure comment array exists
+    if (!Array.isArray(updatedUser.comment)) {
+      updatedUser.comment = [];
+    }
+
+    // Create new comment entry
+    const newComment = {
+      _id: {
+        $oid: Date.now(),
+      },
+      user_id: {
+        $oid: updatedUser.id,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        profile_image: updatedUser.profile_image,
+      },
+      recipe_id: id, // which recipe comment belongs to
+      comment_text: "fafafafa",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Add newest comment at the top
+    updatedUser.comment.unshift(newComment);
+
+    // Save to localStorage
+    localStorage.setItem("authUser", JSON.stringify(updatedUser));
+
+    return newComment;
+  };
+
   const submitComment = async (commentText) => {
+    if (DEMO_MODE) {
+      return demoSubmitComment();
+    }
+
     const commentPayload = {
       comment_text: commentText,
       recipe_id: Number(id),
@@ -860,11 +985,13 @@ export default function Recipe() {
                         key={index} // 2. Added key prop (REQUIRED in lists)
                         className="gap-5 border-t border-black/10 pt-14 flex items-start"
                       >
-                        <img
-                          src={comment.user_id.profile_image}
-                          alt={`${comment.user_id.firstName}'s profile`}
-                          className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-300 shadow-md"
-                        />
+                        <a href={`/profile/${comment.user_id._id}`}>
+                          <img
+                            src={comment.user_id.profile_image}
+                            alt={`${comment.user_id.firstName}'s profile`}
+                            className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-300 shadow-md"
+                          />
+                        </a>
                         <div className="flex-1">
                           <a href={`/profile/${comment.user_id._id}`}>
                             <h4 className="text-xl font-medium">
