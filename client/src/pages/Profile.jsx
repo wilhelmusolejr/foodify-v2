@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faCheck } from "@fortawesome/free-solid-svg-icons";
@@ -29,6 +29,10 @@ import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
 
 import toast, { Toaster } from "react-hot-toast";
 
+import bookmarkData from "../demo/bookmarks.json";
+import userData from "../demo/users.json";
+import commentData from "../demo/comments.json";
+
 // Skeleton data
 let skeletonRecipes = Array.from({ length: 8 }, () => <RecipeItemSkeleton />);
 
@@ -47,18 +51,25 @@ export default function Profile() {
   const FOOD_API = import.meta.env.VITE_FOOD_API;
   const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
   const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
+  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
   const MAX_RECIPES_DISPLAY = 8;
 
+  const queryObject = {
+    enabled: !!id && !DEMO_MODE,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  };
+
   // STATE
-  // const [userProfile, setUserProfile] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
 
   // Global Stand
   const user = useAuthStore((state) => state.user);
+  user.id = user.id.toString();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const isVisitor = isLoggedIn ? user.id !== id : true;
 
+  // Get user profile
   // Get user profile
   const fetchUserProfile = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
@@ -73,6 +84,17 @@ export default function Profile() {
       ...user,
     };
   };
+  const demoFetchUserProfile = () => {
+    if (!isVisitor) {
+      return user;
+    } else {
+      for (let user in userData) {
+        if (id === userData[user]._id.$oid) {
+          return userData[user];
+        }
+      }
+    }
+  };
   const {
     data: userProfile = {},
     isLoading: userProfileLoading,
@@ -80,11 +102,11 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["user-profile", id],
     queryFn: fetchUserProfile,
-    enabled: !!id,
-    retry: 1,
-    staleTime: 1000 * 60 * 2,
+    initialData: demoFetchUserProfile,
+    ...queryObject,
   });
 
+  // Get user bookmarks
   // Get user bookmarks
   const fetchUserBookmarks = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
@@ -94,6 +116,27 @@ export default function Profile() {
     const res = await axios.get(BACKEND_API, { signal });
     return res.data.bookmarks;
   };
+  const demoFetchUserBookmarks = () => {
+    let userBookmarks = [];
+
+    if (!isVisitor) {
+      if (user?.bookmark?.length === 0) {
+        userBookmarks = [];
+      } else {
+        userBookmarks = user?.bookmark;
+      }
+    } else {
+      for (let bookmark in bookmarkData) {
+        let currentBookmarkUserId = bookmarkData[bookmark].user_id.$oid;
+
+        if (currentBookmarkUserId === id) {
+          userBookmarks.push(bookmarkData[bookmark]);
+        }
+      }
+    }
+
+    return userBookmarks;
+  };
   const {
     data: userBookmarks = [],
     isLoading: userBookmarksLoading,
@@ -101,12 +144,12 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["user-bookmarks", id],
     queryFn: fetchUserBookmarks,
-    enabled: !!id,
-    retry: 1,
-    staleTime: 1000 * 60 * 2,
+    ...queryObject,
+    initialData: demoFetchUserBookmarks,
     select: (bookmark = []) => bookmark.slice(0, 8),
   });
 
+  // Get user comments
   // Get user comments
   const fetchUserComments = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
@@ -116,6 +159,21 @@ export default function Profile() {
     const res = await axios.get(BACKEND_API, { signal });
     return res.data.comments;
   };
+  const demoFetchUserComments = () => {
+    let listComments = [];
+
+    if (!isVisitor) {
+      listComments = user?.comments ? user?.comments : [];
+    } else {
+      for (let comment in commentData) {
+        if (commentData[comment].user_id.$oid === id) {
+          listComments.push(commentData[comment]);
+        }
+      }
+    }
+
+    return listComments;
+  };
   const {
     data: userComments = [],
     isLoading: userCommentsLoading,
@@ -123,11 +181,11 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["user-comments", id],
     queryFn: fetchUserComments,
-    enabled: !!id,
-    retry: 1,
-    staleTime: 1000 * 60 * 2,
+    ...queryObject,
+    initialData: demoFetchUserComments,
   });
 
+  // Get user recipes via api
   // Get user recipes via api
   const bookmarkIds = useMemo(() => {
     // extract numeric/string ids and join into a stable string
@@ -175,15 +233,11 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["recipes", id, bookmarkIds],
     queryFn: fetchRecipe,
+    ...queryObject,
     enabled: !!id && bookmarkIds.length > 0,
-    retry: 0,
-    staleTime: 1000 * 60 * 2,
   });
 
   let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
-
-  //
-  //
 
   // Page title
   useEffect(() => {
@@ -193,6 +247,8 @@ export default function Profile() {
       document.title = `My Profile | ${PAGE_NAME}`;
     }
   }, [userProfile]);
+
+  console.log(userBookmarks);
 
   return (
     <>
