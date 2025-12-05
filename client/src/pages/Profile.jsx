@@ -163,7 +163,7 @@ export default function Profile() {
     let listComments = [];
 
     if (!isVisitor) {
-      listComments = user?.comments ? user?.comments : [];
+      listComments = user?.comment ? user?.comment : [];
     } else {
       for (let comment in commentData) {
         if (commentData[comment].user_id.$oid === id) {
@@ -247,8 +247,6 @@ export default function Profile() {
       document.title = `My Profile | ${PAGE_NAME}`;
     }
   }, [userProfile]);
-
-  console.log(userBookmarks);
 
   return (
     <>
