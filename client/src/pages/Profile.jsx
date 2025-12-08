@@ -43,7 +43,6 @@ export default function Profile() {
 
   const { id } = useParams();
 
-  const apiKey = getRandomApiKey();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const BACKEND_USER_URL = `${BACKEND_URL}/api/user`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
@@ -64,9 +63,11 @@ export default function Profile() {
   // STATE
 
   // Global Stand
-  const user = useAuthStore((state) => state.user);
-  user.id = user.id.toString();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const user = useAuthStore((state) => state.user);
+  if (isLoggedIn) {
+    user.id = user.id.toString();
+  }
   const isVisitor = isLoggedIn ? user.id !== id : true;
 
   // Get user profile
