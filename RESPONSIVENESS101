@@ -84,16 +84,13 @@ DEC 5
 - Handle error when mongo db is offline. // SHOW INFORMATION, make the page for frontend only. save to local storage instead
   make json of users. (extract data in the database)
 
-  - bookmark page
+  - bookmark page DONE
   - fetch user comments in recipe page and combine from json and user comments
-  - bug in profile page if user is logged out
+    ----------- requires to add localstorage as authcomments
+  - bug in profile page if user is logged out DONE
 
 - ui final check
 
-DEC 6
-DEC 6
-DEC 6
-DEC 6
 DEC 6
 
 - MEAL PLANNER PAGE UI
