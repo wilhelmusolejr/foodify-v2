@@ -13,6 +13,7 @@ import Label from "@components/Label";
 import SearchButton from "@components/SearchButton";
 import Footer from "@components/Footer";
 import PaginationButton from "@components/PaginationButton";
+import EmptyRecipe from "@components/Profile/EmptyRecipe";
 
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -22,10 +23,11 @@ import { getRandomApiKey } from "../utils/apiUtils";
 import toast, { Toaster } from "react-hot-toast";
 import offlineRecipeData from "./recipe.json";
 
+import userData from "../demo/users.json";
+import bookmarkData from "../demo/bookmarks.json";
+
 // GLOBAL STATE
 import { useAuthStore } from "../stores/useAuthStore";
-
-import EmptyRecipe from "@components/Profile/EmptyRecipe";
 
 const skeletonRecipes = Array.from({ length: 12 }, () => <RecipeItemSkeleton />);
 
@@ -41,6 +43,9 @@ export default function Bookmark() {
 
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  if (isLoggedIn) {
+    user.id = user.id.toString();
+  }
   const isVisitor = isLoggedIn ? user.id !== id : true;
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -49,6 +54,7 @@ export default function Bookmark() {
   const FOOD_API = import.meta.env.VITE_FOOD_API;
   const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
   const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
+  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
   // Get user profile
   const fetchUserProfile = async ({ queryKey, signal }) => {
@@ -68,6 +74,17 @@ export default function Bookmark() {
       profile_path,
     };
   };
+  const demoFetchUserProfile = () => {
+    if (!isVisitor) {
+      return user;
+    } else {
+      for (let user in userData) {
+        if (id === userData[user]._id.$oid) {
+          return userData[user];
+        }
+      }
+    }
+  };
   const {
     data: userProfile = {},
     isLoading: userProfileLoading,
@@ -76,11 +93,13 @@ export default function Bookmark() {
   } = useQuery({
     queryKey: ["user-profile", id],
     queryFn: fetchUserProfile,
-    enabled: !!id,
+    enabled: !!id && !DEMO_MODE,
     retry: 1,
     staleTime: 1000 * 60 * 2,
-    initialData: user ? user : undefined,
+    initialData: demoFetchUserProfile,
   });
+
+  console.log(userProfile);
 
   // Fetch userbookmarks
   const fetchUserBookmarks = async ({ queryKey, signal }) => {
@@ -92,6 +111,27 @@ export default function Bookmark() {
 
     return res.data.bookmarks;
   };
+  const demoFetchUserBookmarks = () => {
+    let userBookmarks = [];
+
+    if (!isVisitor) {
+      if (user?.bookmark?.length === 0) {
+        userBookmarks = [];
+      } else {
+        userBookmarks = user?.bookmark;
+      }
+    } else {
+      for (let bookmark in bookmarkData) {
+        let currentBookmarkUserId = bookmarkData[bookmark].user_id.$oid;
+
+        if (currentBookmarkUserId === id) {
+          userBookmarks.push(bookmarkData[bookmark]);
+        }
+      }
+    }
+
+    return userBookmarks;
+  };
   const {
     data: userBookmarks = [],
     isLoading,
@@ -100,10 +140,13 @@ export default function Bookmark() {
   } = useQuery({
     queryKey: ["user-bookmark", id],
     queryFn: fetchUserBookmarks,
-    enabled: !!id && userProfileSuccess,
+    enabled: !!id && userProfileSuccess && !DEMO_MODE,
     retry: 1,
     staleTime: 1000 * 60 * 2,
+    initialData: demoFetchUserBookmarks,
   });
+
+  console.log(userBookmarks);
 
   //   Fetch Recipe
   const bookmarkIds = useMemo(() => {
@@ -270,7 +313,7 @@ export default function Bookmark() {
 
         {/* Pagination */}
         {recipeData.length > 5 && (
-          <div className="flex justify-center items-center gap-3 my-30">
+          <div className="flex justify-center items-center gap-3 my-30 hidden">
             {pageNum > 1 && (
               <PaginationButton
                 pageNum={pageNum - 1}
