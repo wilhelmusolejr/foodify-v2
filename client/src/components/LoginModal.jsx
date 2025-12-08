@@ -61,9 +61,13 @@ export default function LoginModal() {
       closeModal();
       set;
     } catch (apiError) {
-      setError(apiError.response?.data?.message || "Registration failed.");
+      setError(apiError.response?.data?.message || "Login failed.");
     } finally {
       setIsLoading(false);
+      setFormData({
+        email: "",
+        password: "",
+      });
     }
   };
 
@@ -86,7 +90,7 @@ export default function LoginModal() {
           {/* Height-Controlled Body */}
           <div className="h-[70vh] relative flex flex-col">
             {DEMO_MODE && (
-              <div className="bg-amber-500 text-white text-sm text-center p-5 ">
+              <div className="bg-amber-500 text-white text-sm text-center p-5 hidden">
                 <p className="w-8/12 mx-auto">
                   Demo mode: Data is stored only in your browser (localStorage). The backend is
                   offline.
