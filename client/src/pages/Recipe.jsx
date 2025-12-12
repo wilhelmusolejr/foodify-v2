@@ -935,7 +935,7 @@ export default function Recipe() {
               </div>
 
               {/* side 2 */}
-              <div className="flex-1">
+              <div className="flex-1 ">
                 {/* tags */}
                 <Tags className="hidden lg:flex mb-14" />
 
