@@ -267,6 +267,14 @@ export default function Navigator() {
                       <p className="font-medium text-gray-900 truncate">Bookmark</p>
                     </a>
 
+                    {/* item */}
+                    <a
+                      href={`/mealplanner/${user.id}`}
+                      className="block p-5 border-b border-gray-100"
+                    >
+                      <p className="font-medium text-gray-900 truncate">Mealplanner</p>
+                    </a>
+
                     {/* Item */}
                     <button
                       onClick={handleLogout}
