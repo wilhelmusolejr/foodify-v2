@@ -1,11 +1,10 @@
 import mongoose from "mongoose";
 import Mealplan from "../models/Mealplan.js";
-
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI; // make sure env is loaded
+const MONGO_URI = process.env.MONGO_URI;
 
 async function seedMealplans() {
   try {
@@ -21,29 +20,44 @@ async function seedMealplans() {
     };
 
     const data = [
+      // December 15
       {
         user_id: userId,
-        date: normalizeDate("2025-12-14"),
-        meals: {
-          breakfast: [647412],
-          lunch: [635215],
+        date: normalizeDate("2025-12-15"),
+        meal: {
+          breakfast: [{ recipeId: 647412 }],
+          lunch: [{ recipeId: 635215 }],
           dinner: [],
           snacks: [],
         },
       },
+
+      // December 16
       {
         user_id: userId,
-        date: normalizeDate("2025-12-13"),
-        meals: {
+        date: normalizeDate("2025-12-16"),
+        meal: {
           breakfast: [],
           lunch: [],
-          dinner: [635215],
+          dinner: [{ recipeId: 635215 }],
+          snacks: [],
+        },
+      },
+
+      // December 18
+      {
+        user_id: userId,
+        date: normalizeDate("2025-12-18"),
+        meal: {
+          breakfast: [{ recipeId: 525252 }],
+          lunch: [],
+          dinner: [{ recipeId: 794979 }],
           snacks: [],
         },
       },
     ];
 
-    // optional: clean old test data
+    // Remove existing test data for these dates
     await Mealplan.deleteMany({
       user_id: userId,
       date: { $in: data.map((d) => d.date) },

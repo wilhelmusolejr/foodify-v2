@@ -221,6 +221,7 @@ export default function Mealplanner() {
 
   const [selectedISO, setSelectedISO] = useState("");
   const [selectedDateData, setSelectedDateData] = useState(null);
+  const [selectedMealId, setSelectedMealId] = useState([]);
 
   const todayISO = getLocalISO();
 
@@ -235,8 +236,6 @@ export default function Mealplanner() {
 
   // return array of objects for all the days in the selected week
   const fetchUserMealSchedule = async ({ queryKey, signal }) => {
-    console.log("bonk");
-
     const [, selectedISO] = queryKey; // date, not userId
 
     const API_URL = `${BACKEND_MEAL_URL}/usermeal`;
@@ -248,8 +247,6 @@ export default function Mealplanner() {
       },
       signal,
     });
-
-    console.log(res.data);
 
     return res.data.data;
   };
@@ -276,9 +273,22 @@ export default function Mealplanner() {
     // modify the usermealschedule to include the recipe information
     //
 
-    console.log(userMealSchedule);
-    console.log(data);
+    // get recipe ids in the data
+    let todayRecipesId = [];
 
+    for (const mealType in data?.meal) {
+      if (data.meal[mealType].length > 0) {
+        for (let meal in data.meal[mealType]) {
+          let recipe_id = data.meal[mealType][meal].recipeId;
+          let isRecipeExist = todayRecipesId.includes(recipe_id);
+          if (!isRecipeExist) {
+            todayRecipesId.push(data.meal[mealType][meal].recipeId);
+          }
+        }
+      }
+    }
+
+    setSelectedMealId((prev) => [...prev, ...todayRecipesId]);
     setSelectedDateData(data || null);
   }, [selectedISO, userMealSchedule]);
 
@@ -292,6 +302,47 @@ export default function Mealplanner() {
       ...selectedDateData.meal.dinner,
     ].map((item) => (typeof item === "number" ? item : item.recipeId));
   }, [selectedDateData]);
+
+  // Fetch recipe
+  const fetchRecipe = async ({ queryKey, signal }) => {
+    const [, idsString] = queryKey;
+
+    return [];
+
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      try {
+        const apiKey = getRandomApiKey();
+
+        const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString.join(",")}&apiKey=${apiKey}`;
+
+        const res = await axios.get(apiUrl, { signal });
+        return res.data;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          const localRecipes = Array.from({ length: userBookmarks.length }, () => ({
+            ...offlineRecipeData,
+          }));
+
+          toast.error("Showing offline data. API LIMIT");
+
+          return localRecipes;
+        }
+      }
+    }
+  };
+  const {
+    data: recipeData = [],
+    isLoading: recipesLoading,
+    error: recipesError,
+  } = useQuery({
+    queryKey: ["recipes", selectedMealId],
+    queryFn: fetchRecipe,
+    enabled: selectedMealId.length > 0,
+  });
 
   return (
     <>

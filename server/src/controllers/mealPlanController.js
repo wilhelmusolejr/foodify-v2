@@ -34,7 +34,7 @@ export async function getUserMeal(req, res) {
     const mealMap = new Map();
     for (const plan of mealplans) {
       const iso = toLocalISO(plan.date);
-      mealMap.set(iso, plan.meals);
+      mealMap.set(iso, plan.meal);
     }
 
     // ===== 3. Build week schedule =====
