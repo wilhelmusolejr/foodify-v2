@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 // COMPONENTS
 import Navigator from "@components/Navigator";
@@ -8,34 +8,36 @@ import DateCardItem from "../components/mealplanner/DateCardItem";
 export default function Mealplanner() {
   const { id } = useParams();
 
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedDateData, setSelectedDateData] = useState({});
+  const [selectedISO, setSelectedISO] = useState("");
+  const [selectedDateData, setSelectedDateData] = useState(null);
 
-  // Today in ISO format
-  const todayISO = new Date().toISOString().slice(0, 10);
+  const todayISO = getLocalISO();
 
-  // Build week schedule
-  const schedule = getWeekSchedule();
-  // mimic date
+  // demo data
+  const schedule = useMemo(() => {
+    const s = getWeekSchedule();
+    s[0].meal.breakfast = [5252];
+    s[2].meal.breakfast = [5252, 7949];
+    s[6].meal.breakfast = [5252, 7949];
+    return s;
+  }, []);
   schedule[0].meal.breakfast = [5252];
-  schedule[2].meal.breakfast = [5252, 7949];
-  schedule[5].meal.breakfast = [5252, 7949];
+  schedule[2].meal.lunch = [5252, 7949];
+  schedule[6].meal.breakfast = [5252, 7949];
 
-  // Load today's schedule item into state
+  // init selected date = today
   useEffect(() => {
-    const todayData = schedule.find((day) => day.iso === todayISO);
-
-    console.log(todayData);
-
-    if (todayData) {
-      setSelectedDate(todayData.date); // e.g. "December 13"
-      setSelectedDateData(todayData); // entire object
-    }
+    setSelectedISO(todayISO);
   }, [todayISO]);
 
-  function changeSelectedDate(target) {
-    console.log(target);
-    setSelectedDate();
+  // derive selected date data
+  useEffect(() => {
+    const data = schedule.find((day) => day.iso === selectedISO);
+    setSelectedDateData(data || null);
+  }, [selectedISO, schedule]);
+
+  function changeSelectedDate(iso) {
+    setSelectedISO(iso);
   }
 
   let nutrients = [
@@ -247,8 +249,10 @@ export default function Mealplanner() {
                 dayName={item.day_type}
                 dateLabel={item.date}
                 meals={item.meal}
-                isToday={item.iso === todayISO}
-                onClick={changeSelectedDate}
+                isToday={item.iso === selectedISO}
+                onClick={() => {
+                  changeSelectedDate(item.iso);
+                }}
               />
             ))}
           </div>
@@ -259,72 +263,69 @@ export default function Mealplanner() {
               <h2 className="text-3xl font-medium capitalize mb-10">Today's meal</h2>
 
               <ul className="flex gap-10 flex-col">
-                {/* breakfast */}
-                {selectedDateData?.meal?.breakfast?.length > 0 && (
-                  <li>
-                    <h2 className="text-xl mb-4">Breakfast</h2>
-                    <div className="flex  gap-5">
-                      {/* item */}
-                      <div className="">
-                        <div className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                      </div>
+                {selectedDateData &&
+                (selectedDateData.meal.breakfast.length > 0 ||
+                  selectedDateData.meal.lunch.length > 0 ||
+                  selectedDateData.meal.dinner.length > 0) ? (
+                  <>
+                    {/* Breakfast */}
+                    {selectedDateData.meal.breakfast.length > 0 && (
+                      <li>
+                        <h2 className="text-xl mb-4">Breakfast</h2>
+                        <div className="flex gap-5">
+                          {selectedDateData.meal.breakfast.map((_, idx) => (
+                            <div key={idx} className="w-60 h-60 bg-red-500 rounded-lg"></div>
+                          ))}
+                        </div>
+                      </li>
+                    )}
 
-                      {/* item */}
-                      <div className="">
-                        <div className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                      </div>
+                    {/* Lunch */}
+                    {selectedDateData.meal.lunch.length > 0 && (
+                      <li>
+                        <h2 className="text-xl mb-4">Lunch</h2>
+                        <div className="flex gap-5">
+                          {selectedDateData.meal.lunch.map((_, idx) => (
+                            <div key={idx} className="w-60 h-60 bg-red-500 rounded-lg"></div>
+                          ))}
+                        </div>
+                      </li>
+                    )}
 
-                      {/* item */}
-                      <div className="">
-                        <div className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                      </div>
-                    </div>
-                  </li>
-                )}
+                    {/* Dinner */}
+                    {selectedDateData.meal.dinner.length > 0 && (
+                      <li>
+                        <h2 className="text-xl mb-4">Dinner</h2>
+                        <div className="flex gap-5">
+                          {selectedDateData.meal.dinner.map((_, idx) => (
+                            <div key={idx} className="w-60 h-60 bg-red-500 rounded-lg"></div>
+                          ))}
+                        </div>
+                      </li>
+                    )}
+                  </>
+                ) : (
+                  /* EMPTY STATE */
+                  <li className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl text-center">
+                    <div className="text-5xl mb-4">🍽️</div>
 
-                {/* lunch */}
-                {selectedDateData?.meal.lunch?.length > 0 && (
-                  <li>
-                    <h2 className="text-xl mb-4">Breakfast</h2>
-                    <div className="flex  gap-5">
-                      {/* item */}
-                      <div className="">
-                        <div className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                      </div>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      No meals planned for today
+                    </h3>
 
-                      {/* item */}
-                      <div className="">
-                        <div className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                      </div>
+                    <p className="text-sm text-gray-500 mt-2 max-w-sm">
+                      You haven’t added any meals yet. Start planning your day by adding a recipe
+                      for breakfast, lunch, or dinner.
+                    </p>
 
-                      {/* item */}
-                      <div className="">
-                        <div className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                      </div>
-                    </div>
-                  </li>
-                )}
-
-                {/* dinner */}
-                {selectedDateData?.meal?.dinner?.length > 0 && (
-                  <li>
-                    <h2 className="text-xl mb-4">Breakfast</h2>
-                    <div className="flex  gap-5">
-                      {/* item */}
-                      <div className="">
-                        <div className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                      </div>
-
-                      {/* item */}
-                      <div className="">
-                        <div className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                      </div>
-
-                      {/* item */}
-                      <div className="">
-                        <div className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                      </div>
-                    </div>
+                    <button
+                      className="mt-6 px-6 py-2 rounded-full bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition"
+                      onClick={() => {
+                        // open add meal modal or redirect to search
+                      }}
+                    >
+                      + Add meal
+                    </button>
                   </li>
                 )}
               </ul>
@@ -446,7 +447,9 @@ export function getWeekSchedule(baseDate = new Date(), weekStart = "monday", loc
     const weekdayFull = d.toLocaleString(locale, { weekday: "long" }); // "Monday"
     const weekdayShort = d.toLocaleString(locale, { weekday: "short" }); // "Mon"
 
-    const iso = d.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
 
     return {
       date: `${monthName} ${dayNumber}`,
@@ -462,4 +465,10 @@ export function getWeekSchedule(baseDate = new Date(), weekStart = "monday", loc
   });
 
   return days;
+}
+
+function getLocalISO(date = new Date()) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate()
+  ).padStart(2, "0")}`;
 }
