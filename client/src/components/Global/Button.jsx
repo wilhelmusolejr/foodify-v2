@@ -7,6 +7,7 @@ export default function Button({
   hoverColor = "hover:bg-green-800",
   textColor = "text-white",
   className = "",
+  onClick = () => {},
 }) {
   return (
     <button
@@ -28,6 +29,7 @@ export default function Button({
         disabled:cursor-not-allowed
         ${className}
       `}
+      onClick={onClick}
     >
       {children}
     </button>

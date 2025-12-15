@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import SectionHeading from "@components/SectionHeading";
 import Navigator from "@components/Navigator";
@@ -54,6 +54,13 @@ let blogs = [
 ];
 
 export default function Blog() {
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+
+  // Page title
+  useEffect(() => {
+    document.title = `Articles | ${PAGE_NAME}`;
+  }, []);
+
   return (
     <>
       {/* Navigator */}

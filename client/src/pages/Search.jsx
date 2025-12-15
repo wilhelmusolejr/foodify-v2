@@ -22,13 +22,56 @@ import Paragraph from "@components/Paragraph";
 
 import axios from "axios";
 
+import offlineRecipeData from "./recipe.json";
+import toast, { Toaster } from "react-hot-toast";
+
 // UTILS
 import { getRandomApiKey } from "../utils/apiUtils";
 import InputError from "../components/InputError";
 
+// DATA
+// DATA
+// DATA
+const diet_list = [
+  "Gluten Free",
+  "Ketogenic",
+  "Vegetarian",
+  "Lacto-Vegetarian",
+  "Ovo-Vegetarian",
+  "Vegan",
+  "Pescetarian",
+  "Paleo",
+  "Primal",
+  "Low FODMAP",
+  "Whole30",
+];
+
+const intolerances = [
+  "Dairy",
+  "Egg",
+  "Gluten",
+  "Grain",
+  "Peanut",
+  "Seafood",
+  "Sesame",
+  "Shellfish",
+  "Soy",
+  "Sulfite",
+  "Tree Nut",
+  "Wheat",
+];
+
+const SEARCH_TYPES = [
+  { id: 1, name: "Recipe" },
+  { id: 2, name: "Ingredient" },
+  { id: 3, name: "Nutrient" },
+];
+
 export default function Search() {
   const apiKey = getRandomApiKey();
   const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const searchTerm = searchParams.get("query");
@@ -115,44 +158,6 @@ export default function Search() {
       }
     });
   };
-
-  // DATA
-  // DATA
-  // DATA
-  const diet_list = [
-    "Gluten Free",
-    "Ketogenic",
-    "Vegetarian",
-    "Lacto-Vegetarian",
-    "Ovo-Vegetarian",
-    "Vegan",
-    "Pescetarian",
-    "Paleo",
-    "Primal",
-    "Low FODMAP",
-    "Whole30",
-  ];
-
-  const intolerances = [
-    "Dairy",
-    "Egg",
-    "Gluten",
-    "Grain",
-    "Peanut",
-    "Seafood",
-    "Sesame",
-    "Shellfish",
-    "Soy",
-    "Sulfite",
-    "Tree Nut",
-    "Wheat",
-  ];
-
-  const SEARCH_TYPES = [
-    { id: 1, name: "Recipe" },
-    { id: 2, name: "Ingredient" },
-    { id: 3, name: "Nutrient" },
-  ];
 
   // handler
   // handler
@@ -245,41 +250,70 @@ export default function Search() {
     });
 
     const params = new URLSearchParams(urlParameter); // Pass the object directly
-    params.append("apiKey", apiKey);
-    const apiUrl = `${FOOD_API}/recipes/complexSearch?${params.toString()}`;
 
     setSearchParams(urlParameter);
 
     const fetchRecipeData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+      for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+        try {
+          const apiKey = getRandomApiKey();
+          params.append("apiKey", apiKey);
+          const apiUrl = `${FOOD_API}/recipes/complexSearch?${params.toString()}`;
 
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: "smooth",
-        });
+          setIsLoading(true);
+          setError(null);
 
-        // 1. Axios handles the request
-        const response = await axios.get(apiUrl);
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth",
+          });
 
-        let tempRecipe = {
-          recipes: response.data.results,
-          totalResults: response.data.totalResults,
-          pageLimit: Math.ceil(response.data.totalResults / 10),
-        };
+          // 1. Axios handles the request
+          const response = await axios.get(apiUrl);
 
-        // 2. Axios data is automatically parsed as JSON
-        setSearchResults(tempRecipe);
-      } catch (err) {
-        console.log(err);
-        console.log(err.response.data.message);
-        // if reached 50 points
-        setError(err.response ? err.response.data.message : err.message);
-      } finally {
-        setIsLoading(false);
-        setIsTriggerSeach(false);
+          let tempRecipe = {
+            recipes: response.data.results,
+            totalResults: response.data.totalResults,
+            pageLimit: Math.ceil(response.data.totalResults / 10),
+          };
+
+          // 2. Axios data is automatically parsed as JSON
+          setSearchResults(tempRecipe);
+          return;
+        } catch (error) {
+          const status = error.response?.status;
+          const message = error.response?.data?.message || error.message;
+          console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+          console.log(attempt === MAX_TRY);
+          console.log(attempt, MAX_TRY);
+
+          if (attempt === MAX_TRY) {
+            // last attempt – fallback
+            const localRecipes = Array.from({ length: 8 }, () => ({
+              ...offlineRecipeData,
+            }));
+
+            toast.error("Showing offline data. API LIMIT");
+
+            let tempRecipe = {
+              recipes: localRecipes,
+              totalResults: localRecipes.length,
+              pageLimit: Math.ceil(localRecipes.length / 10),
+            };
+
+            console.log(tempRecipe);
+
+            setSearchResults(tempRecipe);
+            return;
+          }
+
+          // if reached 50 points
+          setError(error.response ? error.response.data.message : error.message);
+        } finally {
+          setIsLoading(false);
+          setIsTriggerSeach(false);
+        }
       }
     };
 
@@ -295,10 +329,17 @@ export default function Search() {
     setIsTriggerSeach(true);
   }
 
+  // Page title
+  useEffect(() => {
+    let pageName = isTriggerSearch ? "Search Results" : "Find Recipes";
+    document.title = `${pageName} | ${PAGE_NAME}`;
+  }, [isTriggerSearch]);
+
   return (
     <>
       {/* Navigator */}
       <Navigator />
+      <Toaster position="top-center" reverseOrder={false} />
 
       {searchParams.size == 0 ? (
         <>

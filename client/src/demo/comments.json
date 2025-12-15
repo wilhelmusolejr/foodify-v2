@@ -1,0 +1,255 @@
+[{
+  "_id": {
+    "$oid": "692045f4e4053a021d9ad546"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "asda",
+  "recipe_id": 652594,
+  "createdAt": {
+    "$date": "2025-11-21T10:59:00.300Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T10:59:00.300Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69204782534270a41c143ace"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "asda",
+  "recipe_id": 652594,
+  "createdAt": {
+    "$date": "2025-11-21T11:05:38.212Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T11:05:38.212Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692047ed30bfeaf81fb0ffce"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "hahaha",
+  "recipe_id": 636158,
+  "createdAt": {
+    "$date": "2025-11-21T11:07:25.204Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T11:07:25.204Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69204abfd1e38ec811cb4ef2"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "hiii",
+  "recipe_id": 636158,
+  "createdAt": {
+    "$date": "2025-11-21T11:19:27.826Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T11:19:27.826Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69204b16d1e38ec811cb4efb"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "test",
+  "recipe_id": 636158,
+  "createdAt": {
+    "$date": "2025-11-21T11:20:54.220Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T11:20:54.220Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69204b3cd1e38ec811cb4f04"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "assds",
+  "recipe_id": 636158,
+  "createdAt": {
+    "$date": "2025-11-21T11:21:32.360Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T11:21:32.360Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69204b84d1e38ec811cb4f0f"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "ham",
+  "recipe_id": 648118,
+  "createdAt": {
+    "$date": "2025-11-21T11:22:44.634Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T11:22:44.634Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69204b89d1e38ec811cb4f12"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "yummy",
+  "recipe_id": 648118,
+  "createdAt": {
+    "$date": "2025-11-21T11:22:49.586Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T11:22:49.586Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69216df6b16aa20a664a57f2"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "This is so yummy!",
+  "recipe_id": 636676,
+  "createdAt": {
+    "$date": "2025-11-22T08:01:58.783Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-22T08:01:58.783Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6923fa50d786015b611609e2"
+  },
+  "user_id": {
+    "$oid": "6923d426d786015b6116089f"
+  },
+  "comment_text": "Yum",
+  "recipe_id": 636158,
+  "createdAt": {
+    "$date": "2025-11-24T06:25:20.880Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-24T06:25:20.880Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692414b3d786015b61160b55"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "Nice",
+  "recipe_id": 660405,
+  "createdAt": {
+    "$date": "2025-11-24T08:17:55.769Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-24T08:17:55.769Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6926e33a4eb66d8f12634ba3"
+  },
+  "user_id": {
+    "$oid": "69202b22fac2c8eaaa3d59cf"
+  },
+  "comment_text": "Hi",
+  "recipe_id": 636560,
+  "createdAt": {
+    "$date": "2025-11-26T11:23:38.295Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-26T11:23:38.295Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692fd61cbec2b78638c34a05"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "comment_text": "Bor",
+  "recipe_id": 622598,
+  "createdAt": {
+    "$date": "2025-12-03T06:18:04.918Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T06:18:04.918Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692fdc3bbec2b78638c34a20"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "comment_text": "Jerome",
+  "recipe_id": 622598,
+  "createdAt": {
+    "$date": "2025-12-03T06:44:11.802Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T06:44:11.802Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692feaf5bec2b78638c34adf"
+  },
+  "user_id": {
+    "$oid": "692fd616bec2b78638c34a02"
+  },
+  "comment_text": "nice",
+  "recipe_id": 639337,
+  "createdAt": {
+    "$date": "2025-12-03T07:47:01.285Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T07:47:01.285Z"
+  },
+  "__v": 0
+}]

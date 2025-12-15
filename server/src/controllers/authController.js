@@ -134,6 +134,7 @@ export async function getUser(req, res) {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      profile_image: user.profile_image,
     });
   } catch (err) {
     console.error(err.message);

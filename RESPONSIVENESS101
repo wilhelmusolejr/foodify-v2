@@ -13,6 +13,8 @@ SUBHEADING - Banner
 ---
 
 CONTAINER
+CONTAINER
+CONTAINER
 10/12
 max-w-7xl
 
@@ -36,18 +38,6 @@ SUBHEADING - Section
 768px = base
 425px = sm
 
-<div className="border border-black/10 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-            <img
-              src="https://via.placeholder.com/300x200"
-              alt="Recipe"
-              className="w-full h-40 object-cover"
-            />
-            <div className="p-4">
-              <h3 className="text-lg font-medium mb-2">Delicious Egg Recipe</h3>
-              <p className="text-sm text-gray-600">A brief description of the recipe goes here.</p>
-            </div>
-          </div>
-
 ---
 
 MAIN HEADING
@@ -62,78 +52,71 @@ Laptop = 3xl
 Tablet = 2xl
 Mobile = 2xl
 
-// const [recipe, setRecipe] = useState(null);
-const [isLoading, setIsLoading] = useState(true);
-const [error, setError] = useState(null);
-
-{/_ Parent _/}
-{searchResults.map((recipe, index) => (
-<RecipeItem key={index} image_name={recipe.image} id={recipe.id} name={recipe.title} />
-))}
-
 "3a26da254435490dbd4166e3f2ea12bf";
 "9c192c6b0bc44dc1a4f2a4bd5e10e4ae";
 "1752e513ded04b76a0513cbfacbf663f"
 "fec93702d1534cee88b3bbfd66cae193"
 f547819e2e124a0b827e56462ce23f46
 
-  <li className="flex gap-5 items-start">
-                      {/* numbering */}
-                      <div className="w-7 h-7  rounded-full bg-green-900 text-white font-bold flex justify-center items-center">
-                        <p>1</p>
-                      </div>
-                      <Paragraph className={"flex-1"}>
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tenetur dolor
-                        quos, asperiores iure odit, eos suscipit vero quaerat molestiae aperiam
-                        nihil ullam! Qui, commodi provident? Architecto officia voluptate natus
-                        obcaecati.
-                      </Paragraph>
-                    </li>
-                    <li className="flex gap-5 items-start">
-                      {/* numbering */}
-                      <div className="w-7 h-7  rounded-full bg-green-900 text-white font-bold flex justify-center items-center">
-                        <p>2</p>
-                      </div>
-                      <Paragraph className={"flex-1"}>
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tenetur dolor
-                        quos, asperiores iure odit, eos suscipit vero quaerat molestiae aperiam
-                        nihil ullam! Qui, commodi provident? Architecto officia voluptate natus
-                        obcaecati.
-                      </Paragraph>
-                    </li>
-                    <li className="flex gap-5 items-start">
-                      {/* numbering */}
-                      <div className="w-7 h-7  rounded-full bg-green-900 text-white font-bold flex justify-center items-center">
-                        <p>3</p>
-                      </div>
-                      <Paragraph className={"flex-1"}>
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tenetur dolor
-                        quos, asperiores iure odit, eos suscipit vero quaerat molestiae aperiam
-                        nihil ullam! Qui, commodi provident? Architecto officia voluptate natus
-                        obcaecati.
-                      </Paragraph>
-                    </li>
+<!--  -->
 
-"Combine first 9 ingredients and marinate overnight.
-Heat 1 tablespoon oil in a large saucepan over medium high heat.
-Saute onion until soft and translucent.
-Stir in butter, lemon juice, ginger, garlic , 1 teaspoon garam masala, cumin and bay leaf. Cook, stirring, for 1 minute.
-Add tomato sauce and diced tomatoes, and cook for 2 minutes, stirring frequently.
-Stir in cream.
-Reduce heat to low, and simmer for 10 minutes, stirring frequently.
-Season with salt and pepper.
-Remove from heat and set aside.
-Heat 1 tablespoon oil in a large heavy skillet over medium heat.
-Cook chicken until lightly browned, about 10 minutes.
-Reduce heat, and season with 1 teaspoon garam masala and.
-Stir in a few spoonfuls of sauce, and simmer until liquid has reduced, and chicken is no longer pink.
-Stir cooked chicken into sauce.
-Mix together cornstarch and water, then stir into the sauce.
-Cook for 5 to 10 minutes, or until thickened.
-Top with cilantro, if desired."
+BOOKMARK PAGE
 
-1. Blog model
-2. User model to get all bookmark of a user DONE
-3. User model to get all activities (send comment) of a user DONE
-4. recipe comment, user profile should be clickable DONE
-5.
+1. Pagination // infinite - when user pressed loadmore, then fetch recipe data and add in the current recipes
+2. Search engine a. Stay or b. Remove - only search that is currently visible, search by name
+3. Dropdown a. Recipe b. Blog - show empty UI for dropdown and loader
+
+RECIPE PAGE
+
+1. Wine Pairing -- DONE
+2. Handle error UI in all pages -- DONE
+3. Set page name -- DONE
+
+4. Page loader/spinner
+
+5. figma update design
+
+BACKEND
+USER
+
+1. Image a. Upload actual image b. Save placeholder instead - done
+
+DEC 5
+DEC 5
+DEC 5
+DEC 5
+DEC 5
+
+- Handle error when mongo db is offline. // SHOW INFORMATION, make the page for frontend only. save to local storage instead
+  make json of users. (extract data in the database)
+
+  - bookmark page DONE
+  - fetch user comments in recipe page and combine from json and user comments
+    ----------- requires to add localstorage as authcomments
+  - bug in profile page if user is logged out DONE
+
+- ui final check
+
+DEC 6
+
+- MEAL PLANNER PAGE UI
+  --- show data
+  --- delete data
+
+- Recipe page -> add to planner -> MODAL UI
+  --- select data
+
+DEC 7.
+DEC 7.
+DEC 7.
+DATABASE
+
+- MEAL PLANNER LOGIC
+  ---- show data
+  ---- delete data
+
+DEC 8
+Finalize
+
+DEC 9
+Figma

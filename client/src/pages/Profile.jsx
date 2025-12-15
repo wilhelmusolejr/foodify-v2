@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faCheck } from "@fortawesome/free-solid-svg-icons";
@@ -27,32 +27,50 @@ import { useQuery } from "@tanstack/react-query";
 import { useModal } from "../context/ModalContext";
 import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
 
+import toast, { Toaster } from "react-hot-toast";
+
+import bookmarkData from "../demo/bookmarks.json";
+import userData from "../demo/users.json";
+import commentData from "../demo/comments.json";
+
 // Skeleton data
 let skeletonRecipes = Array.from({ length: 8 }, () => <RecipeItemSkeleton />);
+
+import offlineRecipeData from "./recipe.json";
 
 export default function Profile() {
   const { modalType, openModal } = useModal();
 
   const { id } = useParams();
 
-  const apiKey = getRandomApiKey();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const BACKEND_USER_URL = `${BACKEND_URL}/api/user`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
   const BACKEND_COMMENT_URL = `${BACKEND_URL}/api/comment`;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
+  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
   const MAX_RECIPES_DISPLAY = 8;
 
+  const queryObject = {
+    enabled: !!id && !DEMO_MODE,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  };
+
   // STATE
-  // const [userProfile, setUserProfile] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
 
   // Global Stand
-  const user = useAuthStore((state) => state.user);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const user = useAuthStore((state) => state.user);
+  if (isLoggedIn) {
+    user.id = user.id.toString();
+  }
   const isVisitor = isLoggedIn ? user.id !== id : true;
 
+  // Get user profile
   // Get user profile
   const fetchUserProfile = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
@@ -63,13 +81,20 @@ export default function Profile() {
 
     const user = res?.data?.user ?? {};
 
-    const initial = (user.firstName?.[0] ?? "U").toUpperCase();
-    const profile_path = `https://placehold.co/40x40/4c3c3a/ffffff?text=${encodeURIComponent(initial)}`;
-
     return {
       ...user,
-      profile_path,
     };
+  };
+  const demoFetchUserProfile = () => {
+    if (!isVisitor) {
+      return user;
+    } else {
+      for (let user in userData) {
+        if (id === userData[user]._id.$oid) {
+          return userData[user];
+        }
+      }
+    }
   };
   const {
     data: userProfile = {},
@@ -78,11 +103,11 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["user-profile", id],
     queryFn: fetchUserProfile,
-    enabled: !!id,
-    retry: 1,
-    staleTime: 1000 * 60 * 2,
+    initialData: demoFetchUserProfile,
+    ...queryObject,
   });
 
+  // Get user bookmarks
   // Get user bookmarks
   const fetchUserBookmarks = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
@@ -92,6 +117,27 @@ export default function Profile() {
     const res = await axios.get(BACKEND_API, { signal });
     return res.data.bookmarks;
   };
+  const demoFetchUserBookmarks = () => {
+    let userBookmarks = [];
+
+    if (!isVisitor) {
+      if (user?.bookmark?.length === 0) {
+        userBookmarks = [];
+      } else {
+        userBookmarks = user?.bookmark;
+      }
+    } else {
+      for (let bookmark in bookmarkData) {
+        let currentBookmarkUserId = bookmarkData[bookmark].user_id.$oid;
+
+        if (currentBookmarkUserId === id) {
+          userBookmarks.push(bookmarkData[bookmark]);
+        }
+      }
+    }
+
+    return userBookmarks;
+  };
   const {
     data: userBookmarks = [],
     isLoading: userBookmarksLoading,
@@ -99,12 +145,12 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["user-bookmarks", id],
     queryFn: fetchUserBookmarks,
-    enabled: !!id,
-    retry: 1,
-    staleTime: 1000 * 60 * 2,
+    ...queryObject,
+    initialData: demoFetchUserBookmarks,
     select: (bookmark = []) => bookmark.slice(0, 8),
   });
 
+  // Get user comments
   // Get user comments
   const fetchUserComments = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
@@ -114,6 +160,21 @@ export default function Profile() {
     const res = await axios.get(BACKEND_API, { signal });
     return res.data.comments;
   };
+  const demoFetchUserComments = () => {
+    let listComments = [];
+
+    if (!isVisitor) {
+      listComments = user?.comment ? user?.comment : [];
+    } else {
+      for (let comment in commentData) {
+        if (commentData[comment].user_id.$oid === id) {
+          listComments.push(commentData[comment]);
+        }
+      }
+    }
+
+    return listComments;
+  };
   const {
     data: userComments = [],
     isLoading: userCommentsLoading,
@@ -121,11 +182,11 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["user-comments", id],
     queryFn: fetchUserComments,
-    enabled: !!id,
-    retry: 1,
-    staleTime: 1000 * 60 * 2,
+    ...queryObject,
+    initialData: demoFetchUserComments,
   });
 
+  // Get user recipes via api
   // Get user recipes via api
   const bookmarkIds = useMemo(() => {
     // extract numeric/string ids and join into a stable string
@@ -136,12 +197,35 @@ export default function Profile() {
         .join(",") ?? ""
     );
   }, [userBookmarks]);
+
   const fetchRecipe = async ({ queryKey, signal }) => {
     // queryKey: ["recipes", id, idsString]
     const [, id, idsString] = queryKey;
-    const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
-    const res = await axios.get(apiUrl, { signal });
-    return res.data;
+
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      try {
+        const apiKey = getRandomApiKey();
+
+        const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
+
+        const res = await axios.get(apiUrl, { signal });
+        return res.data;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          const localRecipes = Array.from({ length: userBookmarks.length }, () => ({
+            ...offlineRecipeData,
+          }));
+
+          toast.error("Showing offline data. API LIMIT");
+
+          return localRecipes;
+        }
+      }
+    }
   };
   const {
     data: recipeData = [],
@@ -150,21 +234,27 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["recipes", id, bookmarkIds],
     queryFn: fetchRecipe,
+    ...queryObject,
     enabled: !!id && bookmarkIds.length > 0,
-    retry: 1,
-    staleTime: 1000 * 60 * 2,
   });
 
   let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
 
-  //
-  //
-  //
+  // Page title
+  useEffect(() => {
+    if (isVisitor) {
+      document.title = `${userProfile.firstName} ${userProfile.lastName} Profile | ${PAGE_NAME}`;
+    } else {
+      document.title = `My Profile | ${PAGE_NAME}`;
+    }
+  }, [userProfile]);
 
   return (
     <>
       {/* Navigator */}
       <Navigator />
+
+      <Toaster position="top-center" reverseOrder={false} />
 
       <div className="">
         {userProfileLoading ? (
@@ -176,11 +266,11 @@ export default function Profile() {
               <div className="w-10/12 mx-auto max-w-7xl py-20 mt-10 text-white min-h-[60vh] flex items-center  relative">
                 <div className="flex flex-col md:flex-row gap-10 md:max-w-[700px] mx-auto items-center">
                   {/* image */}
-                  <div className="w-40 h-40 text-center flex justify-center items-center">
+                  <div className="w-40 h-40 text-center flex justify-center items-center ">
                     <img
-                      src={userProfile.profile_path}
+                      src={userProfile.profile_image}
                       alt={`${userProfile.firstName}'s profile`}
-                      className="w-full h-full rounded-full object-cover shadow-md"
+                      className="w-full h-full rounded-full object-cover shadow-md border border-white/10"
                     />
                   </div>
                   {/* data */}

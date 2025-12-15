@@ -6,9 +6,15 @@ export default function AuthLoader({ children }) {
   // Get the token and the setter action from the store
   const { token, isLoggedIn, setUser, logout } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
+  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
   useEffect(() => {
     async function verifyAndLoadUser() {
+      if (DEMO_MODE) {
+        setIsLoading(false);
+        return;
+      }
+
       // 1. Check if we have a token from localStorage (set during store initialization)
       if (token && isLoggedIn) {
         try {

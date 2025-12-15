@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faDownLong } from "@fortawesome/free-solid-svg-icons";
@@ -13,16 +13,21 @@ import Label from "@components/Label";
 import SearchButton from "@components/SearchButton";
 import Footer from "@components/Footer";
 import PaginationButton from "@components/PaginationButton";
+import EmptyRecipe from "@components/Profile/EmptyRecipe";
 
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getRandomApiKey } from "../utils/apiUtils";
 
+import toast, { Toaster } from "react-hot-toast";
+import offlineRecipeData from "./recipe.json";
+
+import userData from "../demo/users.json";
+import bookmarkData from "../demo/bookmarks.json";
+
 // GLOBAL STATE
 import { useAuthStore } from "../stores/useAuthStore";
-
-import EmptyRecipe from "@components/Profile/EmptyRecipe";
 
 const skeletonRecipes = Array.from({ length: 12 }, () => <RecipeItemSkeleton />);
 
@@ -38,66 +43,18 @@ export default function Bookmark() {
 
   const user = useAuthStore((state) => state.user);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  if (isLoggedIn) {
+    user.id = user.id.toString();
+  }
   const isVisitor = isLoggedIn ? user.id !== id : true;
-
-  const apiKey = getRandomApiKey();
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const BACKEND_USER_URL = `${BACKEND_URL}/api/user`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
-
-  // Fetch userbookmarks
-  const fetchUserBookmarks = async ({ queryKey, signal }) => {
-    const [, id] = queryKey;
-    if (!id) throw new Error("Missing user id");
-
-    const BACKEND_API = `${BACKEND_BOOKMARK_URL}/getUserBookmarks/${id}`;
-    const res = await axios.get(BACKEND_API, { signal });
-    return res.data.bookmarks;
-  };
-  const {
-    data: userBookmarks = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["user-bookmark", id],
-    queryFn: fetchUserBookmarks,
-    enabled: !!id,
-    retry: 1,
-    staleTime: 1000 * 60 * 2,
-  });
-
-  //   Fetch Recipe
-  const bookmarkIds = useMemo(() => {
-    // extract numeric/string ids and join into a stable string
-    return (
-      userBookmarks
-        ?.map((b) => b?.recipe_id)
-        .filter(Boolean)
-        .join(",") ?? ""
-    );
-  }, [userBookmarks]);
-
-  const fetchRecipe = async ({ queryKey, signal }) => {
-    // queryKey: ["recipes", id, idsString]
-    const [, id, idsString] = queryKey;
-    const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
-    console.log(apiUrl);
-    const res = await axios.get(apiUrl, { signal });
-    return res.data;
-  };
-  const {
-    data: recipeData = [],
-    isLoading: recipesLoading,
-    error: recipesError,
-  } = useQuery({
-    queryKey: ["recipes", id, bookmarkIds],
-    queryFn: fetchRecipe,
-    enabled: !!id && bookmarkIds.length > 0,
-    retry: 1,
-    staleTime: 1000 * 60 * 2,
-  });
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
+  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
   // Get user profile
   const fetchUserProfile = async ({ queryKey, signal }) => {
@@ -117,28 +74,151 @@ export default function Bookmark() {
       profile_path,
     };
   };
+  const demoFetchUserProfile = () => {
+    if (!isVisitor) {
+      return user;
+    } else {
+      for (let user in userData) {
+        if (id === userData[user]._id.$oid) {
+          return userData[user];
+        }
+      }
+    }
+  };
   const {
     data: userProfile = {},
     isLoading: userProfileLoading,
     error: userProfileError,
+    isSuccess: userProfileSuccess,
   } = useQuery({
     queryKey: ["user-profile", id],
     queryFn: fetchUserProfile,
-    enabled: !!id,
+    enabled: !!id && !DEMO_MODE,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+    initialData: demoFetchUserProfile,
+  });
+
+  console.log(userProfile);
+
+  // Fetch userbookmarks
+  const fetchUserBookmarks = async ({ queryKey, signal }) => {
+    const [, id] = queryKey;
+    if (!id) throw new Error("Missing user id");
+
+    const BACKEND_API = `${BACKEND_BOOKMARK_URL}/getUserBookmarks/${id}`;
+    const res = await axios.get(BACKEND_API, { signal });
+
+    return res.data.bookmarks;
+  };
+  const demoFetchUserBookmarks = () => {
+    let userBookmarks = [];
+
+    if (!isVisitor) {
+      if (user?.bookmark?.length === 0) {
+        userBookmarks = [];
+      } else {
+        userBookmarks = user?.bookmark;
+      }
+    } else {
+      for (let bookmark in bookmarkData) {
+        let currentBookmarkUserId = bookmarkData[bookmark].user_id.$oid;
+
+        if (currentBookmarkUserId === id) {
+          userBookmarks.push(bookmarkData[bookmark]);
+        }
+      }
+    }
+
+    return userBookmarks;
+  };
+  const {
+    data: userBookmarks = [],
+    isLoading,
+    error,
+    isSuccess: userBookmarksSuccess,
+  } = useQuery({
+    queryKey: ["user-bookmark", id],
+    queryFn: fetchUserBookmarks,
+    enabled: !!id && userProfileSuccess && !DEMO_MODE,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+    initialData: demoFetchUserBookmarks,
+  });
+
+  console.log(userBookmarks);
+
+  //   Fetch Recipe
+  const bookmarkIds = useMemo(() => {
+    // extract numeric/string ids and join into a stable string
+    return (
+      userBookmarks
+        ?.map((b) => b?.recipe_id)
+        .filter(Boolean)
+        .join(",") ?? ""
+    );
+  }, [userBookmarks]);
+
+  const fetchRecipe = async ({ queryKey, signal }) => {
+    const [, id, idsString] = queryKey;
+
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      try {
+        if (signal?.aborted) {
+          throw new Error("Request was aborted");
+        }
+
+        const apiKey = getRandomApiKey();
+        const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
+        const res = await axios.get(apiUrl, { signal });
+        return res.data;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          const localRecipes = Array.from({ length: userBookmarks.length }, () => ({
+            ...offlineRecipeData,
+          }));
+
+          toast.error("Showing offline data. API LIMIT");
+
+          return localRecipes;
+        }
+      }
+    }
+  };
+  const {
+    data: recipeData = [],
+    isLoading: recipesLoading,
+    error: recipesError,
+  } = useQuery({
+    queryKey: ["recipes", id, bookmarkIds],
+    queryFn: fetchRecipe,
+    enabled: !!id && bookmarkIds.length > 0,
     retry: 1,
     staleTime: 1000 * 60 * 2,
   });
 
   let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
 
-  console.log();
+  // Page title
+  useEffect(() => {
+    if (isVisitor) {
+      document.title = `${userProfile.firstName} ${userProfile.lastName} Bookmark | ${PAGE_NAME}`;
+    } else {
+      document.title = `My Bookmark | ${PAGE_NAME}`;
+    }
+  }, [userProfile]);
 
   return (
     <>
       {/* navigator */}
       <Navigator />
+      <Toaster position="top-center" reverseOrder={false} />
 
-      {userProfileError?.response?.data?.isError ? (
+      {userProfileError && (
         <div className="flex flex-col items-center justify-center my-50 pb-20 text-center w-10/12 mx-auto">
           <div className="text-6xl mb-4">🔍</div>
           <h2 className="text-2xl font-semibold text-gray-700 mb-2">No User Found</h2>
@@ -147,124 +227,135 @@ export default function Bookmark() {
             options.
           </p>
         </div>
-      ) : (
-        <div className="w-10/12 mx-auto mt-30 ">
-          {/* heading */}
-          <SectionHeading
-            heading="Bookmark"
-            subheading="Browse All Recipes by Category or Filter"
-          />
+      )}
 
-          {/* option */}
-          <div className="mb-5 lg:mb-10 mt-30  max-w-7xl mx-auto flex flex-col-reverse lg:flex-row lg:items-end gap-10">
-            {/* option 1 */}
-            <div className="flex flex-col gap-3 md:flex-row w-full md:justify-between lg:justify-start">
-              {/* drop down */}
-              <div className="relative">
-                <select className="appearance-none px-4 py-3 w-full border border-black/30 rounded-md pr-1 lg:pr-14 cursor-pointer">
-                  <option defaultValue="recipe">Recipe</option>
-                  <option value="blog">Blog</option>
-                </select>
+      <div className={`w-10/12 mx-auto mt-30 ${userProfileError ? "hidden" : ""}`}>
+        {/* heading */}
+        <SectionHeading heading="Bookmark" subheading="Browse All Recipes by Category or Filter" />
 
-                {/* Custom arrow */}
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-black/60">
-                  <FontAwesomeIcon icon={faChevronDown} size="1x" />
-                </div>
+        {/* option */}
+        <div className="mb-5 lg:mb-10 mt-30  max-w-7xl mx-auto flex flex-col-reverse lg:flex-row lg:items-end gap-10">
+          {/* option 1 */}
+          <div className="flex flex-col gap-3 md:flex-row w-full md:justify-between lg:justify-start">
+            {/* drop down */}
+            <div className="relative">
+              <select className="appearance-none px-4 py-3 w-full border border-black/30 rounded-md pr-1 lg:pr-14 cursor-pointer">
+                <option defaultValue="recipe">Recipe</option>
+                <option value="blog">Blog</option>
+              </select>
+
+              {/* Custom arrow */}
+              <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-black/60">
+                <FontAwesomeIcon icon={faChevronDown} size="1x" />
               </div>
-
-              {/* generate */}
-              <button className="px-4 py-3 border border-black/30 rounded-lg w-full md:w-fit">
-                Generate Shopping List
-              </button>
             </div>
 
-            {/* Search  */}
-            <div className="flex flex-col md:flex-row md:items-end justify-center gap-2">
-              {/* form */}
-              <div className="w-full md:w-fit flex flex-col gap-2 ">
-                <Label name={`${bookmarkType} name`} required={true} />
-                <input
-                  type="text_name"
-                  placeholder="e.g. chicken, rice, broccoli"
-                  className={`border flex-1 md:w-fit border-black/50 rounded-lg px-4 py-3 lg:min-w-80`}
-                  // value={searchInput}
-                  // onChange={(e) => setSearchInput(e.target.value)}
-                />
-              </div>
-              {/* button */}
-              <SearchButton />
-            </div>
+            {/* generate */}
+            <button className="px-4 py-3 border border-black/30 rounded-lg w-full md:w-fit">
+              Generate Shopping List
+            </button>
           </div>
 
-          {recipeData.length === 0 ? (
-            <>
-              <div className="max-w-7xl mx-auto mb-20 min-h-[60vh]">
-                <EmptyRecipe isVisitor={isVisitor} userProfile={userProfile} />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 min-h-[60vh]">
-                {recipes.map((recipe, index) => (
-                  <RecipeItem
-                    key={index}
-                    image_name={recipe.image}
-                    id={recipe.id}
-                    name={recipe.title}
-                  />
-                ))}
-              </div>
-            </>
-          )}
+          {/* Search  */}
+          <div className="flex flex-col md:flex-row md:items-end justify-center gap-2">
+            {/* form */}
+            <div className="w-full md:w-fit flex flex-col gap-2 ">
+              <Label name={`${bookmarkType} name`} required={true} />
+              <input
+                type="text_name"
+                placeholder="e.g. chicken, rice, broccoli"
+                className={`border flex-1 md:w-fit border-black/50 rounded-lg px-4 py-3 lg:min-w-80`}
+                // value={searchInput}
+                // onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </div>
+            {/* button */}
+            <SearchButton />
+          </div>
+        </div>
 
-          {/* recipe */}
+        {/* recipe */}
+        {recipesLoading ? (
+          <div className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 min-h-[60vh]">
+            <RecipeItemSkeleton />
+            <RecipeItemSkeleton />
+            <RecipeItemSkeleton />
+            <RecipeItemSkeleton />
+            <RecipeItemSkeleton />
+            <RecipeItemSkeleton />
+            <RecipeItemSkeleton />
+            <RecipeItemSkeleton />
+          </div>
+        ) : (
+          <>
+            {recipes.length > 0 ? (
+              <>
+                <div className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 min-h-[60vh]">
+                  {recipes.map((recipe, index) => (
+                    <RecipeItem
+                      key={index}
+                      image_name={recipe.image}
+                      id={recipe.id}
+                      name={recipe.title}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="max-w-7xl mx-auto mb-20 min-h-[60vh]">
+                  <EmptyRecipe isVisitor={isVisitor} userProfile={userProfile} />
+                </div>
+              </>
+            )}
+          </>
+        )}
 
-          {/* Pagination */}
-          {recipeData.length > 5 && (
-            <div className="flex justify-center items-center gap-3 my-30">
-              {pageNum > 1 && (
+        {/* Pagination */}
+        {recipeData.length > 5 && (
+          <div className="flex justify-center items-center gap-3 my-30 hidden">
+            {pageNum > 1 && (
+              <PaginationButton
+                pageNum={pageNum - 1}
+                // onClick={handlePagination}
+                className="px-3"
+                isDisabled={pageNum <= 1}
+                text={"Previous"}
+              />
+            )}
+            {pageNum > 1 && (
+              <PaginationButton
+                pageNum={pageNum - 1}
+                text={pageNum - 1}
+                // onClick={handlePagination}
+              />
+            )}
+
+            <PaginationButton
+              pageNum={pageNum}
+              text={pageNum}
+              isDisabled={true}
+              className={"bg-black text-white"}
+            />
+
+            {pageNum < 80 && (
+              <>
                 <PaginationButton
-                  pageNum={pageNum - 1}
+                  pageNum={pageNum + 1}
+                  text={pageNum + 1}
+                  // onClick={handlePagination}
+                />
+                <PaginationButton
+                  pageNum={pageNum + 1}
+                  text={"Next"}
                   // onClick={handlePagination}
                   className="px-3"
-                  isDisabled={pageNum <= 1}
-                  text={"Previous"}
                 />
-              )}
-              {pageNum > 1 && (
-                <PaginationButton
-                  pageNum={pageNum - 1}
-                  text={pageNum - 1}
-                  // onClick={handlePagination}
-                />
-              )}
-
-              <PaginationButton
-                pageNum={pageNum}
-                text={pageNum}
-                isDisabled={true}
-                className={"bg-black text-white"}
-              />
-
-              {pageNum < 80 && (
-                <>
-                  <PaginationButton
-                    pageNum={pageNum + 1}
-                    text={pageNum + 1}
-                    // onClick={handlePagination}
-                  />
-                  <PaginationButton
-                    pageNum={pageNum + 1}
-                    text={"Next"}
-                    // onClick={handlePagination}
-                    className="px-3"
-                  />
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
 
       <MailLetter />
 

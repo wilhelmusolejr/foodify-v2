@@ -30,6 +30,11 @@ import { getRandomApiKey } from "../utils/apiUtils";
 import { useQuery } from "@tanstack/react-query";
 import Button from "../components/Global/Button";
 
+import toast, { Toaster } from "react-hot-toast";
+
+// recipe data
+import offlineRecipeData from "./recipe.json";
+
 let blogs = [
   {
     header: "10 Quick and Easy Dinner Recipes for Busy Weeknights",
@@ -57,6 +62,8 @@ let blogs = [
 function Home() {
   const apiKey = getRandomApiKey();
   const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
 
   const [currentIngredients, setCurrentIngredients] = useState([]);
   const [ingredientError, setIngredientError] = useState(false);
@@ -100,23 +107,47 @@ function Home() {
     window.location.href = finalUrl;
   }
 
-  //
+  // FETCH RECIPE DATA
   const fetchRecipesFromApi = async ({ signal }) => {
-    const apiKey = getRandomApiKey();
-    const url = `${FOOD_API}/recipes/random?number=17&apiKey=${apiKey}`;
-    const res = await axios.get(url, { signal });
-    return Array.isArray(res.data?.recipes) ? res.data.recipes : [];
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      if (signal?.aborted) {
+        throw new Error("Request was aborted");
+      }
+
+      const apiKey = getRandomApiKey();
+
+      try {
+        const url = `${FOOD_API}/recipes/random?number=17&apiKey=${apiKey}`;
+        const res = await axios.get(url, { signal });
+        return Array.isArray(res.data?.recipes) ? res.data.recipes : [];
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          // last attempt – fallback
+          const localRecipes = Array.from({ length: 20 }, () => ({
+            ...offlineRecipeData,
+          }));
+
+          toast.error("Showing offline data. API LIMIT");
+
+          return localRecipes;
+        }
+      }
+    }
   };
 
   const {
     data: recipes = {},
     isLoading,
-    error,
+    error: recipeError,
   } = useQuery({
     queryKey: ["recipes"],
     queryFn: fetchRecipesFromApi,
     enabled: !!FOOD_API && !!apiKey, // only run if config exists
-    retry: 1,
+    retry: 0,
     staleTime: 1000 * 60 * 2,
     select: (recipesData = []) => ({
       popular: recipesData.slice(0, 8),
@@ -125,10 +156,16 @@ function Home() {
     }),
   });
 
+  useEffect(() => {
+    document.title = `Discover | ${PAGE_NAME}`;
+  }, []);
+
   return (
     <>
       {/* Navigator */}
       <Navigator />
+
+      <Toaster position="top-center" reverseOrder={false} />
 
       {/* Head */}
       <div className="header min-h-[80vh] xl:min-h-[75vh] my-10 md:my-14 py-20 text-white flex justify-center items-center bg-white border border-black/10">

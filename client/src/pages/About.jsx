@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // Components
 import Navigator from "@components/Navigator";
@@ -84,6 +84,13 @@ const socialLinks = [
 ];
 
 export default function About() {
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+
+  // Page title
+  useEffect(() => {
+    document.title = `About Us | ${PAGE_NAME}`;
+  }, []);
+
   return (
     <>
       {/* Navigator */}

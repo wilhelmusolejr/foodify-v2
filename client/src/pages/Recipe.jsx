@@ -28,11 +28,11 @@ import Tags from "@components/Recipe/Tags";
 import NutritionFacts from "@components/NutritionFacts";
 import Feedback from "@components/Recipe/Feedback";
 import SectionHeading from "@components/SectionHeading";
-import recipeData from "./recipe.json";
 import IconItem from "@components/IconItem";
 import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
 import NeedLogin from "@components/Modal/NeedLogin";
+import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
 
 // UTILS
 import { formatCommentDate } from "../utils/dateUtils";
@@ -46,12 +46,21 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useModal } from "../context/ModalContext";
+import offlineRecipeData from "./recipe.json";
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Button from "../components/Global/Button";
+
+import bookmarkData from "../demo/bookmarks.json";
+import userData from "../demo/users.json";
+import commentData from "../demo/comments.json";
 
 export default function Recipe() {
   const { id } = useParams();
 
-  const apiKey = getRandomApiKey();
+  const queryClient = useQueryClient();
   const token = useAuthStore.getState().token;
+  const user = useAuthStore.getState().user;
   const isLoggedIn = useAuthStore.getState().isLoggedIn;
 
   const { modalType, openModal } = useModal();
@@ -60,57 +69,49 @@ export default function Recipe() {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const BACKEND_COMMENT_URL = `${BACKEND_URL}/api/comment`;
   const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
-  const runLocal = import.meta.env.VITE_RUN_LOCAL === "true" ? true : false;
   const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
+  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
+  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
-  const [isloading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [recipe, setRecipe] = useState(null);
   const [comment, setComment] = useState("");
-  const [listComments, setListComments] = useState([]);
-  const [hasBookmarked, setHasBookmarked] = useState(false);
 
   // Get recipe information
-  useEffect(() => {
-    if (!id) return;
+  const fetchRecipe = async ({ queryKey, signal }) => {
+    const [, id] = queryKey;
+    if (!id) throw new Error("Missing recipe id");
 
-    const apiUrl = `${FOOD_API}/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      if (signal?.aborted) {
+        throw new Error("Request was aborted");
+      }
 
-    const fetchRecipeData = async () => {
+      const apiKey = getRandomApiKey();
+      const apiUrl = `${FOOD_API}/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
+
       try {
-        setIsLoading(true);
-        setError(null);
-
-        if (runLocal) {
-          throw new Error("upgrade your plan");
-        }
-
-        // 1. Axios handles the request
-        const response = await axios.get(apiUrl);
+        const res = await axios.get(apiUrl, { signal });
 
         // 2. Axios data is automatically parsed as JSON
-        response.data.groupedByAisle = response.data.extendedIngredients.reduce(
-          (accumulator, ingredient) => {
-            const aisle = ingredient.aisle;
+        res.data.groupedByAisle = res.data.extendedIngredients.reduce((accumulator, ingredient) => {
+          const aisle = ingredient.aisle;
 
-            // If the aisle doesn't exist in the accumulator, initialize it as an array
-            if (!accumulator[aisle]) {
-              accumulator[aisle] = [];
-            }
+          // If the aisle doesn't exist in the accumulator, initialize it as an array
+          if (!accumulator[aisle]) {
+            accumulator[aisle] = [];
+          }
 
-            // Push the ingredient object (or a subset of its properties)
-            accumulator[aisle].push({
-              id: ingredient.id,
-              name: ingredient.name,
-              original: ingredient.original,
-            });
+          // Push the ingredient object (or a subset of its properties)
+          accumulator[aisle].push({
+            id: ingredient.id,
+            name: ingredient.name,
+            original: ingredient.original,
+          });
 
-            return accumulator;
-          },
-          {}
-        );
+          return accumulator;
+        }, {});
 
-        response.data.finalIngredientsArray = Object.entries(response.data.groupedByAisle).map(
+        res.data.finalIngredientsArray = Object.entries(res.data.groupedByAisle).map(
           ([aisleName, ingredientList]) => {
             return {
               name: aisleName, // The key becomes the 'name' property
@@ -119,7 +120,7 @@ export default function Recipe() {
           }
         );
 
-        response.data.tags = [
+        res.data.tags = [
           {
             heading: "Cheap",
             name: "cheap",
@@ -157,18 +158,19 @@ export default function Recipe() {
           },
         ];
 
-        response.data.tags.forEach((tags) => {
-          tags.status = response.data[tags.name];
+        res.data.tags.forEach((tags) => {
+          tags.status = res.data[tags.name];
         });
 
-        setRecipe(response.data);
-        console.log(response.data);
-      } catch (err) {
-        // if reached 50 points
-        if (err.message.includes("upgrade your plan")) {
-          let DATA_FROM_API = recipeData;
+        return res.data;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
 
-          DATA_FROM_API.groupedByAisle = DATA_FROM_API.extendedIngredients.reduce(
+        if (attempt === MAX_TRY) {
+          // 2. Axios data is automatically parsed as JSON
+          offlineRecipeData.groupedByAisle = offlineRecipeData.extendedIngredients.reduce(
             (accumulator, ingredient) => {
               const aisle = ingredient.aisle;
 
@@ -189,16 +191,16 @@ export default function Recipe() {
             {}
           );
 
-          DATA_FROM_API.finalIngredientsArray = Object.entries(DATA_FROM_API.groupedByAisle).map(
-            ([aisleName, ingredientList]) => {
-              return {
-                name: aisleName, // The key becomes the 'name' property
-                list: ingredientList, // The value (the array of ingredients) becomes the 'list' property
-              };
-            }
-          );
+          offlineRecipeData.finalIngredientsArray = Object.entries(
+            offlineRecipeData.groupedByAisle
+          ).map(([aisleName, ingredientList]) => {
+            return {
+              name: aisleName, // The key becomes the 'name' property
+              list: ingredientList, // The value (the array of ingredients) becomes the 'list' property
+            };
+          });
 
-          DATA_FROM_API.tags = [
+          offlineRecipeData.tags = [
             {
               heading: "Cheap",
               name: "cheap",
@@ -236,159 +238,360 @@ export default function Recipe() {
             },
           ];
 
-          DATA_FROM_API.tags.forEach((tags) => {
-            tags.status = DATA_FROM_API[tags.name];
+          offlineRecipeData.tags.forEach((tags) => {
+            tags.status = offlineRecipeData[tags.name];
           });
 
-          setRecipe(DATA_FROM_API);
+          return offlineRecipeData;
         }
-
-        setError(err.response ? err.response.data.message : err.message);
-      } finally {
-        setIsLoading(false);
       }
-    };
-
-    fetchRecipeData();
-  }, [id]);
+    }
+  };
+  const {
+    data: recipe = {},
+    isLoading: recipeLoading,
+    error: recipeError,
+  } = useQuery({
+    queryKey: ["recipe", id],
+    queryFn: fetchRecipe,
+    enabled: !!id,
+    retry: 0,
+    staleTime: 1000 * 60 * 2,
+  });
 
   // Get similar Recipe
-  useEffect(() => {
-    if (!id) return;
+  const fetchSimilarRecipe = async ({ queryKey, signal }) => {
+    const [, id] = queryKey;
+    if (!id) throw new Error("Missing recipe id");
 
-    const apiUrl = `${FOOD_API}/recipes/${id}/similar?number=6&apiKey=${apiKey}`;
-
-    const fetchRecipeData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        if (runLocal) {
-          throw new Error("upgrade your plan");
-        }
-
-        // 1. Axios handles the request
-        const response = await axios.get(apiUrl);
-
-        setRecipe((prevSettings) => ({
-          ...prevSettings,
-          ["similarRecipe"]: response.data,
-        }));
-      } catch (err) {
-        // if reached 50 points
-        if (err.message.includes("upgrade your plan")) {
-          let DATA_FROM_API = [];
-
-          for (let i = 0; i < 6; i++) {
-            DATA_FROM_API.push(recipeData);
-          }
-
-          setRecipe((prevSettings) => ({
-            ...prevSettings,
-            ["similarRecipe"]: DATA_FROM_API,
-          }));
-        }
-
-        setError(err.response ? err.response.data.message : err.message);
-      } finally {
-        setIsLoading(false);
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      if (signal?.aborted) {
+        throw new Error("Request was aborted");
       }
-    };
 
-    fetchRecipeData();
-  }, [id]);
+      const apiKey = getRandomApiKey();
+      const apiUrl = `${FOOD_API}/recipes/${id}/similar?number=6&apiKey=${apiKey}`;
+
+      try {
+        const res = await axios.get(apiUrl, { signal });
+        return res.data;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          const localRecipes = Array.from({ length: 6 }, () => ({
+            ...offlineRecipeData,
+          }));
+
+          toast.error("Showing offline data. API LIMIT");
+
+          return localRecipes;
+        }
+      }
+    }
+  };
+  const {
+    data: similarRecipe = [],
+    isLoading: similarRecipeLoading,
+    error: similarRecipeError,
+  } = useQuery({
+    queryKey: ["similar-recipe", id],
+    queryFn: fetchSimilarRecipe,
+    enabled: !!id,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  });
 
   // Get random recipe
-  useEffect(() => {
-    const apiUrl = `${FOOD_API}/recipes/random?number=8&apiKey=${apiKey}`;
-
-    const fetchRecipeData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        if (runLocal) {
-          throw new Error("upgrade your plan");
-        }
-
-        // 1. Axios handles the request
-        const response = await axios.get(apiUrl);
-
-        // 2. Axios data is automatically parsed as JSON
-        setRecipe((prevSettings) => ({
-          ...prevSettings,
-          ["random"]: response.data.recipes,
-        }));
-      } catch (err) {
-        // if reached 50 points
-        if (err.message.includes("upgrade your plan")) {
-          let DATA_FROM_API = [];
-
-          for (let i = 0; i < 8; i++) {
-            DATA_FROM_API.push(recipeData);
-          }
-
-          setRecipe((prevSettings) => ({
-            ...prevSettings,
-            ["random"]: DATA_FROM_API,
-          }));
-        }
-        setError(err.response ? err.response.data.message : err.message);
-      } finally {
-        setIsLoading(false);
+  const fetchRandomRecipe = async ({ signal }) => {
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      if (signal?.aborted) {
+        throw new Error("Request was aborted");
       }
-    };
 
-    fetchRecipeData();
-  }, []);
+      const apiKey = getRandomApiKey();
+      const apiUrl = `${FOOD_API}/recipes/random?number=8&apiKey=${apiKey}`;
+
+      try {
+        const res = await axios.get(apiUrl, { signal });
+        return res.data.recipes;
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
+
+        if (attempt === MAX_TRY) {
+          const localRecipes = Array.from({ length: 8 }, () => ({
+            ...offlineRecipeData,
+          }));
+
+          toast.error("Showing offline data. API LIMIT");
+
+          return localRecipes;
+        }
+      }
+    }
+  };
+  const {
+    data: randomRecipe = [],
+    isLoading: randomRecipeLoading,
+    error: randomRecipeError,
+  } = useQuery({
+    queryKey: ["random-recipe"],
+    queryFn: fetchRandomRecipe,
+    enabled: recipe.id != null,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  });
 
   // Get comments
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        // api url
-        const BACKEND_API = `${BACKEND_COMMENT_URL}/${id}`;
+  // Get comments
+  const fetchComments = async ({ queryKey, signal }) => {
+    const [, id] = queryKey;
+    if (!id) throw new Error("Missing id");
 
-        // request
-        const response = await axios.get(BACKEND_API);
+    const BACKEND_API = `${BACKEND_COMMENT_URL}/${id}`;
+    const res = await axios.get(BACKEND_API, { signal });
+    return res.data;
+  };
+  const demoFetchComments = () => {
+    let listComments = [];
 
-        setListComments(response.data);
-      } catch (err) {
-        console.error("error getting comments:", err);
+    for (let comment in commentData) {
+      let recipeId = commentData[comment].recipe_id.toString();
+      if (recipeId === id) {
+        for (let user in userData) {
+          if (userData[user]._id.$oid === commentData[comment].user_id.$oid) {
+            let temp_data = { ...userData[user] };
+            temp_data._id = userData[user]._id.$oid;
+            commentData[comment].user_id = temp_data;
+            break;
+          }
+        }
+
+        commentData[comment].createdAt = commentData[comment].createdAt.$date;
+
+        listComments.push(commentData[comment]);
       }
-    };
+    }
 
-    fetchComments();
-  }, [id]);
+    return listComments;
+  };
+  const {
+    data: listComments = [],
+    isLoading: listCommentsLoading,
+    error: listCommentsError,
+  } = useQuery({
+    queryKey: ["list-comment", id],
+    queryFn: fetchComments,
+    initialData: demoFetchComments,
+    enabled: !!id && !DEMO_MODE,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  });
 
   // check if the recipe has been bookmarked by the user
-  useEffect(() => {
-    const fetchComments = async () => {
-      const token = useAuthStore.getState().token;
+  const checkRecipeBookmarked = async ({ queryKey, signal }) => {
+    const [, id] = queryKey;
+    if (!id) throw new Error("Missing id");
 
-      const payload = {
-        recipeId: id,
-      };
+    if (!token) {
+      // Not logged in → treat as not bookmarked
+      return { isBookmarked: false, message: "User not logged in" };
+    }
 
-      // Prevent unnecessary calls
-      if (!token || !id) return;
+    const res = await axios.get(`${BACKEND_BOOKMARK_URL}/status`, {
+      params: { recipeId: id },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      signal,
+    });
 
-      try {
-        // request
-        const response = await axios.get(`${BACKEND_BOOKMARK_URL}/status`, {
-          params: payload,
+    return res.data.isBookmarked; // { isBookmarked, message }
+  };
+
+  const demoCheckRecipeBookmarked = () => {
+    if (isLoggedIn) {
+      for (let bookmark in user?.bookmark) {
+        console.log(user.bookmark[bookmark].recipe_id);
+        if (id === user.bookmark[bookmark].recipe_id) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  const {
+    data: hasBookmarked = false,
+    isLoading: hasBookmarkedLoading,
+    error: hasBookmarkedError,
+  } = useQuery({
+    queryKey: ["has-bookmarked", id],
+    queryFn: checkRecipeBookmarked,
+    enabled: !!id && !!token && !DEMO_MODE, // only run if logged in
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+    initialData: demoCheckRecipeBookmarked,
+  });
+
+  const addDemoBookmark = () => {
+    if (!isLoggedIn || !user?.id) {
+      return false;
+    }
+
+    // Clone user, avoid mutation
+    const updatedUser = structuredClone(user);
+
+    // Ensure bookmark array exists
+    if (!Array.isArray(updatedUser.bookmark)) {
+      updatedUser.bookmark = [];
+    }
+
+    // Create a new bookmark entry
+    const newBookmark = {
+      id: Date.now(), // unique ID
+      user_id: updatedUser.id, // user reference
+      recipe_id: id, // recipe being saved
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Prevent duplicates
+    const alreadyBookmarked = updatedUser.bookmark.some((b) => b.recipe_id === id);
+    if (!alreadyBookmarked) {
+      updatedUser.bookmark.unshift(newBookmark);
+    }
+
+    // Save to localStorage
+    localStorage.setItem("authUser", JSON.stringify(updatedUser));
+
+    // Return updated user
+    return true;
+  };
+
+  const addBookmarkMutation = useMutation({
+    mutationFn: async () => {
+      if (DEMO_MODE) {
+        return addDemoBookmark(id);
+      }
+
+      const response = await axios.post(
+        BACKEND_BOOKMARK_URL,
+        { recipeId: id },
+        {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-        setHasBookmarked(response.data.isBookmarked);
-      } catch (err) {
-        console.error("error getting recipe bookmark status:", err);
-      }
+        }
+      );
+
+      // assume backend returns the new bookmark or status
+      return response.data;
+    },
+
+    onSuccess: () => {
+      // Option 1: directly set the cached status to true
+      queryClient.setQueryData(["has-bookmarked", id], true);
+
+      // Option 2 (alternative): invalidate so it refetches from backend
+      // queryClient.invalidateQueries({ queryKey: ["has-bookmarked", id] });
+
+      toast.success("You’ve bookmarked this recipe.");
+    },
+
+    onError: (error) => {
+      console.error("Error adding bookmark:", error);
+      const msg = error.response?.data?.message || "Failed to add bookmark.";
+      toast.error(msg);
+    },
+  });
+
+  const isAddingBookmark = addBookmarkMutation.isPending;
+
+  //
+  //
+
+  const demoSubmitComment = () => {
+    if (!isLoggedIn || !user?.id) {
+      return false; // user not logged in
+    }
+
+    // Clone the user object to avoid mutation
+    const updatedUser = structuredClone(user);
+
+    // Ensure comment array exists
+    if (!Array.isArray(updatedUser.comment)) {
+      updatedUser.comment = [];
+    }
+
+    // Create new comment entry
+    const newComment = {
+      _id: {
+        $oid: Date.now(),
+      },
+      user_id: {
+        $oid: updatedUser.id,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        profile_image: updatedUser.profile_image,
+      },
+      recipe_id: id, // which recipe comment belongs to
+      comment_text: "fafafafa",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
-    fetchComments();
-  }, [id]);
+    // Add newest comment at the top
+    updatedUser.comment.unshift(newComment);
+
+    // Save to localStorage
+    localStorage.setItem("authUser", JSON.stringify(updatedUser));
+
+    return newComment;
+  };
+
+  const submitComment = async (commentText) => {
+    if (DEMO_MODE) {
+      return demoSubmitComment();
+    }
+
+    const commentPayload = {
+      comment_text: commentText,
+      recipe_id: Number(id),
+    };
+
+    const response = await axios.post(BACKEND_COMMENT_URL, commentPayload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // assuming your backend returns the new comment here:
+    return response.data.comment;
+  };
+
+  const commentMutation = useMutation({
+    mutationFn: submitComment,
+    onSuccess: (newComment_api) => {
+      // Update cache for ["list-comment", id]
+      queryClient.setQueryData(["list-comment", id], (oldComments) => {
+        if (!oldComments) return [newComment_api];
+        return [newComment_api, ...oldComments];
+      });
+
+      setComment(""); // clear textarea/input
+    },
+    onError: (err) => {
+      console.error("Comment submission failed:", err);
+      const msg = err.response?.data?.message || "Failed to submit comment. Please try again.";
+      setError(msg); // or toast.error(msg)
+    },
+  });
 
   // Handler for posting a comment
   async function handleCommentSubmit() {
@@ -406,57 +609,29 @@ export default function Recipe() {
       return;
     }
 
-    // submit data to database
-    const commentPayload = {
-      comment_text: trimmedComment,
-      recipe_id: Number(id),
-    };
-
-    try {
-      const response = await axios.post(BACKEND_COMMENT_URL, commentPayload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const newComment_api = response.data.comment;
-
-      setListComments((prevComments) => [newComment_api, ...prevComments]);
-      setComment("");
-    } catch (err) {
-      // 6. Error Handling
-      console.error("Comment submission failed:", err);
-      setError(err.response?.data?.message || "Failed to submit comment. Please try again.");
-    }
+    commentMutation.mutate(trimmedComment);
   }
 
   async function handleAddToBookmark() {
-    try {
-      const response = await axios.post(
-        BACKEND_BOOKMARK_URL,
-        {
-          recipeId: id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setHasBookmarked(true);
-      toast.success("You’ve bookmarked this recipe.");
-    } catch (error) {
-      console.error("Error adding bookmark:", error.response.data.message);
-      console.error("Error adding bookmark:", error);
+    if (!token) {
+      openModal("need-login");
+      return;
     }
+
+    addBookmarkMutation.mutate();
   }
+
+  // Page title
+  useEffect(() => {
+    document.title = `Recipe Name | ${PAGE_NAME}`;
+  }, []);
 
   return (
     <>
       {/* Navigator */}
       <Navigator />
 
-      {isloading && (
+      {recipeLoading && (
         <div className="max-w-7xl mx-auto px-4 mt-30 sm:px-6 lg:px-8 py-10 animate-pulse">
           {/* 1. Header Section: Title and Quick Info */}
           <div className="mb-10">
@@ -513,7 +688,7 @@ export default function Recipe() {
         </div>
       )}
 
-      {recipe != null && (
+      {recipe?.id != null && (
         <div className="">
           <div className="w-10/12 max-w-7xl mx-auto mt-30 ">
             <Toaster position="top-center" reverseOrder={false} />
@@ -571,12 +746,16 @@ export default function Recipe() {
 
               {/* side 2 */}
               <div className="absolute right-0 top-0 md:top-3 md:right-3 lg:top-5 lg:right-5 hidden md:block">
-                <FontAwesomeIcon
-                  icon={hasBookmarked ? faBookmarked : faBookmark}
-                  className="text-green-900 w-10 h-10 cursor-pointer"
-                  size="2x"
-                  onClick={handleAddToBookmark}
-                />
+                {isAddingBookmark ? (
+                  <span className="animate-spin mr-2 border-t-2 border-green-900 rounded-full w-4 h-4 inline-block"></span>
+                ) : (
+                  <FontAwesomeIcon
+                    icon={hasBookmarked ? faBookmarked : faBookmark}
+                    className="text-green-900 w-10 h-10 cursor-pointer"
+                    size="2x"
+                    onClick={handleAddToBookmark}
+                  />
+                )}
               </div>
             </div>
 
@@ -641,40 +820,112 @@ export default function Recipe() {
                   </div>
                 </div>
 
-                {/* Equipments */}
-                <div className="my-14 hidden">
-                  {/* heading */}
-                  <Heading name="Equipments" step="0/12" />
+                {/* Wine Pairing */}
+                <div className="my-20">
+                  <Heading name="Wine Pairing" />
 
-                  {/* item */}
-                  <ul className="flex flex-col gap-3 mt-5 ms-2">
-                    <ListItem>
-                      <div className="rounded-full border w-5 h-5"></div>
-                      <p>120 extra virgin olive oil</p>
-                    </ListItem>
-                  </ul>
+                  {/* If no wine data */}
+                  {!recipe?.winePairing?.pairedWines?.length && (
+                    <ListItem>No wine pairings available for this recipe.</ListItem>
+                  )}
+
+                  {/* Paired Wines */}
+                  {recipe?.winePairing?.pairedWines?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {recipe.winePairing.pairedWines.map((wine) => (
+                        <span
+                          key={wine}
+                          className="px-3 py-1 text-sm rounded-full bg-rose-100 text-rose-700 font-medium"
+                        >
+                          {wine}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Pairing Text */}
+                  {recipe?.winePairing?.pairingText && (
+                    <p className="mt-6 text-gray-700 leading-relaxed">
+                      {recipe.winePairing.pairingText}
+                    </p>
+                  )}
+
+                  {/* Product Match */}
+                  {recipe?.winePairing?.productMatches?.length > 0 && (
+                    <div className="mt-10">
+                      <h3 className="text-lg font-semibold mb-4">Featured Wine</h3>
+
+                      {recipe.winePairing.productMatches.map((product) => (
+                        <div
+                          key={product.id}
+                          className="border border-black/10 rounded-xl p-4 flex gap-4 shadow-sm hover:shadow-md transition"
+                        >
+                          {/* Image */}
+                          <img
+                            src={product.imageUrl}
+                            alt={product.title}
+                            className="w-32 h-24 object-cover rounded-md"
+                          />
+
+                          {/* Info */}
+                          <div className="flex-1">
+                            <h4 className="text-lg font-semibold">{product.title}</h4>
+
+                            <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                              <span className="font-medium text-rose-600">{product.price}</span>
+                              <span>•</span>
+                              <span>
+                                ⭐ {product.averageRating} ({product.ratingCount} reviews)
+                              </span>
+                            </div>
+
+                            {/* Description */}
+                            <p className="text-gray-600 text-sm mt-2 line-clamp-3">
+                              {product.description}
+                            </p>
+
+                            {/* Button */}
+                            <a
+                              href={product.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block mt-3 text-sm bg-rose-600 text-white px-3 py-1.5 rounded-lg hover:bg-rose-700"
+                            >
+                              View Product
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {recipe?.analyzedInstructions?.[0]?.steps?.length > 0 && (
-                  <div className="my-14">
-                    {/* heading */}
-                    <Heading name="Instructions" />
+                {/* Instructions */}
+                <div className="my-20">
+                  {/* heading */}
+                  <Heading name="Instructions" />
 
-                    {/* list */}
-                    <ul className="flex flex-col gap-5">
-                      {recipe?.analyzedInstructions[0]?.steps?.map((step, index) => (
-                        <li className="flex gap-5 items-start" key={index}>
-                          {/* numbering */}
-                          <div className="w-7 h-7 rounded-full bg-green-900 text-white font-bold flex justify-center items-center">
-                            <p>{step.number}</p>
-                          </div>
+                  {/* If no instructions */}
+                  {recipe?.analyzedInstructions.length === 0 && (
+                    <p className="text-gray-500 italic mt-4">
+                      No instructions available for this recipe.
+                    </p>
+                  )}
 
-                          <Paragraph className={"flex-1"}>{step.step}</Paragraph>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                  {/* list */}
+                  <ul className="flex flex-col gap-5">
+                    {recipe?.analyzedInstructions[0]?.steps?.map((step, index) => (
+                      <li className="flex gap-5 items-start" key={index}>
+                        {/* numbering */}
+                        <div className="w-7 h-7 rounded-full bg-green-900 text-white font-bold flex justify-center items-center">
+                          <p>{step.number}</p>
+                        </div>
+
+                        <Paragraph className={"flex-1"}>{step.step}</Paragraph>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
                 {/* Nutrition Facts */}
                 <NutritionFacts className="block lg:hidden my-14" data={recipe.nutrition} />
@@ -684,7 +935,7 @@ export default function Recipe() {
               </div>
 
               {/* side 2 */}
-              <div className="flex-1">
+              <div className="flex-1 ">
                 {/* tags */}
                 <Tags className="hidden lg:flex mb-14" />
 
@@ -700,7 +951,7 @@ export default function Recipe() {
 
                   {/* parent */}
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-5">
-                    {recipe.similarRecipe?.map((recipee, index) => (
+                    {similarRecipe.map((recipee, index) => (
                       <RecipeItem
                         key={index}
                         name={recipee.title}
@@ -734,11 +985,13 @@ export default function Recipe() {
                         key={index} // 2. Added key prop (REQUIRED in lists)
                         className="gap-5 border-t border-black/10 pt-14 flex items-start"
                       >
-                        <img
-                          src={`https://placehold.co/40x40/4c3c3a/ffffff?text=${comment.user_id.firstName[0]}`}
-                          alt={`${comment.user_id.firstName}'s profile`}
-                          className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-300 shadow-md"
-                        />
+                        <a href={`/profile/${comment.user_id._id}`}>
+                          <img
+                            src={comment.user_id.profile_image}
+                            alt={`${comment.user_id.firstName}'s profile`}
+                            className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-300 shadow-md"
+                          />
+                        </a>
                         <div className="flex-1">
                           <a href={`/profile/${comment.user_id._id}`}>
                             <h4 className="text-xl font-medium">
@@ -798,12 +1051,9 @@ export default function Recipe() {
                     }}
                   ></textarea>
 
-                  <button
-                    className="bg-black cursor-pointer text-white px-5 py-3 rounded-lg absolute right-5 bottom-5"
-                    onClick={handleCommentSubmit}
-                  >
+                  <Button className="absolute right-5 bottom-5" onClick={handleCommentSubmit}>
                     Comment
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -820,17 +1070,15 @@ export default function Recipe() {
 
               {/* parent */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
-                {isloading && (
+                {randomRecipeLoading ? (
                   <>
                     {[...Array(8)].map((_, index) => (
                       <RecipeItemSkeleton key={index} />
                     ))}
                   </>
-                )}
-
-                {!isloading && recipe?.random?.length > 0 && (
+                ) : (
                   <>
-                    {recipe.random.map((popularRecipe, index) => (
+                    {randomRecipe.map((popularRecipe, index) => (
                       <RecipeItem
                         key={index}
                         name={popularRecipe.title}

@@ -11,7 +11,7 @@ export async function getCommentsByRecipeId(req, res) {
     const comments = await Comment.find({ recipe_id: recipeId })
       .populate({
         path: "user_id",
-        select: "firstName lastName profileUrl",
+        select: "firstName lastName profile_image",
       })
       .sort({ createdAt: -1 }); // Show newest comments first
 
