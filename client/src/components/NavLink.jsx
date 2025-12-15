@@ -1,6 +1,8 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 
+// /GGG
+
 export default function NavLink({ url = "#", label }) {
   const location = useLocation();
 
