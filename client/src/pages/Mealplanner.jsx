@@ -288,7 +288,7 @@ export default function Mealplanner() {
       }
     }
 
-    setSelectedMealId((prev) => [...prev, ...todayRecipesId]);
+    setSelectedMealId([...todayRecipesId]);
     setSelectedDateData(data || null);
   }, [selectedISO, userMealSchedule]);
 
@@ -306,6 +306,10 @@ export default function Mealplanner() {
   // Fetch recipe
   const fetchRecipe = async ({ queryKey, signal }) => {
     const [, idsString] = queryKey;
+
+    console.log(selectedDateData);
+
+    for(let in)
 
     return [];
 
@@ -343,6 +347,8 @@ export default function Mealplanner() {
     queryFn: fetchRecipe,
     enabled: selectedMealId.length > 0,
   });
+
+  console.log(selectedMealId);
 
   return (
     <>
