@@ -5,10 +5,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import Navigator from "@components/Navigator";
 import DateCardItem from "../components/mealplanner/DateCardItem";
 
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/useAuthStore";
 
+import { getRandomApiKey } from "../utils/apiUtils";
+
 import axios from "axios";
+import RecipeItem from "@components/RecipeItem";
 
 let nutrients = [
   {
@@ -219,16 +222,15 @@ export default function Mealplanner() {
   // AUTH
   const token = useAuthStore.getState().token;
 
-  const [selectedISO, setSelectedISO] = useState("");
-  const [selectedDateData, setSelectedDateData] = useState(null);
-  const [selectedMealId, setSelectedMealId] = useState([]);
-
+  // clean up
+  // clean up
+  // clean up
+  // clean up
   const todayISO = getLocalISO();
 
-  // init selected date = today
-  useEffect(() => {
-    setSelectedISO(todayISO);
-  }, [todayISO]);
+  const [selectedISO, setSelectedISO] = useState(todayISO);
+  const [selectedDateData, setSelectedDateData] = useState(null);
+  const [selectedMealId, setSelectedMealId] = useState([]);
 
   function changeSelectedDate(iso) {
     setSelectedISO(iso);
@@ -237,6 +239,8 @@ export default function Mealplanner() {
   // return array of objects for all the days in the selected week
   const fetchUserMealSchedule = async ({ queryKey, signal }) => {
     const [, selectedISO] = queryKey; // date, not userId
+
+    console.log("Fetching user meal schedule for date:", selectedISO);
 
     const API_URL = `${BACKEND_MEAL_URL}/usermeal`;
 
@@ -292,64 +296,6 @@ export default function Mealplanner() {
     setSelectedDateData(data || null);
   }, [selectedISO, userMealSchedule]);
 
-  // derive recipe IDs for the selected date
-  const recipeIds = useMemo(() => {
-    if (!selectedDateData) return [];
-
-    return [
-      ...selectedDateData.meal.breakfast,
-      ...selectedDateData.meal.lunch,
-      ...selectedDateData.meal.dinner,
-    ].map((item) => (typeof item === "number" ? item : item.recipeId));
-  }, [selectedDateData]);
-
-  // Fetch recipe
-  const fetchRecipe = async ({ queryKey, signal }) => {
-    const [, idsString] = queryKey;
-
-    console.log(selectedDateData);
-
-    for(let in)
-
-    return [];
-
-    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
-      try {
-        const apiKey = getRandomApiKey();
-
-        const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString.join(",")}&apiKey=${apiKey}`;
-
-        const res = await axios.get(apiUrl, { signal });
-        return res.data;
-      } catch (error) {
-        const status = error.response?.status;
-        const message = error.response?.data?.message || error.message;
-        console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
-
-        if (attempt === MAX_TRY) {
-          const localRecipes = Array.from({ length: userBookmarks.length }, () => ({
-            ...offlineRecipeData,
-          }));
-
-          toast.error("Showing offline data. API LIMIT");
-
-          return localRecipes;
-        }
-      }
-    }
-  };
-  const {
-    data: recipeData = [],
-    isLoading: recipesLoading,
-    error: recipesError,
-  } = useQuery({
-    queryKey: ["recipes", selectedMealId],
-    queryFn: fetchRecipe,
-    enabled: selectedMealId.length > 0,
-  });
-
-  console.log(selectedMealId);
-
   return (
     <>
       <Navigator />
@@ -378,73 +324,10 @@ export default function Mealplanner() {
               <h2 className="text-3xl font-medium capitalize mb-10">Today's meal</h2>
 
               <ul className="flex gap-10 flex-col">
-                {selectedDateData &&
-                (selectedDateData.meal.breakfast.length > 0 ||
-                  selectedDateData.meal.lunch.length > 0 ||
-                  selectedDateData.meal.dinner.length > 0) ? (
-                  <>
-                    {/* Breakfast */}
-                    {selectedDateData.meal.breakfast.length > 0 && (
-                      <li>
-                        <h2 className="text-xl mb-4">Breakfast</h2>
-                        <div className="flex gap-5">
-                          {selectedDateData.meal.breakfast.map((_, idx) => (
-                            <div key={idx} className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                          ))}
-                        </div>
-                      </li>
-                    )}
-
-                    {/* Lunch */}
-                    {selectedDateData.meal.lunch.length > 0 && (
-                      <li>
-                        <h2 className="text-xl mb-4">Lunch</h2>
-                        <div className="flex gap-5">
-                          {selectedDateData.meal.lunch.map((_, idx) => (
-                            <div key={idx} className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                          ))}
-                        </div>
-                      </li>
-                    )}
-
-                    {/* Dinner */}
-                    {selectedDateData.meal.dinner.length > 0 && (
-                      <li>
-                        <h2 className="text-xl mb-4">Dinner</h2>
-                        <div className="flex gap-5">
-                          {selectedDateData.meal.dinner.map((_, idx) => (
-                            <div key={idx} className="w-60 h-60 bg-red-500 rounded-lg"></div>
-                          ))}
-                        </div>
-                      </li>
-                    )}
-                  </>
-                ) : (
-                  /* EMPTY STATE */
-                  <li className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl text-center">
-                    <div className="text-5xl mb-4">🍽️</div>
-
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      No meals planned for today
-                    </h3>
-
-                    <p className="text-sm text-gray-500 mt-2 max-w-sm">
-                      You haven’t added any meals yet. Start planning your day by adding a recipe
-                      for breakfast, lunch, or dinner.
-                    </p>
-
-                    <button
-                      className="mt-6 px-6 py-2 rounded-full bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition"
-                      onClick={() => {
-                        // open add meal modal or redirect to search
-                      }}
-                    >
-                      + Add meal
-                    </button>
-                  </li>
-                )}
+                {/* {recipesLoading || userMealLoading ? <li>Loading...</li> : <li>test</li>} */}
               </ul>
             </div>
+
             {/* side 2 */}
             <div className="flex-1 max-w-[400px]">
               {/* button */}
