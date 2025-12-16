@@ -20,34 +20,10 @@ async function seedMealplans() {
     };
 
     const data = [
-      // December 15
+      // December 17
       {
         user_id: userId,
-        date: normalizeDate("2025-12-15"),
-        meal: {
-          breakfast: [{ recipeId: 647412 }],
-          lunch: [{ recipeId: 635215 }],
-          dinner: [],
-          snacks: [],
-        },
-      },
-
-      // December 16
-      {
-        user_id: userId,
-        date: normalizeDate("2025-12-16"),
-        meal: {
-          breakfast: [],
-          lunch: [],
-          dinner: [{ recipeId: 635215 }],
-          snacks: [],
-        },
-      },
-
-      // December 18
-      {
-        user_id: userId,
-        date: normalizeDate("2025-12-18"),
+        date: normalizeDate("2025-12-17"),
         meal: {
           breakfast: [{ recipeId: 525252 }],
           lunch: [],
