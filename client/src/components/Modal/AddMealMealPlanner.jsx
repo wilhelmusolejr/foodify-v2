@@ -56,11 +56,11 @@ export default function AddMealMealPlanner({ recipeId = 0 }) {
 
       const API_URL = `${BACKEND_MEAL_URL}/usermeal`;
 
-      // const res = await axios.post(API_URL, formData, {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      // });
+      const res = await axios.post(API_URL, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       // console.log(res.data);
       setIsSuccess(true);
@@ -68,8 +68,6 @@ export default function AddMealMealPlanner({ recipeId = 0 }) {
       console.error(error);
     } finally {
       setIsLoading(false);
-
-      // closeModal();
     }
   }
 
