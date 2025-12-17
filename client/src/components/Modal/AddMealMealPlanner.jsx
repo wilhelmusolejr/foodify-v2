@@ -20,7 +20,9 @@ export default function AddMealMealPlanner({ recipeId = 0 }) {
 
   function handleAddMeal() {
     // Here you would typically send the selectedISO and selectedMeals to your backend or state management
-    console.log("Adding meal on:", selectedISO, "for meals:", selectedMeals, "recipeId:", recipeId);
+    console.log(selectedISO);
+    console.log(selectedMeals);
+    console.log(recipeId);
     // closeModal();
   }
 
@@ -78,7 +80,7 @@ export default function AddMealMealPlanner({ recipeId = 0 }) {
         <div className="flex justify-end gap-3">
           <button
             onClick={closeModal}
-            className="px-4 py-2 rounded-lg text-sm border border-gray-300 text-gray-700 hover:bg-gray-100"
+            className="px-4 py-2 rounded-lg text-sm border cursor-pointer border-gray-300 text-gray-700 hover:bg-gray-100"
           >
             Cancel
           </button>
@@ -86,7 +88,7 @@ export default function AddMealMealPlanner({ recipeId = 0 }) {
           <button
             onClick={handleAddMeal}
             disabled={!selectedISO || selectedMeals.length === 0}
-            className="px-4 py-2 rounded-lg text-sm bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg text-sm bg-green-600 cursor-pointer text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Add to Planner
           </button>
