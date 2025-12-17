@@ -968,6 +968,8 @@ export default function Mealplanner() {
                                             image_name={item?.details?.image}
                                             id={item?.details?.id}
                                             name={item?.details?.title}
+                                            setListId={setListId}
+                                            toModify={toModify}
                                           />
                                         )}
                                       </div>
@@ -989,6 +991,8 @@ export default function Mealplanner() {
                                             image_name={item?.details?.image}
                                             id={item?.details?.id}
                                             name={item?.details?.title}
+                                            setListId={setListId}
+                                            toModify={toModify}
                                           />
                                         )}
                                       </div>
@@ -1010,6 +1014,8 @@ export default function Mealplanner() {
                                             image_name={item?.details?.image}
                                             id={item?.details?.id}
                                             name={item?.details?.title}
+                                            setListId={setListId}
+                                            toModify={toModify}
                                           />
                                         )}
                                       </div>
