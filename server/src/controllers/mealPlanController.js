@@ -71,6 +71,66 @@ export async function getUserMeal(req, res) {
   }
 }
 
+export async function addUserMeal(req, res) {
+  try {
+    const userId = req.user.userId;
+    const { date, mealTimes, recipeId } = req.body;
+
+    // date = 2025-12-20
+    // mealTime = ["lunch"]
+    // recipeId = 782601
+
+    if (!date || !mealTimes?.length || !recipeId) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing date, mealTimes, or recipeId",
+      });
+    }
+
+    const mealDate = new Date(date);
+    mealDate.setHours(0, 0, 0, 0);
+
+    // Find or create mealplan
+    let mealplan = await Mealplan.findOne({
+      user_id: userId,
+      date: mealDate,
+    });
+
+    if (!mealplan) {
+      mealplan = new Mealplan({
+        user_id: userId,
+        date: mealDate,
+      });
+    }
+
+    // Add recipe to each selected meal time
+    for (const mealTime of mealTimes) {
+      if (!mealplan.meal[mealTime]) continue;
+
+      const alreadyExists = mealplan.meal[mealTime].some(
+        (item) => item.recipeId === recipeId
+      );
+
+      if (!alreadyExists) {
+        mealplan.meal[mealTime].push({ recipeId });
+      }
+    }
+
+    await mealplan.save();
+
+    return res.status(200).json({
+      success: true,
+      data: mealplan,
+    });
+  } catch (error) {
+    console.error("addUserMeal error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add meal",
+    });
+  }
+}
+
 function toLocalISO(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
     2,
