@@ -120,3 +120,9 @@ Finalize
 
 DEC 9
 Figma
+
+--
+
+1. Mealplanner page. modify button, choose recipe to delete, press delete button.
+   in choosing recipe, add data-id, iso in the mealplanner page. breakfast or type in the recipeitem component.
+   upon delete button. show toast, refetch data.
