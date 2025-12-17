@@ -77,7 +77,7 @@ export async function addUserMeal(req, res) {
     const { date, mealTimes, recipeId } = req.body;
 
     // date = 2025-12-20
-    // mealTime = ["lunch"]
+    // mealTimes = ["lunch"]
     // recipeId = 782601
 
     if (!date || !mealTimes?.length || !recipeId) {
