@@ -33,6 +33,9 @@ import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
 import NeedLogin from "@components/Modal/NeedLogin";
 import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
+import PageLoader from "@components/Recipe/PageLoader";
+import AddMealMealPlanner from "@components/Modal/AddMealMealPlanner";
+import Button from "@components/Global/Button";
 
 // UTILS
 import { formatCommentDate } from "../utils/dateUtils";
@@ -44,18 +47,14 @@ import { useAuthStore } from "../stores/useAuthStore";
 // Library
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-
 import { useModal } from "../context/ModalContext";
-import offlineRecipeData from "./recipe.json";
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Button from "../components/Global/Button";
 
+// DEMO
 import bookmarkData from "../demo/bookmarks.json";
 import userData from "../demo/users.json";
 import commentData from "../demo/comments.json";
-import PageLoader from "../components/Recipe/PageLoader";
-import AddMealMealPlanner from "../components/Modal/AddMealMealPlanner";
+import offlineRecipeData from "./recipe.json";
 
 export default function Recipe() {
   const { id } = useParams();
@@ -627,13 +626,14 @@ export default function Recipe() {
 
   // Page title
   useEffect(() => {
-    document.title = `Recipe Name | ${PAGE_NAME}`;
-  }, []);
+    const title = recipe?.title ? recipe.title : "Loading recipe";
+    document.title = `${title} | ${PAGE_NAME}`;
+  }, [recipe?.title, PAGE_NAME]);
 
   // MEAL PLANNER
   function handleAddMealPlanner() {
-    toast.success("Added to meal planner!");
     openModal("meal-planner");
+    // toast.success("Added to meal planner!");
   }
 
   return (
