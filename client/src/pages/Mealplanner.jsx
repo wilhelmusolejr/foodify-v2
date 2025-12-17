@@ -4,8 +4,9 @@ import React, { use, useEffect, useMemo, useState } from "react";
 // COMPONENTS
 import Navigator from "@components/Navigator";
 import DateCardItem from "../components/mealplanner/DateCardItem";
+import Footer from "@components/Footer";
 
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/useAuthStore";
 
 import { getRandomApiKey } from "../utils/apiUtils";
@@ -230,6 +231,8 @@ export default function Mealplanner() {
   const [selectedMealId, setSelectedMealId] = useState([]);
   const [meal, setMeal] = useState({});
   const [isMealReady, setIsMealReady] = useState(false);
+  const [listId, setListId] = useState([]);
+  const [toModify, setToModify] = useState(false);
 
   function changeSelectedDate(iso) {
     setSelectedISO(iso);
@@ -822,7 +825,13 @@ export default function Mealplanner() {
     setIsMealReady(true);
   }, [recipeData.length > 0]);
 
-  // console.log(selectedDateData?.meal?.breakfast);
+  function handleModifyClick(bool) {
+    setToModify(bool);
+  }
+
+  function handleDeleteClick() {
+    console.log("delete ids:", listId);
+  }
 
   return (
     <>
@@ -853,28 +862,147 @@ export default function Mealplanner() {
 
               {userMealLoading ? (
                 <>
-                  <p>Loading user meals ...</p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {Array.from({ length: 4 }).map((_, idx) => (
+                      <div
+                        key={idx}
+                        className="animate-pulse rounded-xl border bg-white shadow-sm overflow-hidden"
+                      >
+                        {/* Image placeholder */}
+                        <div className="h-40 bg-gray-200" />
+
+                        {/* Text placeholder */}
+                        <div className="p-4 space-y-3">
+                          <div className="h-4 bg-gray-200 rounded w-3/4" />
+                          <div className="h-3 bg-gray-200 rounded w-1/2" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </>
               ) : (
                 <>
                   {selectedMealId.length === 0 ? (
-                    <p>No meals planned for this day.</p>
+                    <>
+                      <li className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl text-center">
+                        <div className="text-5xl mb-4">🍽️</div>
+
+                        <h3 className="text-xl font-semibold text-gray-800">
+                          No meals planned for today
+                        </h3>
+
+                        <p className="text-sm text-gray-500 mt-2 max-w-sm">
+                          You haven’t added any meals yet. Start planning your day by adding a
+                          recipe for breakfast, lunch, or dinner.
+                        </p>
+
+                        <button
+                          className="mt-6 px-6 py-2 rounded-full bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition"
+                          onClick={() => {
+                            // open add meal modal or redirect to search
+                          }}
+                        >
+                          + Add meal
+                        </button>
+                      </li>
+                    </>
                   ) : (
                     <>
                       {recipesLoading ? (
                         <>
-                          <p>loading</p>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {Array.from({ length: 4 }).map((_, idx) => (
+                              <div
+                                key={idx}
+                                className="animate-pulse rounded-xl border bg-white shadow-sm overflow-hidden"
+                              >
+                                {/* Image placeholder */}
+                                <div className="h-40 bg-gray-200" />
+
+                                {/* Text placeholder */}
+                                <div className="p-4 space-y-3">
+                                  <div className="h-4 bg-gray-200 rounded w-3/4" />
+                                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </>
                       ) : (
                         <>
                           {isMealReady && (
-                            <ul>
+                            <ul className="flex flex-col gap-10">
                               {/* Breakfast */}
                               {selectedDateData.meal.breakfast.length > 0 && (
                                 <li>
                                   <h2 className="text-xl mb-4">Breakfast</h2>
                                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                                     {selectedDateData.meal.breakfast.map((item, idx) => (
+                                      <div key={idx}>
+                                        {item?.details?.id && (
+                                          <RecipeItem
+                                            key={item?.details?.id}
+                                            image_name={item?.details?.image}
+                                            id={item?.details?.id}
+                                            name={item?.details?.title}
+                                            setListId={setListId}
+                                            toModify={toModify}
+                                          />
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </li>
+                              )}
+
+                              {/* Lunch */}
+                              {selectedDateData.meal.lunch.length > 0 && (
+                                <li>
+                                  <h2 className="text-xl mb-4">Lunch</h2>
+                                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                    {selectedDateData.meal.lunch.map((item, idx) => (
+                                      <div key={idx}>
+                                        {item?.details?.id && (
+                                          <RecipeItem
+                                            key={item?.details?.id}
+                                            image_name={item?.details?.image}
+                                            id={item?.details?.id}
+                                            name={item?.details?.title}
+                                          />
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </li>
+                              )}
+
+                              {/* Snacks */}
+                              {selectedDateData.meal.snacks.length > 0 && (
+                                <li>
+                                  <h2 className="text-xl mb-4">Snacks</h2>
+                                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                    {selectedDateData.meal.snacks.map((item, idx) => (
+                                      <div key={idx}>
+                                        {item?.details?.id && (
+                                          <RecipeItem
+                                            key={item?.details?.id}
+                                            image_name={item?.details?.image}
+                                            id={item?.details?.id}
+                                            name={item?.details?.title}
+                                          />
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </li>
+                              )}
+
+                              {/* Dinner */}
+                              {selectedDateData.meal.dinner.length > 0 && (
+                                <li>
+                                  <h2 className="text-xl mb-4">Dinner</h2>
+                                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                    {selectedDateData.meal.dinner.map((item, idx) => (
                                       <div key={idx}>
                                         {item?.details?.id && (
                                           <RecipeItem
@@ -913,10 +1041,37 @@ export default function Mealplanner() {
                   <p>Add meal</p>
                 </div>
 
+                {!toModify ? (
+                  <>
+                    {/* item */}
+                    <div
+                      className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
+                      onClick={() => handleModifyClick(true)}
+                    >
+                      <p>Modify</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* item */}
+                    <div
+                      className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
+                      onClick={handleDeleteClick}
+                    >
+                      <p>Delete</p>
+                    </div>
+                  </>
+                )}
+
                 {/* item */}
-                <div className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer">
-                  <p>Modify</p>
-                </div>
+                {toModify && (
+                  <div
+                    className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
+                    onClick={() => handleModifyClick(false)}
+                  >
+                    <p>Cancel</p>
+                  </div>
+                )}
               </div>
 
               {/* nutrition  */}
@@ -960,17 +1115,8 @@ export default function Mealplanner() {
       <br />
       <br />
       <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
+
+      <Footer />
     </>
   );
 }
