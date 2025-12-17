@@ -3,14 +3,30 @@ import React, { useState } from "react";
 // Component
 import ModalContainer from "../ModalContainer";
 import { useModal } from "../../context/ModalContext";
+import { useAuthStore } from "../../stores/useAuthStore";
+
+// Library
+import axios from "axios";
+import { useMemo } from "react";
 
 export default function AddMealMealPlanner({ recipeId = 0 }) {
-  const { openModal, closeModal } = useModal();
+  const { closeModal } = useModal();
 
+  // STATE
   const [selectedISO, setSelectedISO] = useState("");
   const [selectedMeals, setSelectedMeals] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  const weekSchedule = getWeekSchedule(); // uses today
+  // ENV
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  const BACKEND_MEAL_URL = `${BACKEND_URL}/api/mealplan`;
+
+  // AUTH
+  const token = useAuthStore.getState().token;
+
+  // FUNCTION
+  const weekSchedule = useMemo(() => getWeekSchedule(), []);
 
   function toggleMeal(meal) {
     setSelectedMeals((prev) =>
@@ -18,12 +34,51 @@ export default function AddMealMealPlanner({ recipeId = 0 }) {
     );
   }
 
-  function handleAddMeal() {
-    // Here you would typically send the selectedISO and selectedMeals to your backend or state management
-    console.log(selectedISO);
-    console.log(selectedMeals);
-    console.log(recipeId);
-    // closeModal();
+  // HANDLER
+  async function handleAddMeal() {
+    if (isLoading || isSuccess) return;
+
+    // Validation
+    if (!selectedISO || selectedMeals.length === 0) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      await sleep(5000);
+
+      let formData = {
+        date: selectedISO,
+        mealTimes: selectedMeals,
+        recipeId: recipeId,
+      };
+
+      const API_URL = `${BACKEND_MEAL_URL}/usermeal`;
+
+      // const res = await axios.post(API_URL, formData, {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // });
+
+      // console.log(res.data);
+      setIsSuccess(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+
+      // closeModal();
+    }
+  }
+
+  function handleClose() {
+    setSelectedISO("");
+    setSelectedMeals([]);
+    setIsLoading(false);
+    setIsSuccess(false);
+    closeModal();
   }
 
   return (
@@ -34,64 +89,102 @@ export default function AddMealMealPlanner({ recipeId = 0 }) {
           Add to Meal Planner
         </h2>
 
-        {/* Week Schedule */}
-        <div className="mb-5">
-          <p className="text-sm font-medium text-gray-600 mb-2">Select a day</p>
+        <div className="min-h-56 relative border border-black/10 p-4 rounded-lg bg-gray-50">
+          {/* LOADING STATE */}
+          {isLoading && (
+            <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center rounded-lg z-10">
+              <div className="animate-spin h-8 w-8 border-4 border-green-600 border-t-transparent rounded-full mb-3" />
+              <p className="text-sm text-gray-600">Adding to your meal planner…</p>
+            </div>
+          )}
 
-          <div className="grid grid-cols-4 gap-2">
-            {weekSchedule.map((day) => (
-              <button
-                key={day.iso}
-                onClick={() => setSelectedISO(day.iso)}
-                className={`px-3 py-2 rounded-lg text-sm border transition
+          {/* SUCCESS STATE */}
+          {isSuccess && (
+            <div className="absolute inset-0 bg-white flex flex-col items-center justify-center p-4 rounded-lg z-20">
+              <h3 className="text-lg font-semibold text-green-700 mb-2">Added successfully 🎉</h3>
+              <p className="text-sm text-green-700 text-center">
+                This recipe is now part of your meal plan.
+              </p>
+            </div>
+          )}
+
+          {/* FORM CONTENT */}
+          {!isSuccess && (
+            <div className={isLoading ? "opacity-40 pointer-events-none" : ""}>
+              {/* Select Day */}
+              <div className="mb-5">
+                <p className="text-sm font-medium text-gray-600 mb-2">Select a day</p>
+
+                <div className="grid grid-cols-4 gap-2">
+                  {weekSchedule.map((day) => (
+                    <button
+                      key={day.iso}
+                      onClick={() => setSelectedISO(day.iso)}
+                      className={`px-3 py-2 rounded-lg text-sm border transition
                 ${
                   selectedISO === day.iso
                     ? "bg-green-600 text-white border-green-600"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
                 }`}
-              >
-                <div className="font-semibold uppercase">{day.short.split(" ")[0]}</div>
-                <div className="text-xs">{day.short.split(" ")[1]}</div>
-              </button>
-            ))}
-          </div>
-        </div>
+                    >
+                      <div className="font-semibold uppercase">{day.short.split(" ")[0]}</div>
+                      <div className="text-xs">{day.short.split(" ")[1]}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-        {/* Meal Type Selection */}
-        <div className="mb-6">
-          <p className="text-sm font-medium text-gray-600 mb-2">Select meal type</p>
+              {/* Meal Type */}
+              <div className="mb-6">
+                <p className="text-sm font-medium text-gray-600 mb-2">Select meal type</p>
 
-          <div className="grid grid-cols-2 gap-3">
-            {["breakfast", "lunch", "dinner", "snacks"].map((meal) => (
-              <label key={meal} className="flex items-center gap-2 text-sm cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={selectedMeals.includes(meal)}
-                  onChange={() => toggleMeal(meal)}
-                  className="accent-green-600"
-                />
-                <span className="capitalize">{meal}</span>
-              </label>
-            ))}
-          </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {["breakfast", "lunch", "dinner", "snacks"].map((meal) => (
+                    <label key={meal} className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedMeals.includes(meal)}
+                        onChange={() => toggleMeal(meal)}
+                        className="accent-green-600"
+                      />
+                      <span className="capitalize">{meal}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={closeModal}
-            className="px-4 py-2 rounded-lg text-sm border cursor-pointer border-gray-300 text-gray-700 hover:bg-gray-100"
-          >
-            Cancel
-          </button>
+        <div className="flex justify-end gap-3 mt-5">
+          {isSuccess ? (
+            <button
+              onClick={handleClose}
+              className="px-4 py-2 rounded-lg text-sm border border-gray-300 text-gray-700 hover:bg-gray-100"
+            >
+              Close
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={handleClose}
+                disabled={isLoading}
+                className="px-4 py-2 rounded-lg text-sm border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+              >
+                Cancel
+              </button>
 
-          <button
-            onClick={handleAddMeal}
-            disabled={!selectedISO || selectedMeals.length === 0}
-            className="px-4 py-2 rounded-lg text-sm bg-green-600 cursor-pointer text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Add to Planner
-          </button>
+              <button
+                onClick={handleAddMeal}
+                disabled={!selectedISO || selectedMeals.length === 0 || isLoading}
+                className="px-4 py-2 rounded-lg text-sm bg-green-600 text-white hover:bg-green-700 
+                   disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? "Adding…" : "Add to Planner"}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </ModalContainer>
@@ -164,3 +257,5 @@ function getLocalISO(date = new Date()) {
     date.getDate()
   ).padStart(2, "0")}`;
 }
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
