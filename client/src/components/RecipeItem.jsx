@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { randomFoodIcon } from "../utils/foodLoaderUtils";
+import { faBox, faBoxOpen } from "@fortawesome/free-solid-svg-icons";
+import { faSquare, faSquareCheck } from "@fortawesome/free-regular-svg-icons";
 
-export default function RecipeItem({ image_name, id, name }) {
+export default function RecipeItem({
+  image_name,
+  id,
+  name,
+  setListId = useState([]),
+  toModify = false,
+}) {
+  // env
+  const FRONT_URL = import.meta.env.VITE_FRONTEND_URL;
+
   let image_path;
   let icon = randomFoodIcon();
+  const recipe_link = `${FRONT_URL}/recipe/${id}`;
+
+  const [isSelected, setIsSelected] = useState(false);
 
   if (image_name) {
     if (image_name.includes("https")) {
@@ -18,11 +32,33 @@ export default function RecipeItem({ image_name, id, name }) {
     image_path = null;
   }
 
-  let recipe_link = `http://localhost:5173/recipe/${id}`;
+  function handleClick() {
+    if (!toModify) return;
+
+    setIsSelected(!isSelected);
+    setListId((prevList) => {
+      if (isSelected) {
+        return prevList.filter((itemId) => itemId !== id);
+      }
+      return [...prevList, id];
+    });
+  }
 
   return (
-    <a href={recipe_link} className="group block">
-      <div className="aspect-square rounded-lg flex items-center justify-center border border-black/10 relative overflow-hidden">
+    <a
+      href={recipe_link}
+      className="group block"
+      onClick={(e) => {
+        if (toModify) {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
+    >
+      <div
+        onClick={handleClick}
+        className="aspect-square rounded-lg flex items-center justify-center border border-black/10 relative overflow-hidden"
+      >
         {image_path ? (
           <img
             src={image_path}
@@ -35,6 +71,14 @@ export default function RecipeItem({ image_name, id, name }) {
           <div className="absolute inset-0 bg-white flex items-center justify-center">
             <FontAwesomeIcon icon={icon} size="2x" className="text-black/50" />
           </div>
+        )}
+
+        {toModify && (
+          <FontAwesomeIcon
+            icon={isSelected ? faSquareCheck : faSquare}
+            size="2x"
+            className="absolute bottom-5 left-2 z-50 text-white"
+          />
         )}
       </div>
 
