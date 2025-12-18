@@ -237,8 +237,9 @@ export default function Mealplanner() {
   function changeSelectedDate(iso) {
     setSelectedISO(iso);
   }
-
+  // -----------------------------------------------------
   // return array of objects for all the days in the selected week
+  // -----------------------------------------------------
   const fetchUserMealSchedule = async ({ queryKey, signal }) => {
     const [, selectedISO] = queryKey; // date, not userId
 
@@ -268,7 +269,9 @@ export default function Mealplanner() {
     refetchOnMount: false,
   });
 
+  // -----------------------------------------------------
   // derive selected date data
+  // -----------------------------------------------------
   useEffect(() => {
     const data = userMealSchedule.find((day) => day.iso === selectedISO);
     setSelectedDateData(data);
@@ -829,9 +832,30 @@ export default function Mealplanner() {
     setToModify(bool);
   }
 
-  function handleDeleteClick() {
+  async function handleDeleteClick() {
     console.log("delete ids:", listId);
+
+    let formData = {
+      date: todayISO,
+      items: listId,
+    };
+
+    const res = await axios.delete(`${BACKEND_MEAL_URL}/usermeal`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: formData,
+    });
+
+    console.log(res.data);
+
+    try {
+    } catch (error) {}
   }
+
+  useEffect(() => {
+    console.log("Selected list ids:", listId);
+  }, [listId]);
 
   return (
     <>
@@ -947,6 +971,7 @@ export default function Mealplanner() {
                                             name={item?.details?.title}
                                             setListId={setListId}
                                             toModify={toModify}
+                                            mealTime={"breakfast"}
                                           />
                                         )}
                                       </div>
@@ -970,6 +995,7 @@ export default function Mealplanner() {
                                             name={item?.details?.title}
                                             setListId={setListId}
                                             toModify={toModify}
+                                            mealTime={"lunch"}
                                           />
                                         )}
                                       </div>
@@ -993,6 +1019,7 @@ export default function Mealplanner() {
                                             name={item?.details?.title}
                                             setListId={setListId}
                                             toModify={toModify}
+                                            mealTime={"snacks"}
                                           />
                                         )}
                                       </div>
@@ -1016,6 +1043,7 @@ export default function Mealplanner() {
                                             name={item?.details?.title}
                                             setListId={setListId}
                                             toModify={toModify}
+                                            mealTime={"dinner"}
                                           />
                                         )}
                                       </div>
