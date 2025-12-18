@@ -14,6 +14,7 @@ import { getRandomApiKey } from "../utils/apiUtils";
 
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import AddMealModal from "../components/Modal/AddMealModal";
 
 let nutrients = [
   {
@@ -408,8 +409,6 @@ export default function Mealplanner() {
     console.log("Selected list ids:", listId);
   }, [listId]);
 
-  console.log("ENRICHED:", enrichedSelectedDateData);
-
   return (
     <>
       <Navigator />
@@ -702,6 +701,8 @@ export default function Mealplanner() {
       <br />
       <br />
       <br />
+
+      <AddMealModal />
 
       <Footer />
     </>
