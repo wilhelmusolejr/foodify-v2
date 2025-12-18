@@ -12,6 +12,7 @@ export default function RecipeItem({
   name,
   setListId = useState([]),
   toModify = false,
+  mealTime = "",
 }) {
   // env
   const FRONT_URL = import.meta.env.VITE_FRONTEND_URL;
@@ -35,13 +36,29 @@ export default function RecipeItem({
   function handleClick() {
     if (!toModify) return;
 
-    setIsSelected(!isSelected);
-    setListId((prevList) => {
-      if (isSelected) {
-        return prevList.filter((itemId) => itemId !== id);
-      }
-      return [...prevList, id];
-    });
+    if (isSelected) {
+      // selected, so unselect
+      setIsSelected(false);
+      setListId((prevList) =>
+        prevList.filter((item) => !(item.recipeId === id && item.mealTime === mealTime))
+      );
+    } else {
+      // not selected, so select
+      setIsSelected(true);
+      setListId((prevList) => {
+        const exists = prevList.some((item) => item.recipeId === id && item.mealTime === mealTime);
+
+        if (exists) return prevList; // prevent duplicates
+
+        return [
+          ...prevList,
+          {
+            recipeId: id,
+            mealTime,
+          },
+        ];
+      });
+    }
   }
 
   return (
