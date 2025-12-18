@@ -131,6 +131,60 @@ export async function addUserMeal(req, res) {
   }
 }
 
+export async function deleteUserMeal(req, res) {
+  try {
+    const userId = req.user.userId;
+    const { date, items } = req.body;
+
+    if (!date || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Date and items are required",
+      });
+    }
+
+    // Normalize date
+    const mealDate = new Date(date);
+    mealDate.setHours(0, 0, 0, 0);
+
+    // Find mealplan
+    const mealplan = await Mealplan.findOne({
+      user_id: userId,
+      date: mealDate,
+    });
+
+    if (!mealplan) {
+      return res.status(404).json({
+        success: false,
+        message: "Mealplan not found",
+      });
+    }
+
+    // Remove items
+    for (const { recipeId, mealTime } of items) {
+      if (!mealplan.meal[mealTime]) continue;
+
+      mealplan.meal[mealTime] = mealplan.meal[mealTime].filter(
+        (item) => item.recipeId !== recipeId
+      );
+    }
+
+    await mealplan.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Meals removed successfully",
+      data: mealplan,
+    });
+  } catch (error) {
+    console.error("deleteUserMeal error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete meals",
+    });
+  }
+}
+
 function toLocalISO(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
     2,
