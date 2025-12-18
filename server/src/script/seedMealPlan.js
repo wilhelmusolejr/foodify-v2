@@ -23,10 +23,10 @@ async function seedMealplans() {
       // December 17
       {
         user_id: userId,
-        date: normalizeDate("2025-12-17"),
+        date: normalizeDate("2025-12-18"),
         meal: {
           breakfast: [{ recipeId: 525252 }],
-          lunch: [],
+          lunch: [{ recipeId: 645416 }],
           dinner: [{ recipeId: 794979 }],
           snacks: [],
         },
