@@ -26,6 +26,7 @@ export default function DateCardItem({ dayName, dateLabel, meals, isToday, onCli
           <ul className="space-y-3 mb-4">
             <MealTypeItem mealTypeName="Breakfast" mealNum={meals.breakfast.length} />
             <MealTypeItem mealTypeName="Lunch" mealNum={meals.lunch.length} />
+            <MealTypeItem mealTypeName="Snacks" mealNum={meals.snacks.length} />
             <MealTypeItem mealTypeName="Dinner" mealNum={meals.dinner.length} />
           </ul>
 
