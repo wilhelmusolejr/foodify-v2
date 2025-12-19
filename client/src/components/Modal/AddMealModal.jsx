@@ -12,7 +12,7 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import axios from "axios";
 
 export default function AddMealModal() {
-  const { openModal, closeModal } = useModal();
+  const { closeModal } = useModal();
 
   const STEPS = {
     SEARCH: "search",
@@ -101,11 +101,13 @@ export default function AddMealModal() {
     );
   }
 
-  async function handleAddMeal() {
-    if (isLoading || isSuccess) return;
+  function handleClose() {
+    closeModal();
+  }
 
+  async function handleAddMeal() {
     // Validation
-    if (!selectedISO || selectedMeals.length === 0) {
+    if (!selectedISO || selectedMeals.length === 0 || isLoading) {
       return;
     }
 
@@ -126,8 +128,6 @@ export default function AddMealModal() {
         },
       });
 
-      console.log(res.data);
-
       setIsSuccess(true);
       setStep(STEPS.FINISH);
     } catch (error) {
@@ -139,6 +139,7 @@ export default function AddMealModal() {
 
   //
   const weekSchedule = useMemo(() => getWeekSchedule(), []);
+  const canSubmit = selectedISO && selectedMeals.length > 0;
 
   return (
     <ModalContainer>
@@ -149,7 +150,7 @@ export default function AddMealModal() {
         </div>
 
         {/* ---------- BODY ---------- */}
-        <div className="px-6 py-4 flex-1 overflow-y-auto  min-h-80">
+        <div className="px-6 py-4 flex-1 overflow-y-auto min-h-80 relative">
           {/*  SEARCH STEP */}
           {step === "search" && (
             <div className="space-y-4 h-full">
@@ -178,7 +179,7 @@ export default function AddMealModal() {
 
           {/*  LOADING */}
           {step === "results" && isLoading && (
-            <div className="flex flex-col items-center justify-center h-full text-gray-500 ">
+            <div className="absolute inset-0 flex flex-col items-center justify-center h-full text-gray-500 ">
               <div className="animate-spin mb-3">🍽️</div>
               <p className="text-sm">Searching recipes...</p>
             </div>
@@ -256,7 +257,7 @@ export default function AddMealModal() {
           )}
 
           {/*  SUCCESS */}
-          {step === "success" && (
+          {step === "done" && (
             <div className="absolute inset-0 bg-white flex flex-col items-center justify-center p-4 rounded-lg z-20">
               <h3 className="text-lg font-semibold text-green-700 mb-2">Added successfully 🎉</h3>
               <p className="text-sm text-green-700 text-center">
@@ -269,8 +270,12 @@ export default function AddMealModal() {
         {/* ---------- FOOTER ---------- */}
         <div className="px-6 py-4 border-t flex justify-between items-center">
           {/*  SEARCH STEP */}
-          {(step === "search" || step === "success") && (
-            <button onClick={closeModal} className="text-sm text-gray-500 hover:text-gray-700">
+          {(step === "search" || step === "done" || step === "results") && (
+            <button
+              type="button"
+              onClick={handleClose}
+              className="text-sm text-gray-500 hover:text-gray-700"
+            >
               Close
             </button>
           )}
@@ -278,18 +283,13 @@ export default function AddMealModal() {
           {/*  RESULTS */}
           {step === "results" && !isLoading && (
             <div className="flex justify-between w-full">
-              <button
-                onClick={() => {
-                  closeModal();
-                }}
-                className="text-sm text-gray-500 hover:text-gray-700"
-              >
+              <button onClick={handleClose} className="text-sm text-gray-500 hover:text-gray-700">
                 Close
               </button>
 
               <button
                 disabled={!selectedRecipeId || isLoading}
-                onClick={() => setStep(step.SCHEDULE)}
+                onClick={() => setStep(STEPS.SCHEDULE)}
                 className={`px-5 py-2 rounded text-sm 
             ${selectedRecipeId ? "bg-green-600 text-white" : "bg-gray-300 text-gray-600 cursor-not-allowed"}`}
               >
@@ -303,7 +303,7 @@ export default function AddMealModal() {
             <div className="flex justify-between w-full">
               {/* back */}
               <button
-                onClick={() => setStep(step.RESULTS)}
+                onClick={() => setStep(STEPS.RESULTS)}
                 className="text-sm text-gray-500 hover:text-gray-700 "
               >
                 Back
@@ -311,10 +311,14 @@ export default function AddMealModal() {
 
               {/* add */}
               <button
-                onClick={() => {
-                  handleAddMeal();
-                }}
-                className="px-5 py-2 bg-green-600 text-white rounded text-sm"
+                onClick={handleAddMeal}
+                disabled={!canSubmit}
+                className={`px-5 py-2 rounded text-sm transition
+        ${
+          canSubmit
+            ? "bg-green-600 text-white hover:bg-green-700"
+            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+        }`}
               >
                 Add to planner
               </button>
