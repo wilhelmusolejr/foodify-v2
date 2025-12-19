@@ -46,8 +46,6 @@ export default function AddMealMealPlanner({ recipeId = 0 }) {
     try {
       setIsLoading(true);
 
-      await sleep(5000);
-
       let formData = {
         date: selectedISO,
         mealTimes: selectedMeals,
@@ -62,7 +60,6 @@ export default function AddMealMealPlanner({ recipeId = 0 }) {
         },
       });
 
-      // console.log(res.data);
       setIsSuccess(true);
     } catch (error) {
       console.error(error);
