@@ -6,6 +6,7 @@ import { useModal } from "../../context/ModalContext";
 
 // UTILS
 import { getRandomApiKey } from "../../utils/apiUtils";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 // LIBRARY
 import axios from "axios";
@@ -23,6 +24,8 @@ export default function AddMealModal() {
   //   ENV
   const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
   const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  const BACKEND_MEAL_URL = `${BACKEND_URL}/api/mealplan`;
 
   //   STATE
   const [step, setStep] = useState(STEPS.SEARCH);
@@ -32,13 +35,17 @@ export default function AddMealModal() {
   const [selectedRecipeId, setSelectedRecipeId] = useState(null);
   const [selectedISO, setSelectedISO] = useState("");
   const [selectedMeals, setSelectedMeals] = useState([]);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  // AUTH
+  const token = useAuthStore.getState().token;
 
   //   HANDLE
   async function handleSearch() {
     for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
       try {
         setIsLoading(true);
-        setStep("results");
+        setStep(STEPS.RESULTS);
 
         const apiKey = getRandomApiKey();
         const apiUrl = `${FOOD_API}/recipes/complexSearch?query=${query}&apiKey=${apiKey}`;
@@ -94,6 +101,42 @@ export default function AddMealModal() {
     );
   }
 
+  async function handleAddMeal() {
+    if (isLoading || isSuccess) return;
+
+    // Validation
+    if (!selectedISO || selectedMeals.length === 0) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      let formData = {
+        date: selectedISO,
+        mealTimes: selectedMeals,
+        recipeId: selectedRecipeId,
+      };
+
+      const API_URL = `${BACKEND_MEAL_URL}/usermeal`;
+
+      const res = await axios.post(API_URL, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(res.data);
+
+      setIsSuccess(true);
+      setStep(STEPS.FINISH);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   //
   const weekSchedule = useMemo(() => getWeekSchedule(), []);
 
@@ -107,7 +150,7 @@ export default function AddMealModal() {
 
         {/* ---------- BODY ---------- */}
         <div className="px-6 py-4 flex-1 overflow-y-auto  min-h-80">
-          {/* 🔎 SEARCH STEP */}
+          {/*  SEARCH STEP */}
           {step === "search" && (
             <div className="space-y-4 h-full">
               <p className="text-sm text-gray-600">
@@ -133,7 +176,7 @@ export default function AddMealModal() {
             </div>
           )}
 
-          {/* ⏳ LOADING */}
+          {/*  LOADING */}
           {step === "results" && isLoading && (
             <div className="flex flex-col items-center justify-center h-full text-gray-500 ">
               <div className="animate-spin mb-3">🍽️</div>
@@ -141,7 +184,7 @@ export default function AddMealModal() {
             </div>
           )}
 
-          {/* 📋 RESULTS */}
+          {/*  RESULTS */}
           {step === "results" && !isLoading && (
             <div className="space-y-4 ">
               <p className="text-sm text-gray-600">Select a recipe to add</p>
@@ -162,7 +205,7 @@ export default function AddMealModal() {
             </div>
           )}
 
-          {/* 📅 SCHEDULE STEP */}
+          {/*  SCHEDULE STEP */}
           {step === "schedule" && (
             <div className="space-y-4">
               <p className="text-sm text-gray-600">Choose when to add this meal</p>
@@ -211,23 +254,28 @@ export default function AddMealModal() {
               </div>
             </div>
           )}
+
+          {/*  SUCCESS */}
+          {step === "success" && (
+            <div className="absolute inset-0 bg-white flex flex-col items-center justify-center p-4 rounded-lg z-20">
+              <h3 className="text-lg font-semibold text-green-700 mb-2">Added successfully 🎉</h3>
+              <p className="text-sm text-green-700 text-center">
+                This recipe is now part of your meal plan.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* ---------- FOOTER ---------- */}
         <div className="px-6 py-4 border-t flex justify-between items-center">
-          {/* 🔎 SEARCH STEP */}
-          {step === "search" && (
-            <button
-              onClick={() => {
-                closeModal();
-              }}
-              className="text-sm text-gray-500 hover:text-gray-700"
-            >
+          {/*  SEARCH STEP */}
+          {(step === "search" || step === "success") && (
+            <button onClick={closeModal} className="text-sm text-gray-500 hover:text-gray-700">
               Close
             </button>
           )}
 
-          {/* 📋 RESULTS */}
+          {/*  RESULTS */}
           {step === "results" && !isLoading && (
             <div className="flex justify-between w-full">
               <button
@@ -241,7 +289,7 @@ export default function AddMealModal() {
 
               <button
                 disabled={!selectedRecipeId || isLoading}
-                onClick={() => setStep("schedule")}
+                onClick={() => setStep(step.SCHEDULE)}
                 className={`px-5 py-2 rounded text-sm 
             ${selectedRecipeId ? "bg-green-600 text-white" : "bg-gray-300 text-gray-600 cursor-not-allowed"}`}
               >
@@ -250,19 +298,24 @@ export default function AddMealModal() {
             </div>
           )}
 
-          {/* 📅 SCHEDULE STEP */}
+          {/*  SCHEDULE STEP */}
           {step === "schedule" && (
             <div className="flex justify-between w-full">
               {/* back */}
               <button
-                onClick={() => setStep("results")}
+                onClick={() => setStep(step.RESULTS)}
                 className="text-sm text-gray-500 hover:text-gray-700 "
               >
                 Back
               </button>
 
               {/* add */}
-              <button className="px-5 py-2 bg-green-600 text-white rounded text-sm">
+              <button
+                onClick={() => {
+                  handleAddMeal();
+                }}
+                className="px-5 py-2 bg-green-600 text-white rounded text-sm"
+              >
                 Add to planner
               </button>
             </div>
