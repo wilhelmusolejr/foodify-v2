@@ -633,7 +633,6 @@ export default function Recipe() {
   // MEAL PLANNER
   function handleAddMealPlanner() {
     openModal("meal-planner");
-    // toast.success("Added to meal planner!");
   }
 
   return (
