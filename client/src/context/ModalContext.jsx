@@ -6,7 +6,7 @@ export function ModalProvider({ children }) {
   const [modalType, setModalType] = useState("");
 
   const openModal = (type) => setModalType(type);
-  const closeModal = () => setModalType("");
+  const closeModal = () => setModalType(null);
 
   return (
     <ModalContext.Provider value={{ modalType, openModal, closeModal }}>
