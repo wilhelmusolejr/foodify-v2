@@ -15,6 +15,7 @@ import { getRandomApiKey } from "../utils/apiUtils";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import AddMealModal from "../components/Modal/AddMealModal";
+import { useModal } from "../context/ModalContext";
 
 let nutrients = [
   {
@@ -214,6 +215,7 @@ let nutrients = [
 export default function Mealplanner() {
   const { id } = useParams();
   const queryClient = useQueryClient();
+  const { modalType, openModal } = useModal();
 
   // ENV
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -377,9 +379,11 @@ export default function Mealplanner() {
     }
 
     let formData = {
-      date: todayISO,
+      date: selectedISO,
       items: listId,
     };
+
+    console.log(formData);
 
     try {
       const res = await axios.delete(`${BACKEND_MEAL_URL}/usermeal`, {
@@ -393,6 +397,9 @@ export default function Mealplanner() {
 
       if (res.data.success) {
         toast.success("Deleted successfully");
+
+        setSelectedMealId([]);
+        setToModify(false);
 
         // 🔥 THIS is the key line
         queryClient.invalidateQueries({
@@ -408,6 +415,8 @@ export default function Mealplanner() {
   useEffect(() => {
     console.log("Selected list ids:", listId);
   }, [listId]);
+
+  console.log(selectedISO);
 
   return (
     <>
@@ -477,7 +486,7 @@ export default function Mealplanner() {
                         <button
                           className="mt-6 px-6 py-2 rounded-full bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition"
                           onClick={() => {
-                            // open add meal modal or redirect to search
+                            openModal("meal-planner");
                           }}
                         >
                           + Add meal
@@ -623,7 +632,12 @@ export default function Mealplanner() {
                 </div>
 
                 {/* item */}
-                <div className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer">
+                <div
+                  onClick={() => {
+                    openModal("meal-planner");
+                  }}
+                  className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
+                >
                   <p>Add meal</p>
                 </div>
 
@@ -702,7 +716,7 @@ export default function Mealplanner() {
       <br />
       <br />
 
-      <AddMealModal />
+      {modalType === "meal-planner" && <AddMealModal />}
 
       <Footer />
     </>
