@@ -126,3 +126,12 @@ Figma
 1. Mealplanner page. modify button, choose recipe to delete, press delete button.
    in choosing recipe, add data-id, iso in the mealplanner page. breakfast or type in the recipeitem component.
    upon delete button. show toast, refetch data.
+   DONE
+
+2. RESPONSIVENESS in MEAL PLANNER PAGE -------------------------------
+3. ADJUST NAV BURGER IN TABLET SIZE SHOW ONLY HALF OR 30% SIDE BAR ---
+4. FINALIZE UI DESIGN, GENERATE MORE IDEA, COLOR ---------------------
+5. PROPER ERROR when BACKEND is not online. --------------------------
+6. ANIMATION
+
+Follow up 7. Bug on deleting meals in mealplanner page
