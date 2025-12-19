@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MealTypeItem from "./MealTypeItem";
 
 export default function DateCardItem({ dayName, dateLabel, meals, isToday, onClick }) {
-  let totalMeal = meals.breakfast.length + meals.lunch.length + meals.dinner.length;
+  let totalMeal =
+    meals.breakfast.length + meals.lunch.length + meals.dinner.length + meals.snacks.length;
 
   return (
     <div
@@ -40,11 +41,6 @@ export default function DateCardItem({ dayName, dateLabel, meals, isToday, onCli
       ) : (
         <>
           <div className="flex flex-col flex-1">
-            {/* <div className="flex-1 w-10/12 mx-auto border border-dotted border-black/30 rounded-xl flex items-center justify-center"></div> */}
-            {/* <p className="text-sm font-medium text-gray-600 uppercase text-center mt-3">empty</p> */}
-            <div className="flex-1 w-10/12 mx-auto  flex items-center justify-center hidden">
-              <FontAwesomeIcon icon={faLemon} />
-            </div>
             {/* message */}
             <div className="text-center flex flex-col h-full items-center justify-center">
               <p className="text-sm font-semibold text-gray-700">No meals planned</p>
