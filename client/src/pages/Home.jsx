@@ -454,7 +454,7 @@ function Home() {
                 variants={staggerContainer}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.5 }}
+                viewport={{ once: true, amount: 0.3 }}
               >
                 {blogs.map((blog, index) => (
                   <motion.div key={index} variants={fadeUp}>
