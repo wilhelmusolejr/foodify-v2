@@ -23,19 +23,17 @@ import { faBoxOpen, faExclamationCircle } from "@fortawesome/free-solid-svg-icon
 
 // Library
 import axios from "axios";
+import { motion } from "framer-motion";
 
 // UTILS
 import { getRandomApiKey } from "../utils/apiUtils";
 
 import { useQuery } from "@tanstack/react-query";
-import Button from "../components/Global/Button";
 
 import toast, { Toaster } from "react-hot-toast";
 
 // recipe data
 import offlineRecipeData from "./recipe.json";
-
-import { motion, AnimatePresence } from "framer-motion";
 
 let blogs = [
   {
@@ -62,6 +60,9 @@ let blogs = [
 ];
 
 function Home() {
+  // ENV
+  const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
+  const SEARCH_URL = `${FRONTEND_URL}/search`;
   const apiKey = getRandomApiKey();
   const FOOD_API = import.meta.env.VITE_FOOD_API;
   const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
@@ -102,10 +103,9 @@ function Home() {
       }
     });
 
-    let searchUrl = "http://localhost:5173/search";
     let params = new URLSearchParams(urlParameter);
 
-    let finalUrl = `${searchUrl}?${params}`;
+    let finalUrl = `${SEARCH_URL}?${params}`;
     window.location.href = finalUrl;
   }
 
