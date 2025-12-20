@@ -128,11 +128,12 @@ Figma
    upon delete button. show toast, refetch data.
    DONE
 
-2. RESPONSIVENESS in MEAL PLANNER PAGE -------------------------------
-3. ADJUST NAV BURGER IN TABLET SIZE SHOW ONLY HALF OR 30% SIDE BAR ---
+2. RESPONSIVENESS in MEAL PLANNER PAGE ------------------------------- DONE
+3. ADJUST NAV BURGER IN TABLET SIZE SHOW ONLY HALF OR 30% SIDE BAR --- DONE
 4. FINALIZE UI DESIGN, GENERATE MORE IDEA, COLOR ---------------------
 5. PROPER ERROR when BACKEND is not online. --------------------------
-6. ANIMATION
+6. ANIMATION - DONE - profile page, bookmark page.
 
 Follow up 7. Bug on deleting meals in mealplanner page
 Follow up 8. To fix offline data.
+Follow up 9. Fix bug in profile
