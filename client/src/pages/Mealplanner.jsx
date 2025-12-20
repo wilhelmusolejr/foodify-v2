@@ -225,6 +225,9 @@ export default function Mealplanner() {
   const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
   const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
+  // STATE
+  const [toggleAction, setToggleAction] = useState(false);
+
   // AUTH
   const token = useAuthStore.getState().token;
 
@@ -427,7 +430,7 @@ export default function Mealplanner() {
       <div className="mt-40">
         <div className="w-10/12 mx-auto">
           {/* schedule */}
-          <div className="flex gap-5 justify-center">
+          <div className="flex gap-5 overflow-x-auto py-5">
             {userMealSchedule.map((item, idx) => (
               <DateCardItem
                 key={item.iso} // prefer stable key
@@ -444,8 +447,74 @@ export default function Mealplanner() {
 
           <div className="my-30 flex gap-10 justify-between mx-auto">
             {/* side 1 */}
-            <div className="w-8/12">
-              <h2 className="text-3xl font-medium capitalize mb-10">Today's meal</h2>
+            <div className="lg:w-8/12 w-full">
+              {/* heading */}
+              <div className="flex justify-between items-center mb-10">
+                <h2 className="text-3xl font-medium capitalize ">Today's meal</h2>
+                <div className="lg:hidden">
+                  <button
+                    onClick={() => setToggleAction((prev) => !prev)}
+                    className="border px-2 py-1 rounded-lg"
+                  >
+                    ACTION
+                  </button>
+                </div>
+              </div>
+
+              {/* button */}
+              {toggleAction && (
+                // BUTTON
+                <div className="flex justify-end">
+                  <div className="mb-10 flex flex-col gap-2 w-6/12">
+                    {/* item */}
+                    <div className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer">
+                      <p>Generate shopping list weekly</p>
+                    </div>
+
+                    {/* item */}
+                    <div
+                      onClick={() => {
+                        openModal("meal-planner");
+                      }}
+                      className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
+                    >
+                      <p>Add meal</p>
+                    </div>
+
+                    {!toModify ? (
+                      <>
+                        {/* item */}
+                        <div
+                          className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
+                          onClick={() => handleModifyClick(true)}
+                        >
+                          <p>Modify</p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {/* item */}
+                        <div
+                          className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
+                          onClick={handleDeleteClick}
+                        >
+                          <p>Delete</p>
+                        </div>
+                      </>
+                    )}
+
+                    {/* item */}
+                    {toModify && (
+                      <div
+                        className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
+                        onClick={() => handleModifyClick(false)}
+                      >
+                        <p>Cancel</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {userMealLoading ? (
                 <>
@@ -623,7 +692,7 @@ export default function Mealplanner() {
             </div>
 
             {/* side 2 */}
-            <div className="flex-1 max-w-[400px]">
+            <div className="flex-1 max-w-[400px] hidden lg:block">
               {/* button */}
               <div className="mb-10 flex flex-col gap-2">
                 {/* item */}
