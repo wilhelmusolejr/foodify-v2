@@ -35,6 +35,8 @@ import toast, { Toaster } from "react-hot-toast";
 // recipe data
 import offlineRecipeData from "./recipe.json";
 
+import { motion, AnimatePresence } from "framer-motion";
+
 let blogs = [
   {
     header: "10 Quick and Easy Dinner Recipes for Busy Weeknights",
@@ -154,11 +156,41 @@ function Home() {
       explore: recipesData.slice(8, 13),
       heading: recipesData.slice(13, 16),
     }),
+
+    staleTime: Infinity,
+    cacheTime: Infinity,
+
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 
   useEffect(() => {
     document.title = `Discover | ${PAGE_NAME}`;
   }, []);
+
+  const fadeUp = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.4 } },
+  };
+
+  const staggerContainer = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
 
   return (
     <>
@@ -168,7 +200,12 @@ function Home() {
       <Toaster position="top-center" reverseOrder={false} />
 
       {/* Head */}
-      <div className="header min-h-[80vh] xl:min-h-[75vh] my-10 md:my-14 py-20 text-white flex justify-center items-center bg-white border border-black/10">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        className="header min-h-[80vh] xl:min-h-[75vh] my-10 md:my-14 py-20 text-white flex justify-center items-center bg-white border border-black/10"
+      >
         <div className="w-10/12 mx-auto max-w-7xl flex flex-col gap-20">
           {/* GROUP 1 */}
           <div className="">
@@ -224,10 +261,16 @@ function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Section - Categories */}
-      <div className="bg-white py-40 border-t border-black/10">
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        className="bg-white py-40 border-t border-black/10"
+      >
         <div className="w-10/12 mx-auto">
           {/* Heading */}
           <SectionHeading
@@ -238,13 +281,21 @@ function Home() {
           {/* list */}
           <div className="flex gap-4 flex-wrap justify-center">
             {/* item */}
-            <CategoryItem image_path={"images/category/category1.png"} title="Main course" />
-            <CategoryItem image_path={"images/category/category2.png"} title="Sea food" />
-            <CategoryItem image_path={"images/category/category3.png"} title="Dessert" />
-            <CategoryItem image_path={"images/category/category4.png"} title="Salad" />
+            <motion.div variants={fadeUp}>
+              <CategoryItem image_path="images/category/category1.png" title="Main course" />
+            </motion.div>
+            <motion.div variants={fadeUp}>
+              <CategoryItem image_path="images/category/category2.png" title="Sea food" />
+            </motion.div>
+            <motion.div variants={fadeUp}>
+              <CategoryItem image_path="images/category/category3.png" title="Dessert" />
+            </motion.div>
+            <motion.div variants={fadeUp}>
+              <CategoryItem image_path="images/category/category4.png" title="Salad" />
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Section - Recipe Finder */}
       <div className="py-40 border-t border-black/10">
@@ -345,7 +396,13 @@ function Home() {
       </div>
 
       {/* Section - Popular Recipes */}
-      <div className="bg-white py-40 border-t border-black/10">
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        className="bg-white py-40 border-t border-black/10"
+      >
         <div className="w-10/12 mx-auto max-w-7xl">
           {/* Heading */}
           <SectionHeading
@@ -354,28 +411,31 @@ function Home() {
           />
 
           {/* parent */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {isLoading ? (
               <>
                 {[...Array(8)].map((_, index) => (
-                  <RecipeItemSkeleton key={index} />
+                  <motion.div key={index} variants={fadeUp}>
+                    <RecipeItemSkeleton />
+                  </motion.div>
                 ))}
               </>
             ) : (
               <>
                 {recipes.popular.map((popularRecipe, index) => (
-                  <RecipeItem
-                    key={index}
-                    name={popularRecipe.title}
-                    image_name={popularRecipe.image}
-                    id={popularRecipe.id}
-                  />
+                  <motion.div key={popularRecipe.id} variants={fadeUp}>
+                    <RecipeItem
+                      name={popularRecipe.title}
+                      image_name={popularRecipe.image}
+                      id={popularRecipe.id}
+                    />
+                  </motion.div>
                 ))}
               </>
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Section - Blog */}
       <div className="py-40 border-t border-black/10">
@@ -390,24 +450,23 @@ function Home() {
               />
 
               {/* parent */}
-              <div className="">
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.5 }}
+              >
                 {blogs.map((blog, index) => (
-                  <BlogItem
-                    key={index}
-                    heading={blog.header}
-                    date={blog.date}
-                    description={blog.description}
-                    imageUrl={blog.image_name}
-                  />
+                  <motion.div key={index} variants={fadeUp}>
+                    <BlogItem
+                      heading={blog.header}
+                      date={blog.date}
+                      description={blog.description}
+                      imageUrl={blog.image_name}
+                    />
+                  </motion.div>
                 ))}
-
-                {/* button */}
-                <div className="md:w-2/3 max-w-70 ">
-                  <Button color="bg-black" hoverColor="hover:bg-black/90">
-                    View more recent blogs
-                  </Button>
-                </div>
-              </div>
+              </motion.div>
             </div>
 
             {/* side 2 */}
