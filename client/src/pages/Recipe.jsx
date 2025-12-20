@@ -32,7 +32,7 @@ import IconItem from "@components/IconItem";
 import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
 import NeedLogin from "@components/Modal/NeedLogin";
-import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
+import RecipeItemSkeleton from "@components/RecipeItemSkeleton";
 import PageLoader from "@components/Recipe/PageLoader";
 import AddMealMealPlanner from "@components/Modal/AddMealMealPlanner";
 import Button from "@components/Global/Button";
@@ -49,6 +49,10 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useModal } from "../context/ModalContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+
+// ANIMATION
+import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 
 // DEMO
 import bookmarkData from "../demo/bookmarks.json";
@@ -643,7 +647,12 @@ export default function Recipe() {
       {recipeLoading && <PageLoader />}
 
       {recipe?.id != null && (
-        <div className="">
+        <motion.div
+          className=""
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
           <div className="w-10/12 max-w-7xl mx-auto mt-30 ">
             <Toaster position="top-center" reverseOrder={false} />
 
@@ -725,12 +734,24 @@ export default function Recipe() {
             </div>
 
             {/* clock */}
-            <div className="flex flex-col gap-7 mb-15 md:flex-row md:items-center md:justify-center lg:justify-start">
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              className="flex flex-col gap-7 mb-15 md:flex-row md:items-center md:justify-center lg:justify-start"
+            >
               {/* item */}
-              <RecipeTime heading="Preparation time" time={recipe.preparationMinutes} />
-              <RecipeTime heading="Cooking for" time={recipe.cookingMinutes} />
-              <RecipeTime heading="Ready in" time={recipe.readyInMinutes} />
-            </div>
+              <motion.div variants={fadeUp}>
+                <RecipeTime heading="Preparation time" time={recipe.preparationMinutes} />
+              </motion.div>
+              <motion.div variants={fadeUp}>
+                <RecipeTime heading="Cooking for" time={recipe.cookingMinutes} />
+              </motion.div>
+              <motion.div variants={fadeUp}>
+                <RecipeTime heading="Ready in" time={recipe.readyInMinutes} />
+              </motion.div>
+            </motion.div>
 
             {/* content */}
             <div className="lg:flex gap-10 justify-between ">
@@ -743,11 +764,24 @@ export default function Recipe() {
                 />
 
                 {/* tags */}
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 border my-20 bg-white p-10 rounded-lg gap-5 border-black/10 text-black ">
+                <motion.div
+                  variants={staggerContainer}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 border my-20 bg-white p-10 rounded-lg gap-5 border-black/10 text-black "
+                >
                   {recipe.tags.map((tag, index) => (
-                    <IconItem icon={tag.icon} name={tag.heading} key={index} status={tag.status} />
+                    <motion.div key={tag.heading} variants={fadeUp}>
+                      <IconItem
+                        icon={tag.icon}
+                        name={tag.heading}
+                        key={index}
+                        status={tag.status}
+                      />
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
 
                 <Tags className="lg:hidden my-20" />
 
@@ -762,8 +796,8 @@ export default function Recipe() {
                         <h3 className="text-xl lg:text-2xl font-medium text-[#333]">{item.name}</h3>
 
                         <ul className="flex flex-col gap-3 mt-5 ms-2">
-                          {item.list.map((listItem, indexs) => (
-                            <ListItem key={indexs}>
+                          {item.list.map((listItem, index) => (
+                            <ListItem key={index}>
                               <div className="rounded-full border w-5 h-5"></div>
                               <p>{listItem.original}</p>
                             </ListItem>
@@ -1024,7 +1058,13 @@ export default function Recipe() {
           </div>
 
           {/* Section - Popular Recipes */}
-          <div className="bg-white py-40 border-t border-black/10">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            className="bg-white py-40 border-t border-black/10"
+          >
             <div className="w-10/12 mx-auto max-w-7xl">
               {/* Heading */}
               <SectionHeading
@@ -1037,31 +1077,40 @@ export default function Recipe() {
                 {randomRecipeLoading ? (
                   <>
                     {[...Array(8)].map((_, index) => (
-                      <RecipeItemSkeleton key={index} />
+                      <motion.div key={index} variants={fadeUp}>
+                        <RecipeItemSkeleton />
+                      </motion.div>
                     ))}
                   </>
                 ) : (
                   <>
                     {randomRecipe.map((popularRecipe, index) => (
-                      <RecipeItem
-                        key={index}
-                        name={popularRecipe.title}
-                        image_name={popularRecipe.image}
-                        id={popularRecipe.id}
-                      />
+                      <motion.div key={popularRecipe.id} variants={fadeUp}>
+                        <RecipeItem
+                          key={index}
+                          name={popularRecipe.title}
+                          image_name={popularRecipe.image}
+                          id={popularRecipe.id}
+                        />
+                      </motion.div>
                     ))}
                   </>
                 )}
               </div>
             </div>
-          </div>
+          </motion.div>
+
+          <br />
+          <br />
+          <br />
+          <br />
 
           {/* Section - mail letter */}
           <MailLetter />
 
           {/* Footer */}
           <Footer />
-        </div>
+        </motion.div>
       )}
 
       {modalType === "need-login" && <NeedLogin />}
