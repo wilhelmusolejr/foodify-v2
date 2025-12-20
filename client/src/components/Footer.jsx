@@ -24,7 +24,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-white w-10/12 mx-auto border border-black/10 rounded-lg mb-30">
-      <div className="flex flex-col lg:flex-row lg:items-center pt-14  gap-14 justify-center min-h-[50vh] w-10/12 max-w-7xl mx-auto">
+      <div className="flex flex-col lg:flex-row lg:items-center pt-14 lg:pt-0  gap-14 justify-center min-h-[50vh] w-10/12 max-w-7xl mx-auto">
         {/* side 1 */}
         <div className="flex gap-2 flex-col md:w-10/12 max-w-[450px]">
           <Logo />
