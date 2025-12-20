@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
 const ModalContext = createContext();
 
@@ -7,6 +7,12 @@ export function ModalProvider({ children }) {
 
   const openModal = (type) => setModalType(type);
   const closeModal = () => setModalType(null);
+
+  useEffect(() => {
+    const onEsc = (e) => e.key === "Escape" && closeModal();
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
+  }, []);
 
   return (
     <ModalContext.Provider value={{ modalType, openModal, closeModal }}>
