@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useModal } from "../context/ModalContext";
+import { motion } from "framer-motion";
 
 export default function ModalContainer({ children }) {
   const { closeModal } = useModal();
@@ -17,11 +18,14 @@ export default function ModalContainer({ children }) {
   };
 
   return (
-    <div
+    <motion.div
       className="fixed inset-0 z-60 flex justify-center items-center bg-black/50 close-modal"
-      onClick={handleOverlayClick}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={handleOverlayClick} // click outside closes
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
