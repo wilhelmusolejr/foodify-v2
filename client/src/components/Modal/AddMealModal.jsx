@@ -143,7 +143,7 @@ export default function AddMealModal() {
 
   return (
     <ModalContainer>
-      <div className="bg-white rounded-lg max-w-lg w-full flex flex-col max-h-[80vh]">
+      <div className="bg-white w-10/12 rounded-lg max-w-lg flex flex-col max-h-[80vh]">
         {/* ---------- HEADER ---------- */}
         <div className="px-6 py-4 border-b">
           <h2 className="text-lg font-semibold">Search for meals to add</h2>
