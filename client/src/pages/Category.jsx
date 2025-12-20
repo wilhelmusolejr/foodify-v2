@@ -1,11 +1,17 @@
 import React, { useEffect } from "react";
 
+// Library
+import { motion } from "framer-motion";
+
 import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
 import CategoryItem from "@components/CategoryItem";
 import MailLetter from "@components/MailLetter";
 import Footer from "@components/Footer";
 import Test from "../components/Test";
+
+// Animation
+import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 
 export default function Category() {
   const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
@@ -93,21 +99,39 @@ export default function Category() {
       {/* Navigator */}
       <Navigator />
 
-      <div className="pb-20 ">
+      <motion.div initial="hidden" animate="visible" variants={fadeUp} className="pb-20 ">
         <div className="w-10/12 mx-auto my-10 md:my-20 lg:my-28 xl:my-32">
-          <SectionHeading
-            heading="Categories"
-            subheading="Turn Your Leftovers into Delicious Meals"
-          />
+          {/* Section Heading */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+          >
+            <SectionHeading
+              heading="Categories"
+              subheading="Turn Your Leftovers into Delicious Meals"
+            />
+          </motion.div>
 
-          {/* Categories content here */}
-          <div className="md:w-10/12 mx-auto max-w-[900px] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 gap-y-10 place-items-center">
+          {/* Categories Grid */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            className="md:w-10/12 mx-auto max-w-[900px] 
+                       grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 
+                       gap-10 gap-y-10 place-items-center"
+          >
             {listCategory.map((item) => (
-              <Test key={item.id} name={item.name} image_name={item.image_name} />
+              <motion.div key={item.id} variants={fadeUp}>
+                <Test name={item.name} image_name={item.image_name} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Section - mail letter */}
       <MailLetter />
