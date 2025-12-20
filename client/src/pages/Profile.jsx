@@ -15,23 +15,27 @@ import CommentItem from "@components/CommentItem";
 import Navigator from "@components/Navigator";
 import EditProfileModal from "@components/Modal/EditProfileModal";
 import ProfileHEaderSkeleton from "@components/Profile/ProfileHEaderSkeleton";
+import RecipeItemSkeleton from "@components/RecipeItemSkeleton";
 
 // GLOBAL STATE
 import { useAuthStore } from "../stores/useAuthStore";
 
 // LIBRARY
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 import { getRandomApiKey } from "../utils/apiUtils";
 import { useQuery } from "@tanstack/react-query";
 import { useModal } from "../context/ModalContext";
-import RecipeItemSkeleton from "../components/RecipeItemSkeleton";
 
-import toast, { Toaster } from "react-hot-toast";
-
+// DEMO
 import bookmarkData from "../demo/bookmarks.json";
 import userData from "../demo/users.json";
 import commentData from "../demo/comments.json";
+
+// ANIMATION
+import { motion } from "framer-motion";
+import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 
 // Skeleton data
 let skeletonRecipes = Array.from({ length: 8 }, () => <RecipeItemSkeleton />);
@@ -61,6 +65,7 @@ export default function Profile() {
   };
 
   // STATE
+  console.log(!!id && !DEMO_MODE);
 
   // Global Stand
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -73,6 +78,9 @@ export default function Profile() {
   // Get user profile
   // Get user profile
   const fetchUserProfile = async ({ queryKey, signal }) => {
+    console.log("asda");
+    console.log("test");
+
     const [, id] = queryKey;
     if (!id) throw new Error("Missing user id");
 
