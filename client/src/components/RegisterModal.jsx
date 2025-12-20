@@ -60,7 +60,6 @@ export default function RegisterModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-  4;
 
   // Zustand
   const login = useAuthStore((state) => state.login);
@@ -79,7 +78,7 @@ export default function RegisterModal() {
         clearTimeout(timer);
       }
     };
-  }, [isSuccess]);
+  }, [isSuccess, closeModal]);
 
   // HANDLER
 
@@ -100,6 +99,11 @@ export default function RegisterModal() {
     // Basic Client-Side Validation (e.g., check required fields)
     if (!formData.firstName || !formData.email || !formData.password) {
       setError("Please fill in all required fields (Name, Email, Password).");
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+      setError("Invalid email format");
       return;
     }
 
@@ -196,9 +200,11 @@ export default function RegisterModal() {
     }
   };
 
+  const handleOpenLogin = () => openModal("login");
+
   return (
     <ModalContainer>
-      <div className="w-10/12 mx-auto max-w-[600px] bg-white rounded-lg ">
+      <div className="w-10/12 mx-auto max-w-[400px] bg-white rounded-lg ">
         {/* Heading */}
         <div className="p-5 py-7 border-b border-black/10 flex justify-between items-center">
           <h2 className="text-2xl font-bold">Create Your Account</h2>
@@ -344,22 +350,18 @@ export default function RegisterModal() {
               {/* FOOTER - Fixed at the bottom of the modal */}
               <div className="p-5 border-t border-gray-200 bg-white sticky bottom-0 z-20">
                 <button
+                  disabled={isLoading}
                   form="registerForm"
                   type="submit"
                   className="w-full cursor-pointer flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150"
                 >
-                  Register
+                  {isLoading ? "Creating account..." : "Register"}
                 </button>
                 <div className="text-center pt-4">
                   <p className="text-sm">
                     Already registered?{" "}
                     <span className="text-green-800 font-medium underline ">
-                      <button
-                        className="cursor-pointer uppercase"
-                        onClick={() => {
-                          openModal("login");
-                        }}
-                      >
+                      <button className="cursor-pointer uppercase" onClick={handleOpenLogin}>
                         login now
                       </button>
                     </span>
