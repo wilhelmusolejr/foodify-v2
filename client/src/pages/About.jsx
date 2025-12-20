@@ -11,6 +11,12 @@ import TextImageBlock from "@components/TextImageBlock";
 import TeamItem from "@components/TeamItem";
 import Paragraph from "@components/Paragraph";
 
+// Animation
+import { fadeUp, staggerContainer, slideLeft } from "@/animations/motionVariants";
+
+// Library
+import { motion } from "framer-motion";
+
 import {
   faBowlFood,
   faHeart,
@@ -20,6 +26,7 @@ import {
   faUtensils,
 } from "@fortawesome/free-solid-svg-icons";
 import { faFacebookF, faGithubAlt, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
+import { scaleFade, slideRight } from "../animations/motionVariants";
 
 let featureList = [
   {
@@ -97,50 +104,82 @@ export default function About() {
       <Navigator />
 
       {/* header */}
-      <header className="my-10 md:my-14 about-header">
+      <motion.header
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        className="my-10 md:my-14 about-header"
+      >
         <div className="min-h-[50vh] text-white flex items-center justify-center ">
           <div className="text-center capitalize flex gap-2 flex-col">
-            <p className="italic uppercase text-base md:text-lg lg:text-xl ">
+            <motion.p
+              variants={fadeUp}
+              className="italic  uppercase text-base md:text-lg lg:text-xl "
+            >
               Turn Your Leftovers into Delicious Meals
-            </p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold">about us</h2>
+            </motion.p>
+
+            <motion.h2
+              variants={fadeUp}
+              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold"
+            >
+              about us
+            </motion.h2>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Paragraphs */}
-      <div className="py-30 bg-white">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        variants={staggerContainer}
+        className="py-30 bg-white"
+      >
         <div className="w-10/12 max-w-7xl mx-auto ">
           {/* paragraph */}
           <div className="flex flex-col gap-10 ">
-            <Paragraph className="mx-auto">
-              At
-              <span className="inline-block px-2">
-                <img src="images/logo.png" alt="" className="w-20" />
-              </span>
-              , we believe that food is more than just meals—it’s a way to connect, create, and
-              celebrate. Our platform is designed for home cooks, food enthusiasts, and chefs alike
-              to easily organize, discover, and share their favorite recipes. Whether you’re
-              meal-planning for the week, preserving family traditions, or experimenting with new
-              flavors, we provide the tools to make recipe management simple, intuitive, and
-              enjoyable. Built by food lovers, for food lovers, we’re here to help you turn every
-              ingredient into inspiration.
-            </Paragraph>
+            <motion.div variants={fadeUp}>
+              <Paragraph className="mx-auto">
+                At
+                <span className="inline-block px-2">
+                  <img src="images/logo.png" alt="" className="w-20" />
+                </span>
+                , we believe that food is more than just meals—it’s a way to connect, create, and
+                celebrate. Our platform is designed for home cooks, food enthusiasts, and chefs
+                alike to easily organize, discover, and share their favorite recipes. Whether you’re
+                meal-planning for the week, preserving family traditions, or experimenting with new
+                flavors, we provide the tools to make recipe management simple, intuitive, and
+                enjoyable. Built by food lovers, for food lovers, we’re here to help you turn every
+                ingredient into inspiration.
+              </Paragraph>
+            </motion.div>
 
-            <Paragraph className="mx-auto">
-              At LOGO, we believe that food is more than just meals—it’s a way to connect, create,
-              and celebrate. Our platform is designed for home cooks, food enthusiasts, and chefs
-              alike to easily organize, discover, and share their favorite recipes.
-            </Paragraph>
+            <motion.div variants={fadeUp}>
+              <Paragraph className="mx-auto">
+                At LOGO, we believe that food is more than just meals—it’s a way to connect, create,
+                and celebrate. Our platform is designed for home cooks, food enthusiasts, and chefs
+                alike to easily organize, discover, and share their favorite recipes.
+              </Paragraph>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Features */}
-      <div className="py-40 bg-green-900 text-white">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        className="py-40 bg-green-900 text-white"
+      >
         <div className="w-10/12 max-w-7xl mx-auto ">
           {/* HEADING */}
-          <SectionHeading heading="Our Features" subheading="Empowering Your Culinary Journey" />
+          <motion.div variants={fadeUp}>
+            <SectionHeading heading="Our Features" subheading="Empowering Your Culinary Journey" />
+          </motion.div>
 
           {/* Parent */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 md:gap-5">
@@ -150,53 +189,81 @@ export default function About() {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Text - Image  */}
       <div className="py-40 bg-white">
         <div className="w-10/12 max-w-7xl mx-auto ">
           <div className="flex flex-col gap-20 ">
             {/* item */}
-            <TextImageBlock
-              image_path={"images/about/about (1).png"}
-              heading={"Our Mission"}
-              description={
-                "Our mission is to revolutionize the way people interact with food and cooking. We aim to empower individuals to make the most of their ingredients, reduce food waste, and inspire creativity in the kitchen. By providing innovative tools and a supportive community, we strive to make cooking accessible, enjoyable, and sustainable for everyone."
-              }
-              type={"1"}
-            />
 
-            {/* item */}
-            <TextImageBlock
-              image_path={"images/about/about (2).png"}
-              heading={"We care for"}
-              description={
-                "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Excepturi quasi quae tempore corporis officiis quis beatae eius molestias enim earum. Nostrum totam molestiae vel asperiores, saepe mollitia fuga quasi deserunt!"
-              }
-              type={"2"}
-            />
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={slideLeft}
+            >
+              <TextImageBlock
+                image_path={"images/about/about (1).png"}
+                heading={"Our Mission"}
+                description={
+                  "Our mission is to revolutionize the way people interact with food and cooking. We aim to empower individuals to make the most of their ingredients, reduce food waste, and inspire creativity in the kitchen. By providing innovative tools and a supportive community, we strive to make cooking accessible, enjoyable, and sustainable for everyone."
+                }
+                type={"1"}
+              />
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={slideRight}
+            >
+              <TextImageBlock
+                image_path={"images/about/about (2).png"}
+                heading={"We care for"}
+                description={
+                  "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Excepturi quasi quae tempore corporis officiis quis beatae eius molestias enim earum. Nostrum totam molestiae vel asperiores, saepe mollitia fuga quasi deserunt!"
+                }
+                type={"2"}
+              />
+            </motion.div>
           </div>
         </div>
       </div>
 
       {/* Our Team */}
-      <div className="py-40">
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        className="py-40"
+      >
         <div className="w-10/12 max-w-7xl mx-auto ">
           {/* HEADING */}
           <SectionHeading heading="Our Features" subheading="Empowering Your Culinary Journey" />
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-5  max-w-[700px] mx-auto">
             {/* item */}
-            <TeamItem />
+            <motion.div variants={scaleFade}>
+              <TeamItem />
+            </motion.div>
             {/* item */}
-            <TeamItem />
+            <motion.div variants={scaleFade}>
+              <TeamItem />
+            </motion.div>
             {/* item */}
-            <TeamItem />
+            <motion.div variants={scaleFade}>
+              <TeamItem />
+            </motion.div>
             {/* item */}
-            <TeamItem />
+            <motion.div variants={scaleFade}>
+              <TeamItem />
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Actual about */}
       <div className="py-40 bg-white">
@@ -230,16 +297,24 @@ export default function About() {
             <div className="">
               <h2 className="capitalize font-medium text-2xl">Connect With Us</h2>
 
-              <div className="mt-5 flex flex-col gap-5">
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                className="mt-5 flex flex-col gap-5"
+              >
                 {socialLinks.map((social, index) => (
-                  <SocialItem
-                    key={index}
-                    icon={social.icon}
-                    name={social.name}
-                    link={social.link}
-                  />
+                  <motion.div key={index} variants={fadeUp}>
+                    <SocialItem
+                      key={index}
+                      icon={social.icon}
+                      name={social.name}
+                      link={social.link}
+                    />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
