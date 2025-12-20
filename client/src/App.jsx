@@ -9,6 +9,7 @@ import Recipe from "@pages/Recipe";
 import Profile from "@pages/Profile";
 import Bookmark from "@pages/Bookmark";
 import Mealplanner from "@pages/Mealplanner";
+import Faq from "@pages/Faq";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/bookmark/:id" element={<Bookmark />} />
           <Route path="/mealplanner/:id" element={<Mealplanner />} />
+          <Route path="/faq" element={<Faq />} />
         </Routes>
       </AuthLoader>
     </BrowserRouter>
