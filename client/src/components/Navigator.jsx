@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRef } from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,7 +13,6 @@ import RegisterModal from "./RegisterModal";
 import LoginModal from "./LoginModal";
 
 import { useAuthStore } from "../stores/useAuthStore";
-import { useRef } from "react";
 import { useModal } from "../context/ModalContext";
 import Button from "./Global/Button";
 
@@ -60,7 +60,7 @@ export default function Navigator() {
           <>
             {/* Backdrop */}
             <motion.div
-              className="fixed inset-0 bg-black/60 z-[998]"
+              className="fixed inset-0 bg-black/60 z-998"
               variants={backdropVariants}
               initial="hidden"
               animate="visible"
@@ -71,7 +71,7 @@ export default function Navigator() {
             {/* Sidebar */}
             <motion.aside
               className="
-          fixed right-0 top-0 z-[999]
+          fixed right-0 top-0 z-999
           w-full max-w-[350px]
           h-full bg-white
           flex flex-col
@@ -352,8 +352,10 @@ export default function Navigator() {
         </div>
       </nav>
 
-      {modalType === "login" && <LoginModal />}
-      {modalType === "register" && <RegisterModal />}
+      <AnimatePresence mode="wait">
+        {modalType === "login" && <LoginModal />}
+        {modalType === "register" && <RegisterModal />}
+      </AnimatePresence>
     </>
   );
 }
