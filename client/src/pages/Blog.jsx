@@ -4,9 +4,12 @@ import SectionHeading from "@components/SectionHeading";
 import Navigator from "@components/Navigator";
 import Label from "@components/Label";
 import BlogItemV2 from "@components/BlogItemV2";
-import Pagination from "../components/Pagination";
+import Pagination from "@components/Pagination";
 import Footer from "@components/Footer";
 import MailLetter from "@components/MailLetter";
+
+// UTILS
+import { ENV } from "@/config/env";
 
 let blogs = [
   {
@@ -54,11 +57,9 @@ let blogs = [
 ];
 
 export default function Blog() {
-  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
-
   // Page title
   useEffect(() => {
-    document.title = `Articles | ${PAGE_NAME}`;
+    document.title = `Articles | ${ENV.pageName}`;
   }, []);
 
   return (
@@ -71,7 +72,7 @@ export default function Blog() {
         <SectionHeading heading="Blog" subheading="Browse All Recipes by Category or Filter" />
 
         {/* Search */}
-        <div className="flex flex-col md:flex-row md:items-end justify-center gap-2 mb-20">
+        <div className="flex flex-col md:flex-row md:items-end justify-center gap-2 mb-14 mt-30">
           {/* form */}
           <div className="w-full md:w-fit flex flex-col gap-2">
             <Label name="Blog name" required={true} />
@@ -96,6 +97,8 @@ export default function Blog() {
 
         <Pagination />
       </div>
+
+      <br />
 
       {/* Section - mail letter */}
       <MailLetter />
