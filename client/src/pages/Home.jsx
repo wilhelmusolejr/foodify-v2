@@ -17,50 +17,26 @@ import RecipeItemSkeleton from "@components/RecipeItemSkeleton";
 import RecipeItem from "@components/RecipeItem";
 import SearchButton from "@components/SearchButton";
 
-// Fontawesome
+// ICON
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBoxOpen, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
 // Library
 import axios from "axios";
 import { motion } from "framer-motion";
+import toast, { Toaster } from "react-hot-toast";
 
 // UTILS
 import { getRandomApiKey } from "../utils/apiUtils";
-
+import { ENV } from "@/config/env";
 import { useQuery } from "@tanstack/react-query";
-
-import toast, { Toaster } from "react-hot-toast";
+import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 
 // recipe data
 import offlineRecipeData from "./recipe.json";
-import { ENV } from "@/config/env";
 
-import { fadeUp, staggerContainer } from "@/animations/motionVariants";
-
-let blogs = [
-  {
-    header: "10 Quick and Easy Dinner Recipes for Busy Weeknights",
-    date: "November 15, 2025",
-    image_name: "blog1.jpg",
-    description:
-      "Discover simple, tasty dinner ideas that you can make in under 30 minutes—perfect for those busy evenings when time is short but flavor still matters.",
-  },
-  {
-    header: "5 Delicious One-Pot Meals to Simplify Your Cooking",
-    date: "November 18, 2025",
-    image_name: "blog2.jpg",
-    description:
-      "Cut down on cleanup without sacrificing taste. These one-pot meals are hearty, comforting, and incredibly easy to make on any night of the week.",
-  },
-  {
-    header: "Healthy Breakfast Ideas to Kickstart Your Morning",
-    date: "November 20, 2025",
-    image_name: "blog3.jpg",
-    description:
-      "Start your day right with these nutritious and energizing breakfast ideas that blend convenience with wholesome ingredients.",
-  },
-];
+// JSON
+import blogData from "@/demo/blogs.json";
 
 function Home() {
   // ENV
@@ -149,17 +125,14 @@ function Home() {
     queryKey: ["recipes"],
     queryFn: fetchRecipesFromApi,
     enabled: !!ENV.foodApiUrl && !!apiKey, // only run if config exists
-    retry: 0,
-    staleTime: 1000 * 60 * 2,
     select: (recipesData = []) => ({
       popular: recipesData.slice(0, 8),
       explore: recipesData.slice(8, 13),
       heading: recipesData.slice(13, 16),
     }),
-
+    retry: 0,
     staleTime: Infinity,
     cacheTime: Infinity,
-
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
@@ -433,7 +406,7 @@ function Home() {
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.3 }}
               >
-                {blogs.map((blog, index) => (
+                {blogData.map((blog, index) => (
                   <motion.div key={index} variants={fadeUp}>
                     <BlogItem
                       heading={blog.header}
