@@ -11,12 +11,10 @@ import TextImageBlock from "@components/TextImageBlock";
 import TeamItem from "@components/TeamItem";
 import Paragraph from "@components/Paragraph";
 
-// Animation
-import { fadeUp, staggerContainer, slideLeft } from "@/animations/motionVariants";
-
 // Library
 import { motion } from "framer-motion";
 
+// ICON
 import {
   faBowlFood,
   faHeart,
@@ -28,74 +26,30 @@ import {
 import { faFacebookF, faGithubAlt, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
 import { scaleFade, slideRight } from "../animations/motionVariants";
 
-let featureList = [
-  {
-    id: 1,
-    icon: faHeart,
-    title: "Recipe Management",
-    description: `Easily organize and categorize your recipes with our intuitive management tools.
-    Create collections, tag ingredients, and access your favorite dishes anytime,
-    anywhere.`,
-  },
-  {
-    id: 2,
-    icon: faUtensils,
-    title: "Smart Ingredient Tracking",
-    description: `Track ingredients you have on hand and never miss an essential item again.
-    Get suggestions based on your pantry to reduce waste and cook smarter.`,
-  },
-  {
-    id: 3,
-    icon: faListCheck,
-    title: "Automated Meal Planning",
-    description: `Plan your meals for the week with ease. Our system generates balanced meal
-    schedules based on your preferences, dietary needs, and available ingredients.`,
-  },
-  {
-    id: 4,
-    icon: faBowlFood,
-    title: "Step-by-Step Cooking Mode",
-    description: `Follow recipes effortlessly with a clean, step-by-step view optimized for
-    cooking. No distractions — just clear instructions and visual guidance.`,
-  },
-  {
-    id: 5,
-    icon: faShareNodes,
-    title: "Share & Discover Recipes",
-    description: `Explore community-created recipes and share your own masterpieces.
-    Save your favorites, leave reviews, and inspire others with your creations.`,
-  },
-];
+// JSON
+import featureList from "@/demo/features.json";
+import socialLinks from "@/demo/socials.json";
 
-const socialLinks = [
-  {
-    icon: faUserTie,
-    name: "portfolio",
-    link: "https://wilhelmus.vercel.app",
-  },
-  {
-    icon: faFacebookF,
-    name: "facebook",
-    link: "https://facebook.com/wilhelmus.ole",
-  },
-  {
-    icon: faGithubAlt,
-    name: "GitHub",
-    link: "https://github.com/wilhelmusolejr",
-  },
-  {
-    icon: faLinkedinIn,
-    name: "LinkedIn",
-    link: "https://linkedin.com/wilhelmusolejr",
-  },
-];
+// UTILS
+import { fadeUp, staggerContainer, slideLeft } from "@/animations/motionVariants";
+import { ENV } from "@/config/env";
+
+const iconMap = {
+  heart: faHeart,
+  utensils: faUtensils,
+  "list-check": faListCheck,
+  "bowl-food": faBowlFood,
+  "share-nodes": faShareNodes,
+  userTie: faUserTie,
+  facebookF: faFacebookF,
+  githubAlt: faGithubAlt,
+  linkedIn: faLinkedinIn,
+};
 
 export default function About() {
-  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
-
   // Page title
   useEffect(() => {
-    document.title = `About Us | ${PAGE_NAME}`;
+    document.title = `About Us | ${ENV.pageName}`;
   }, []);
 
   return (
@@ -185,7 +139,11 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 md:gap-5">
             {/* item */}
             {featureList.map((item) => (
-              <FeatureItem icon={item.icon} title={item.title} description={item.description} />
+              <FeatureItem
+                icon={iconMap[item.icon]}
+                title={item.title}
+                description={item.description}
+              />
             ))}
           </div>
         </div>
@@ -308,7 +266,7 @@ export default function About() {
                   <motion.div key={index} variants={fadeUp}>
                     <SocialItem
                       key={index}
-                      icon={social.icon}
+                      icon={iconMap[social.icon]}
                       name={social.name}
                       link={social.link}
                     />
