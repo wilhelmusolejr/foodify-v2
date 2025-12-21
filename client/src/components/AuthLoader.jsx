@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuthStore } from "../stores/useAuthStore";
+import { ENV } from "@/config/env";
 
 export default function AuthLoader({ children }) {
   // Get the token and the setter action from the store
   const { token, isLoggedIn, setUser, logout } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
-  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
   useEffect(() => {
     async function verifyAndLoadUser() {
-      if (DEMO_MODE) {
+      if (ENV.isDemoMode) {
         setIsLoading(false);
         return;
       }
@@ -20,7 +20,7 @@ export default function AuthLoader({ children }) {
         try {
           // 2. Set the Authorization Header for the request
           // This is how you send the JWT back to the server.
-          const response = await axios.get("http://localhost:5001/api/auth/profile", {
+          const response = await axios.get(`${ENV.VITE_BACKEND_URL}/api/auth/profile`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
