@@ -66,6 +66,10 @@ export async function registerUser(req, res) {
 }
 
 export async function loginUser(req, res) {
+  let incorrectMessage = `Incorrect email or password. Please try again.`;
+  let successMessage = `Welcome back! You’ve successfully logged in.`;
+  let technicalErrorMessage = `A technical error occurred. Please try again later.`;
+
   try {
     const { email, password } = req.body;
 
@@ -74,7 +78,7 @@ export async function loginUser(req, res) {
 
     // 2. Handle User Not Found
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials." });
+      return res.status(401).json({ message: incorrectMessage });
     }
 
     // 3. Compare the provided password with the stored hash
@@ -82,7 +86,7 @@ export async function loginUser(req, res) {
 
     // 4. Handle Incorrect Password
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials." });
+      return res.status(401).json({ message: incorrectMessage });
     }
 
     // 5. SUCCESS: Generate JSON Web Token (JWT)
@@ -100,19 +104,17 @@ export async function loginUser(req, res) {
     };
 
     return res.status(200).json({
-      message: "Login successful",
+      message: successMessage,
       token: token,
       user: userResponse,
     });
   } catch (error) {
     // 1. Log the full error to the console for server debugging
-    console.error("Internal server error during login:", error);
+    // console.error("Internal server error during login:", error);
 
     // 2. Send a generic 500 status response to the client
     // This hides sensitive server details from the user
-    res
-      .status(500)
-      .json({ message: "A technical error occurred. Please try again later." });
+    res.status(500).json({ message: technicalErrorMessage });
   }
 }
 
