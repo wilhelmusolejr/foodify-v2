@@ -60,9 +60,12 @@ import userData from "../demo/users.json";
 import commentData from "../demo/comments.json";
 import offlineRecipeData from "./recipe.json";
 
+import { ENV } from "@/config/env";
+
 export default function Recipe() {
   const { id } = useParams();
 
+  // AUTH
   const queryClient = useQueryClient();
   const token = useAuthStore.getState().token;
   const user = useAuthStore.getState().user;
@@ -71,30 +74,29 @@ export default function Recipe() {
   const { modalType, openModal } = useModal();
 
   // URL
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const BACKEND_COMMENT_URL = `${BACKEND_URL}/api/comment`;
-  const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
-  const FOOD_API = import.meta.env.VITE_FOOD_API;
-  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
-  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
+  const BACKEND_COMMENT_URL = `${ENV.backendUrl}/api/comment`;
+  const BACKEND_BOOKMARK_URL = `${ENV.backendUrl}/api/bookmark`;
   const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
+  // STATE
   const [comment, setComment] = useState("");
 
+  // ---------------------------------------
   // Get recipe information
+  // ---------------------------------------
   const fetchRecipe = async ({ queryKey, signal }) => {
     console.log("Fetching recipe data...");
 
     const [, id] = queryKey;
     if (!id) throw new Error("Missing recipe id");
 
-    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+    for (let attempt = 1; attempt <= ENV.maxTry; attempt++) {
       if (signal?.aborted) {
         throw new Error("Request was aborted");
       }
 
       const apiKey = getRandomApiKey();
-      const apiUrl = `${FOOD_API}/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
+      const apiUrl = `${ENV.foodApiUrl}/recipes/${id}/information?includeNutrition=true&addWinePairing=true&apiKey=${apiKey}`;
 
       try {
         const res = await axios.get(apiUrl, { signal });
@@ -175,7 +177,7 @@ export default function Recipe() {
         const message = error.response?.data?.message || error.message;
         console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
 
-        if (attempt === MAX_TRY) {
+        if (attempt === ENV.maxTry) {
           // 2. Axios data is automatically parsed as JSON
           offlineRecipeData.groupedByAisle = offlineRecipeData.extendedIngredients.reduce(
             (accumulator, ingredient) => {
@@ -266,18 +268,20 @@ export default function Recipe() {
     staleTime: 1000 * 60 * 2,
   });
 
+  // ---------------------------------------
   // Get similar Recipe
+  // ---------------------------------------
   const fetchSimilarRecipe = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
     if (!id) throw new Error("Missing recipe id");
 
-    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+    for (let attempt = 1; attempt <= ENV.maxTry; attempt++) {
       if (signal?.aborted) {
         throw new Error("Request was aborted");
       }
 
       const apiKey = getRandomApiKey();
-      const apiUrl = `${FOOD_API}/recipes/${id}/similar?number=6&apiKey=${apiKey}`;
+      const apiUrl = `${ENV.foodApiUrl}/recipes/${id}/similar?number=6&apiKey=${apiKey}`;
 
       try {
         const res = await axios.get(apiUrl, { signal });
@@ -287,7 +291,7 @@ export default function Recipe() {
         const message = error.response?.data?.message || error.message;
         console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
 
-        if (attempt === MAX_TRY) {
+        if (attempt === ENV.maxTry) {
           const localRecipes = Array.from({ length: 6 }, () => ({
             ...offlineRecipeData,
           }));
@@ -306,20 +310,22 @@ export default function Recipe() {
   } = useQuery({
     queryKey: ["similar-recipe", id],
     queryFn: fetchSimilarRecipe,
-    enabled: !!id,
+    enabled: !!id && recipe.id != null,
     retry: 1,
     staleTime: 1000 * 60 * 2,
   });
 
+  // ---------------------------------------
   // Get random recipe
+  // ---------------------------------------
   const fetchRandomRecipe = async ({ signal }) => {
-    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+    for (let attempt = 1; attempt <= ENV.maxTry; attempt++) {
       if (signal?.aborted) {
         throw new Error("Request was aborted");
       }
 
       const apiKey = getRandomApiKey();
-      const apiUrl = `${FOOD_API}/recipes/random?number=8&apiKey=${apiKey}`;
+      const apiUrl = `${ENV.foodApiUrl}/recipes/random?number=8&apiKey=${apiKey}`;
 
       try {
         const res = await axios.get(apiUrl, { signal });
@@ -329,7 +335,7 @@ export default function Recipe() {
         const message = error.response?.data?.message || error.message;
         console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
 
-        if (attempt === MAX_TRY) {
+        if (attempt === ENV.maxTry) {
           const localRecipes = Array.from({ length: 8 }, () => ({
             ...offlineRecipeData,
           }));
@@ -353,8 +359,9 @@ export default function Recipe() {
     staleTime: 1000 * 60 * 2,
   });
 
+  // ---------------------------------------
   // Get comments
-  // Get comments
+  // ---------------------------------------
   const fetchComments = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
     if (!id) throw new Error("Missing id");
@@ -393,13 +400,15 @@ export default function Recipe() {
   } = useQuery({
     queryKey: ["list-comment", id],
     queryFn: fetchComments,
-    initialData: demoFetchComments,
-    enabled: !!id && !DEMO_MODE,
+    initialData: ENV.isDemoMode ? demoFetchComments() : undefined,
+    enabled: !!id && !ENV.isDemoMode,
     retry: 1,
     staleTime: 1000 * 60 * 2,
   });
 
+  // ---------------------------------------
   // check if the recipe has been bookmarked by the user
+  // ---------------------------------------
   const checkRecipeBookmarked = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
     if (!id) throw new Error("Missing id");
@@ -440,10 +449,10 @@ export default function Recipe() {
   } = useQuery({
     queryKey: ["has-bookmarked", id],
     queryFn: checkRecipeBookmarked,
-    enabled: !!id && !!token && !DEMO_MODE, // only run if logged in
+    enabled: !!id && !!token && !ENV.isDemoMode,
     retry: 1,
     staleTime: 1000 * 60 * 2,
-    initialData: demoCheckRecipeBookmarked,
+    initialData: ENV.isDemoMode ? demoCheckRecipeBookmarked : undefined,
   });
 
   const addDemoBookmark = () => {
@@ -631,13 +640,45 @@ export default function Recipe() {
   // Page title
   useEffect(() => {
     const title = recipe?.title ? recipe.title : "Loading recipe";
-    document.title = `${title} | ${PAGE_NAME}`;
-  }, [recipe?.title, PAGE_NAME]);
+    document.title = `${title} | ${ENV.pageName}`;
+  }, [recipe?.title, ENV.pageName]);
 
   // MEAL PLANNER
   function handleAddMealPlanner() {
+    if (!token) {
+      openModal("need-login");
+      return;
+    }
+
     openModal("meal-planner");
   }
+
+  const fetchNutritionLabel = async ({ queryKey }) => {
+    const [, productId] = queryKey;
+
+    const apiKey = getRandomApiKey();
+    const url = `${ENV.foodApiUrl}/food/products/${productId}/nutritionLabel`;
+
+    const res = await axios.get(url, {
+      params: {
+        apiKey,
+        defaultCss: true,
+      },
+      responseType: "text", // 👈 IMPORTANT
+    });
+
+    return res.data; // HTML string
+  };
+
+  const {
+    data: nutritionHtml,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["nutrition-label", id],
+    queryFn: fetchNutritionLabel,
+    enabled: !!id,
+  });
 
   return (
     <>
@@ -916,7 +957,7 @@ export default function Recipe() {
                 </div>
 
                 {/* Nutrition Facts */}
-                <NutritionFacts className="block lg:hidden my-14" data={recipe.nutrition} />
+                <NutritionFacts className="block lg:hidden my-14" html={nutritionHtml} />
 
                 {/* feedback */}
                 <Feedback className="hidden lg:text-center lg:flex my-20" />
@@ -938,7 +979,7 @@ export default function Recipe() {
                 </div>
 
                 {/* nutrition */}
-                <NutritionFacts className="hidden lg:block my-14" data={recipe.nutrition} />
+                <NutritionFacts className="hidden lg:block my-14" html={nutritionHtml} />
 
                 {/* recipes */}
                 <div className="my-14">
@@ -971,11 +1012,11 @@ export default function Recipe() {
               <button className="px-7 py-4 border rounded-lg mb-10">Share your feedback</button>
               <div className="h-2 bg-green-900 mb-10"></div>
               <h3 className="text-xl lg:text-2xl font-semibold mt-30 mb-10">
-                ({listComments.length}) Comments
+                ({listComments?.length}) Comments
               </h3>
 
               {/* actual comments */}
-              <div className="flex flex-col gap-14">
+              <div className="flex flex-col gap-14 ">
                 {listComments.length > 0 ? (
                   <>
                     {listComments.map((comment, index) => (
@@ -1019,6 +1060,25 @@ export default function Recipe() {
                   </div>
                 )}
               </div>
+
+              {/* LOADING comments */}
+              {listCommentsLoading && (
+                <div className="min-h-[30vh] flex flex-col gap-6 px-4 py-6 animate-pulse">
+                  {[...Array(3)].map((_, idx) => (
+                    <div key={idx} className="flex gap-4 border border-black/10 rounded-xl p-4">
+                      {/* Avatar */}
+                      <div className="w-12 h-12 rounded-full bg-gray-200" />
+
+                      {/* Content */}
+                      <div className="flex-1 space-y-3">
+                        <div className="h-4 w-1/4 bg-gray-200 rounded" />
+                        <div className="h-4 w-full bg-gray-200 rounded" />
+                        <div className="h-4 w-5/6 bg-gray-200 rounded" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* write a comment */}
               <div className="my-40">
