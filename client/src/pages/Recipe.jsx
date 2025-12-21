@@ -64,14 +64,13 @@ import { ENV } from "@/config/env";
 
 export default function Recipe() {
   const { id } = useParams();
+  const { modalType, openModal } = useModal();
 
   // AUTH
   const queryClient = useQueryClient();
   const token = useAuthStore.getState().token;
   const user = useAuthStore.getState().user;
   const isLoggedIn = useAuthStore.getState().isLoggedIn;
-
-  const { modalType, openModal } = useModal();
 
   // URL
   const BACKEND_COMMENT_URL = `${ENV.backendUrl}/api/comment`;
@@ -265,7 +264,11 @@ export default function Recipe() {
     queryFn: fetchRecipe,
     enabled: !!id,
     retry: 0,
-    staleTime: 1000 * 60 * 2,
+    staleTime: Infinity,
+    cacheTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 
   // ---------------------------------------
@@ -355,13 +358,11 @@ export default function Recipe() {
     queryKey: ["random-recipe"],
     queryFn: fetchRandomRecipe,
     enabled: recipe.id != null,
-    retry: 1,
-    staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
-    staleTime: Infinity, // never stale
-    cacheTime: Infinity, // keep forever
+    staleTime: Infinity,
+    cacheTime: Infinity,
     retry: 0,
   });
 
