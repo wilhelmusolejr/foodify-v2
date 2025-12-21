@@ -53,7 +53,7 @@ export async function createComment(req, res) {
     // This replaces the ObjectId with the User object, excluding the password.
     const savedComment = await newComment.populate({
       path: "user_id",
-      select: "firstName lastName profileUrl email",
+      select: "firstName lastName profile_image email ",
     });
 
     // 6. Return the fully populated comment to the frontend for UI update
