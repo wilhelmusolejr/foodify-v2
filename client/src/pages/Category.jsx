@@ -5,93 +5,21 @@ import { motion } from "framer-motion";
 
 import Navigator from "@components/Navigator";
 import SectionHeading from "@components/SectionHeading";
-import CategoryItem from "@components/CategoryItem";
 import MailLetter from "@components/MailLetter";
 import Footer from "@components/Footer";
-import Test from "../components/Test";
+import Test from "@components/Test";
 
-// Animation
+// UTILS
 import { fadeUp, staggerContainer } from "@/animations/motionVariants";
+import { ENV } from "@/config/env";
+
+// JSON
+import listCategory from "@/demo/category.json";
 
 export default function Category() {
-  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
-
-  let listCategory = [
-    {
-      id: 1,
-      name: "Main course",
-      image_name: "main_course.jpg",
-    },
-    {
-      id: 2,
-      name: "Side dish",
-      image_name: "side_dish.jpg",
-    },
-    {
-      id: 3,
-      name: "Dessert",
-      image_name: "dessert.jpg",
-    },
-    {
-      id: 4,
-      name: "Appetizer",
-      image_name: "appetizer.jpg",
-    },
-    {
-      id: 5,
-      name: "Salad",
-      image_name: "salad.jpg",
-    },
-    {
-      id: 6,
-      name: "Bread",
-      image_name: "bread.jpg",
-    },
-    {
-      id: 7,
-      name: "Breakfast",
-      image_name: "breakfast.jpg",
-    },
-    {
-      id: 8,
-      name: "Soup",
-      image_name: "soup.jpg",
-    },
-    {
-      id: 9,
-      name: "Beverage",
-      image_name: "beverage.jpg",
-    },
-    {
-      id: 10,
-      name: "Sauce",
-      image_name: "sauce.jpg",
-    },
-    {
-      id: 11,
-      name: "Marinade",
-      image_name: "marinade.jpg",
-    },
-    {
-      id: 12,
-      name: "Fingerfood",
-      image_name: "fingerfood.jpg",
-    },
-    {
-      id: 13,
-      name: "Snack",
-      image_name: "snack.jpg",
-    },
-    {
-      id: 14,
-      name: "Drink",
-      image_name: "drink.jpg",
-    },
-  ];
-
   // Page title
   useEffect(() => {
-    document.title = `Explore Categories | ${PAGE_NAME}`;
+    document.title = `Explore Categories | ${ENV.pageName}`;
   }, []);
 
   return (
