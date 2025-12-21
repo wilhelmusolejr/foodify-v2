@@ -15,18 +15,20 @@ import { useModal } from "../context/ModalContext";
 // Auth
 import { useAuthStore } from "../stores/useAuthStore";
 
+import { ENV } from "@/config/env";
+
 export default function LoginModal() {
   const { openModal, closeModal } = useModal();
 
-  // ENV
-  let backend_url = import.meta.env.VITE_BACKEND_URL;
-  let DEMO_MODE = import.meta.env.VITE_DEMO_MODE;
-
-  // STATE
-  const [formData, setFormData] = useState({
+  // VARIABLES
+  let formDataTemplate = {
     email: "",
     password: "",
-  });
+  };
+  let errorMessage = "Please fill in all required fields.";
+
+  // STATE
+  const [formData, setFormData] = useState(formDataTemplate);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -46,7 +48,7 @@ export default function LoginModal() {
 
     // Basic Client-Side Validation (e.g., check required fields)
     if (!formData.email || !formData.password) {
-      setError("Please fill in all required fields (Email, Password).");
+      setError(errorMessage);
       return;
     }
 
@@ -54,19 +56,16 @@ export default function LoginModal() {
     setError("");
 
     try {
-      let backend_api_url = `${backend_url}/api/auth/login`;
+      let backend_api_url = `${ENV.backendUrl}/api/auth/login`;
       const response = await axios.post(backend_api_url, formData);
       const { token, user } = response.data;
       login({ token, user });
       closeModal();
     } catch (apiError) {
-      setError(apiError.response?.data?.message || "Login failed.");
+      setError(apiError.response?.data?.message || ENV.offlineErrorMessage);
     } finally {
       setIsLoading(false);
-      setFormData({
-        email: "",
-        password: "",
-      });
+      setFormData(formDataTemplate);
     }
   };
 
@@ -88,7 +87,7 @@ export default function LoginModal() {
 
           {/* Height-Controlled Body */}
           <div className=" relative flex flex-col">
-            {DEMO_MODE && (
+            {ENV.isDemoMode && (
               <div className="bg-amber-500 text-white text-sm text-center p-5 hidden">
                 <p className="w-8/12 mx-auto">
                   Demo mode: Data is stored only in your browser (localStorage). The backend is
