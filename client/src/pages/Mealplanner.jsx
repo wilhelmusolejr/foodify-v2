@@ -464,8 +464,8 @@ export default function Mealplanner() {
               {/* button */}
               {toggleAction && (
                 // BUTTON
-                <div className="flex justify-end">
-                  <div className="mb-10 flex flex-col gap-2 w-6/12">
+                <div className="flex justify-end lg:hidden">
+                  <div className="mb-10 flex flex-col gap-2 w-full md:w-6/12">
                     {/* item */}
                     <div className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer">
                       <p>Generate shopping list weekly</p>
@@ -591,7 +591,7 @@ export default function Mealplanner() {
                             {enrichedSelectedDateData.meal.breakfast.length > 0 && (
                               <li>
                                 <h2 className="text-xl mb-4">Breakfast</h2>
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                   {enrichedSelectedDateData.meal.breakfast.map((item, idx) => (
                                     <div key={idx}>
                                       {item?.details?.id && (
@@ -615,7 +615,7 @@ export default function Mealplanner() {
                             {enrichedSelectedDateData.meal.lunch.length > 0 && (
                               <li>
                                 <h2 className="text-xl mb-4">Lunch</h2>
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                   {enrichedSelectedDateData.meal.lunch.map((item, idx) => (
                                     <div key={idx}>
                                       {item?.details?.id && (
@@ -639,7 +639,7 @@ export default function Mealplanner() {
                             {enrichedSelectedDateData.meal.snacks.length > 0 && (
                               <li>
                                 <h2 className="text-xl mb-4">Snacks</h2>
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                   {enrichedSelectedDateData.meal.snacks.map((item, idx) => (
                                     <div key={idx}>
                                       {item?.details?.id && (
@@ -663,7 +663,7 @@ export default function Mealplanner() {
                             {enrichedSelectedDateData.meal.dinner.length > 0 && (
                               <li>
                                 <h2 className="text-xl mb-4">Dinner</h2>
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                   {enrichedSelectedDateData.meal.dinner.map((item, idx) => (
                                     <div key={idx}>
                                       {item?.details?.id && (
