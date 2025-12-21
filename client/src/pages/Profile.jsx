@@ -37,6 +37,8 @@ import commentData from "../demo/comments.json";
 import { motion } from "framer-motion";
 import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 
+import { ENV } from "@/config/env";
+
 // Skeleton data
 let skeletonRecipes = Array.from({ length: 8 }, () => <RecipeItemSkeleton />);
 
@@ -47,25 +49,18 @@ export default function Profile() {
 
   const { id } = useParams();
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const BACKEND_USER_URL = `${BACKEND_URL}/api/user`;
-  const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
-  const BACKEND_COMMENT_URL = `${BACKEND_URL}/api/comment`;
-  const FOOD_API = import.meta.env.VITE_FOOD_API;
-  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
-  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
-  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
+  // URL
+  const BACKEND_USER_URL = `${ENV.backendUrl}/api/user`;
+  const BACKEND_BOOKMARK_URL = `${ENV.backendUrl}/api/bookmark`;
+  const BACKEND_COMMENT_URL = `${ENV.backendUrl}/api/comment`;
 
   const MAX_RECIPES_DISPLAY = 8;
 
   const queryObject = {
-    enabled: !!id && !DEMO_MODE,
+    enabled: !!id && !ENV.isDemoMode,
     retry: 1,
     staleTime: 1000 * 60 * 2,
   };
-
-  // STATE
-  console.log(!!id && !DEMO_MODE);
 
   // Global Stand
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -75,12 +70,10 @@ export default function Profile() {
   }
   const isVisitor = isLoggedIn ? user.id !== id : true;
 
+  // ---------------------------------------
   // Get user profile
-  // Get user profile
+  // ---------------------------------------
   const fetchUserProfile = async ({ queryKey, signal }) => {
-    console.log("asda");
-    console.log("test");
-
     const [, id] = queryKey;
     if (!id) throw new Error("Missing user id");
 
@@ -111,12 +104,15 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["user-profile", id],
     queryFn: fetchUserProfile,
-    initialData: demoFetchUserProfile,
-    ...queryObject,
+    initialData: ENV.isDemoMode ? demoFetchUserProfile : undefined,
+    enabled: !!id && !ENV.isDemoMode,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
   });
 
+  // ---------------------------------------
   // Get user bookmarks
-  // Get user bookmarks
+  // ---------------------------------------
   const fetchUserBookmarks = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
     if (!id) throw new Error("Missing user id");
@@ -153,13 +149,16 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["user-bookmarks", id],
     queryFn: fetchUserBookmarks,
-    ...queryObject,
-    initialData: demoFetchUserBookmarks,
+    enabled: !!id && !ENV.isDemoMode,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+    initialData: ENV.isDemoMode ? demoFetchUserBookmarks : undefined,
     select: (bookmark = []) => bookmark.slice(0, 8),
   });
 
+  // ---------------------------------------
   // Get user comments
-  // Get user comments
+  // ---------------------------------------
   const fetchUserComments = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
     if (!id) throw new Error("Missing user id");
@@ -190,14 +189,15 @@ export default function Profile() {
   } = useQuery({
     queryKey: ["user-comments", id],
     queryFn: fetchUserComments,
-    ...queryObject,
-    initialData: demoFetchUserComments,
+    enabled: !!id && !ENV.isDemoMode,
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+    initialData: ENV.isDemoMode ? demoFetchUserComments : undefined,
   });
 
+  // ---------------------------------------
   // Get user recipes via api
-  // Get user recipes via api
-  // Get user recipes via api
-  // Get user recipes via api
+  // ---------------------------------------
   const bookmarkIds = useMemo(() => {
     // extract numeric/string ids and join into a stable string
     return (
@@ -212,11 +212,11 @@ export default function Profile() {
     // queryKey: ["recipes", id, idsString]
     const [, id, idsString] = queryKey;
 
-    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+    for (let attempt = 1; attempt <= ENV.maxTry; attempt++) {
       try {
         const apiKey = getRandomApiKey();
 
-        const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
+        const apiUrl = `${ENV.foodApiUrl}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
 
         const res = await axios.get(apiUrl, { signal });
         return res.data;
@@ -225,7 +225,7 @@ export default function Profile() {
         const message = error.response?.data?.message || error.message;
         console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
 
-        if (attempt === MAX_TRY) {
+        if (attempt === ENV.maxTry) {
           const localRecipes = Array.from({ length: userBookmarks.length }, () => ({
             ...offlineRecipeData,
           }));
@@ -246,6 +246,14 @@ export default function Profile() {
     queryFn: fetchRecipe,
     ...queryObject,
     enabled: !!id && bookmarkIds.length > 0,
+
+    staleTime: Infinity,
+    cacheTime: Infinity,
+    retry: 0,
+
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 
   let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
@@ -253,9 +261,9 @@ export default function Profile() {
   // Page title
   useEffect(() => {
     if (isVisitor) {
-      document.title = `${userProfile.firstName} ${userProfile.lastName} Profile | ${PAGE_NAME}`;
+      document.title = `${userProfile.firstName} ${userProfile.lastName} Profile | ${ENV.pageName}`;
     } else {
-      document.title = `My Profile | ${PAGE_NAME}`;
+      document.title = `My Profile | ${ENV.pageName}`;
     }
   }, [userProfile]);
 
@@ -343,16 +351,19 @@ export default function Profile() {
 
                 {/* Content */}
                 {userBookmarks.length > 0 ? (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-h-[40vh] ">
+                  <motion.div
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.3 }}
+                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-h-[40vh] "
+                  >
                     {recipes.map((recipe, index) => (
-                      <RecipeItem
-                        key={index}
-                        image_name={recipe.image}
-                        id={recipe.id}
-                        name={recipe.title}
-                      />
+                      <motion.div key={index} variants={fadeUp}>
+                        <RecipeItem image_name={recipe.image} id={recipe.id} name={recipe.title} />
+                      </motion.div>
                     ))}
-                  </div>
+                  </motion.div>
                 ) : (
                   <EmptyRecipe isVisitor={isVisitor} userProfile={userProfile} />
                 )}

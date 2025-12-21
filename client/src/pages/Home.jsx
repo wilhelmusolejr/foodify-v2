@@ -34,6 +34,9 @@ import toast, { Toaster } from "react-hot-toast";
 
 // recipe data
 import offlineRecipeData from "./recipe.json";
+import { ENV } from "@/config/env";
+
+import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 
 let blogs = [
   {
@@ -61,13 +64,10 @@ let blogs = [
 
 function Home() {
   // ENV
-  const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
-  const SEARCH_URL = `${FRONTEND_URL}/search`;
+  const SEARCH_URL = `${ENV.frontEndUrl}/search`;
   const apiKey = getRandomApiKey();
-  const FOOD_API = import.meta.env.VITE_FOOD_API;
-  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
-  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
 
+  // STATE
   const [currentIngredients, setCurrentIngredients] = useState([]);
   const [ingredientError, setIngredientError] = useState(false);
   const [ingredient, setIngredient] = useState("");
@@ -111,7 +111,7 @@ function Home() {
 
   // FETCH RECIPE DATA
   const fetchRecipesFromApi = async ({ signal }) => {
-    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+    for (let attempt = 1; attempt <= ENV.maxTry; attempt++) {
       if (signal?.aborted) {
         throw new Error("Request was aborted");
       }
@@ -119,7 +119,7 @@ function Home() {
       const apiKey = getRandomApiKey();
 
       try {
-        const url = `${FOOD_API}/recipes/random?number=17&apiKey=${apiKey}`;
+        const url = `${ENV.foodApiUrl}/recipes/random?number=17&apiKey=${apiKey}`;
         const res = await axios.get(url, { signal });
         return Array.isArray(res.data?.recipes) ? res.data.recipes : [];
       } catch (error) {
@@ -127,7 +127,7 @@ function Home() {
         const message = error.response?.data?.message || error.message;
         console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
 
-        if (attempt === MAX_TRY) {
+        if (attempt === ENV.maxTry) {
           // last attempt – fallback
           const localRecipes = Array.from({ length: 20 }, () => ({
             ...offlineRecipeData,
@@ -148,7 +148,7 @@ function Home() {
   } = useQuery({
     queryKey: ["recipes"],
     queryFn: fetchRecipesFromApi,
-    enabled: !!FOOD_API && !!apiKey, // only run if config exists
+    enabled: !!ENV.foodApiUrl && !!apiKey, // only run if config exists
     retry: 0,
     staleTime: 1000 * 60 * 2,
     select: (recipesData = []) => ({
@@ -166,31 +166,8 @@ function Home() {
   });
 
   useEffect(() => {
-    document.title = `Discover | ${PAGE_NAME}`;
+    document.title = `Discover | ${ENV.pageName}`;
   }, []);
-
-  const fadeUp = {
-    hidden: { opacity: 0, y: 24 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-  };
-
-  const fadeIn = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.4 } },
-  };
-
-  const staggerContainer = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.08,
-      },
-    },
-  };
 
   return (
     <>

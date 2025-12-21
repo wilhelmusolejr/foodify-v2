@@ -430,7 +430,7 @@ export default function Mealplanner() {
       <div className="mt-40">
         <div className="w-10/12 mx-auto">
           {/* schedule */}
-          <div className="flex gap-5 overflow-x-auto py-5">
+          <div className="flex gap-5 overflow-x-auto py-5 px-2">
             {userMealSchedule.map((item, idx) => (
               <DateCardItem
                 key={item.iso} // prefer stable key

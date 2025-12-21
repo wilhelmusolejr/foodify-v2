@@ -12,7 +12,7 @@ export default function DateCardItem({ dayName, dateLabel, meals, isToday, onCli
       onClick={() => {
         onClick(dateLabel);
       }}
-      className={`w-full min-w-52 flex flex-col rounded-2xl px-5 py-10 border shadow-sm hover:shadow-md transition-all cursor-pointer 
+      className={`w-full min-w-52 min-h-72 flex flex-col rounded-2xl px-5 py-10 border shadow-sm hover:shadow-md transition-all cursor-pointer 
     ${isToday ? "bg-green-50 border-green-400 shadow-md scale-[1.02]" : "bg-white border-gray-200"}
   `}
     >

@@ -29,6 +29,10 @@ import bookmarkData from "../demo/bookmarks.json";
 // GLOBAL STATE
 import { useAuthStore } from "../stores/useAuthStore";
 
+import { ENV } from "@/config/env";
+import { fadeUp, staggerContainer } from "@/animations/motionVariants";
+import { motion } from "framer-motion";
+
 const skeletonRecipes = Array.from({ length: 12 }, () => <RecipeItemSkeleton />);
 
 export default function Bookmark() {
@@ -48,12 +52,8 @@ export default function Bookmark() {
   }
   const isVisitor = isLoggedIn ? user.id !== id : true;
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const BACKEND_USER_URL = `${BACKEND_URL}/api/user`;
-  const BACKEND_BOOKMARK_URL = `${BACKEND_URL}/api/bookmark`;
-  const FOOD_API = import.meta.env.VITE_FOOD_API;
-  const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
-  const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
+  const BACKEND_USER_URL = `${ENV.backendUrl}/api/user`;
+  const BACKEND_BOOKMARK_URL = `${ENV.backendUrl}/api/bookmark`;
   const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 
   // Get user profile
@@ -93,13 +93,11 @@ export default function Bookmark() {
   } = useQuery({
     queryKey: ["user-profile", id],
     queryFn: fetchUserProfile,
-    enabled: !!id && !DEMO_MODE,
+    enabled: !!id && !ENV.isDemoMode,
     retry: 1,
     staleTime: 1000 * 60 * 2,
-    initialData: demoFetchUserProfile,
+    initialData: ENV.isDemoMode ? demoFetchUserProfile : undefined,
   });
-
-  console.log(userProfile);
 
   // Fetch userbookmarks
   const fetchUserBookmarks = async ({ queryKey, signal }) => {
@@ -140,13 +138,11 @@ export default function Bookmark() {
   } = useQuery({
     queryKey: ["user-bookmark", id],
     queryFn: fetchUserBookmarks,
-    enabled: !!id && userProfileSuccess && !DEMO_MODE,
+    enabled: !!id && userProfileSuccess && !ENV.isDemoMode,
     retry: 1,
     staleTime: 1000 * 60 * 2,
-    initialData: demoFetchUserBookmarks,
+    initialData: ENV.isDemoMode ? demoFetchUserBookmarks : undefined,
   });
-
-  console.log(userBookmarks);
 
   //   Fetch Recipe
   const bookmarkIds = useMemo(() => {
@@ -162,14 +158,14 @@ export default function Bookmark() {
   const fetchRecipe = async ({ queryKey, signal }) => {
     const [, id, idsString] = queryKey;
 
-    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+    for (let attempt = 1; attempt <= ENV.maxTry; attempt++) {
       try {
         if (signal?.aborted) {
           throw new Error("Request was aborted");
         }
 
         const apiKey = getRandomApiKey();
-        const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
+        const apiUrl = `${ENV.foodApiUrl}/recipes/informationBulk?ids=${idsString}&apiKey=${apiKey}`;
         const res = await axios.get(apiUrl, { signal });
         return res.data;
       } catch (error) {
@@ -177,7 +173,7 @@ export default function Bookmark() {
         const message = error.response?.data?.message || error.message;
         console.warn(`Attempt ${attempt} failed (status: ${status}): ${message}`);
 
-        if (attempt === MAX_TRY) {
+        if (attempt === ENV.maxTry) {
           const localRecipes = Array.from({ length: userBookmarks.length }, () => ({
             ...offlineRecipeData,
           }));
@@ -198,7 +194,12 @@ export default function Bookmark() {
     queryFn: fetchRecipe,
     enabled: !!id && bookmarkIds.length > 0,
     retry: 1,
-    staleTime: 1000 * 60 * 2,
+
+    staleTime: Infinity,
+    cacheTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 
   let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
@@ -206,9 +207,9 @@ export default function Bookmark() {
   // Page title
   useEffect(() => {
     if (isVisitor) {
-      document.title = `${userProfile.firstName} ${userProfile.lastName} Bookmark | ${PAGE_NAME}`;
+      document.title = `${userProfile.firstName} ${userProfile.lastName} Bookmark | ${ENV.pageName}`;
     } else {
-      document.title = `My Bookmark | ${PAGE_NAME}`;
+      document.title = `My Bookmark | ${ENV.pageName}`;
     }
   }, [userProfile]);
 
@@ -290,16 +291,24 @@ export default function Bookmark() {
           <>
             {recipes.length > 0 ? (
               <>
-                <div className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 min-h-[60vh]">
+                <motion.div
+                  variants={staggerContainer}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 min-h-[60vh]"
+                >
                   {recipes.map((recipe, index) => (
-                    <RecipeItem
-                      key={index}
-                      image_name={recipe.image}
-                      id={recipe.id}
-                      name={recipe.title}
-                    />
+                    <motion.div key={index} variants={fadeUp}>
+                      <RecipeItem
+                        key={index}
+                        image_name={recipe.image}
+                        id={recipe.id}
+                        name={recipe.title}
+                      />
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               </>
             ) : (
               <>
@@ -356,6 +365,11 @@ export default function Bookmark() {
           </div>
         )}
       </div>
+
+      <br />
+      <br />
+      <br />
+      <br />
 
       <MailLetter />
 

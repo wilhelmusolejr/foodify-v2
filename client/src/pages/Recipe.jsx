@@ -357,6 +357,12 @@ export default function Recipe() {
     enabled: recipe.id != null,
     retry: 1,
     staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    staleTime: Infinity, // never stale
+    cacheTime: Infinity, // keep forever
+    retry: 0,
   });
 
   // ---------------------------------------
@@ -401,7 +407,7 @@ export default function Recipe() {
     queryKey: ["list-comment", id],
     queryFn: fetchComments,
     initialData: ENV.isDemoMode ? demoFetchComments() : undefined,
-    enabled: !!id && !ENV.isDemoMode,
+    enabled: !!recipe.id && !ENV.isDemoMode,
     retry: 1,
     staleTime: 1000 * 60 * 2,
   });
@@ -586,6 +592,8 @@ export default function Recipe() {
         Authorization: `Bearer ${token}`,
       },
     });
+
+    console.log(response.data);
 
     // assuming your backend returns the new comment here:
     return response.data.comment;
@@ -1062,7 +1070,7 @@ export default function Recipe() {
               </div>
 
               {/* LOADING comments */}
-              {listCommentsLoading && (
+              {listCommentsLoading && !ENV.isDemoMode && (
                 <div className="min-h-[30vh] flex flex-col gap-6 px-4 py-6 animate-pulse">
                   {[...Array(3)].map((_, idx) => (
                     <div key={idx} className="flex gap-4 border border-black/10 rounded-xl p-4">
