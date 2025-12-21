@@ -15,6 +15,8 @@ import axios from "axios";
 // Context
 import { useModal } from "../context/ModalContext";
 
+import { ENV } from "@/config/env";
+
 function generateRandomEmail() {
   const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
   const domains = ["gmail.com", "yahoo.com", "outlook.net", "mailservice.co"];
@@ -41,12 +43,15 @@ function generateRandomEmail() {
 }
 
 export default function RegisterModal() {
-  let backend_url = import.meta.env.VITE_BACKEND_URL;
-  const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
-
+  // CONTEXT
   const { openModal, closeModal } = useModal();
-
   const randomEmail = generateRandomEmail();
+
+  let message = {
+    invalid: "Please fill in all required fields.",
+    invalidEmail: "invalid email format",
+    invalidPassword: "Password must be at least 6 characters long.",
+  };
 
   // STATE
   const [formData, setFormData] = useState({
@@ -81,7 +86,6 @@ export default function RegisterModal() {
   }, [isSuccess, closeModal]);
 
   // HANDLER
-
   const handleChange = (e, target) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -92,31 +96,25 @@ export default function RegisterModal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // INPUT VALIDATION
-    // INPUT VALIDATION
-    // INPUT VALIDATION
-
     // Basic Client-Side Validation (e.g., check required fields)
     if (!formData.firstName || !formData.email || !formData.password) {
-      setError("Please fill in all required fields (Name, Email, Password).");
+      setError(message.invalid);
       return;
     }
 
     if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      setError("Invalid email format");
+      setError(message.invalidEmail);
       return;
     }
 
     // Check password minimum length (Schema minlength: 6)
     if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long.");
+      setError(message.invalidPassword);
       return;
     }
 
     // DEMO MODE
-    // DEMO MODE
-    // DEMO MODE
-    if (DEMO_MODE) {
+    if (ENV.isDemoMode) {
       setError("");
       setIsLoading(true);
 
@@ -158,7 +156,7 @@ export default function RegisterModal() {
       setIsLoading(true);
       setError("");
 
-      let backend_api_url = `${backend_url}/api/auth/register`;
+      let backend_api_url = `${ENV.backendUrl}/api/auth/register`;
       const response = await axios.post(backend_api_url, formData);
       const { token, user } = response.data;
 
@@ -167,7 +165,7 @@ export default function RegisterModal() {
         login({ token, user });
       }
     } catch (apiError) {
-      console.error("Registration error:", apiError);
+      // console.error("Registration error:", apiError);
 
       // Backend offline / network issue
       if (!apiError.response) {
