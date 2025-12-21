@@ -6,7 +6,6 @@ import { faUtensils, faXmark } from "@fortawesome/free-solid-svg-icons";
 // Components
 import FormLabelInput from "./FormLabelInput";
 import FormLabel from "./FormLabel";
-import { useAuthStore } from "../stores/useAuthStore";
 import ModalContainer from "./ModalContainer";
 
 // Library
@@ -14,7 +13,9 @@ import axios from "axios";
 
 // Context
 import { useModal } from "../context/ModalContext";
+import { useAuthStore } from "../stores/useAuthStore";
 
+// UTILS
 import { ENV } from "@/config/env";
 
 function generateRandomEmail() {
