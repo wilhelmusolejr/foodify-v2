@@ -1,10 +1,9 @@
 import { create } from "zustand";
-
-const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
+import { ENV } from "@/config/env";
 
 const getInitialState = () => {
   const storedToken = localStorage.getItem("authToken");
-  const storedUser = DEMO_MODE ? JSON.parse(localStorage.getItem("authUser") || "null") : null;
+  const storedUser = ENV.isDemoMode ? JSON.parse(localStorage.getItem("authUser") || "null") : null;
 
   return {
     token: storedToken || null,
@@ -21,7 +20,7 @@ export const useAuthStore = create((set) => ({
     localStorage.setItem("authToken", token);
 
     // DEMO MODE: persist user too
-    if (DEMO_MODE) {
+    if (ENV.isDemoMode) {
       localStorage.setItem("authUser", JSON.stringify(user));
     }
 
