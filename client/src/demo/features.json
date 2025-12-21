@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "icon": "heart",
+    "title": "Recipe Management",
+    "description": "Easily organize and categorize your recipes with our intuitive management tools. Create collections, tag ingredients, and access your favorite dishes anytime, anywhere."
+  },
+  {
+    "id": 2,
+    "icon": "utensils",
+    "title": "Smart Ingredient Tracking",
+    "description": "Track ingredients you have on hand and never miss an essential item again. Get suggestions based on your pantry to reduce waste and cook smarter."
+  },
+  {
+    "id": 3,
+    "icon": "list-check",
+    "title": "Automated Meal Planning",
+    "description": "Plan your meals for the week with ease. Our system generates balanced meal schedules based on your preferences, dietary needs, and available ingredients."
+  },
+  {
+    "id": 4,
+    "icon": "bowl-food",
+    "title": "Step-by-Step Cooking Mode",
+    "description": "Follow recipes effortlessly with a clean, step-by-step view optimized for cooking. No distractions — just clear instructions and visual guidance."
+  },
+  {
+    "id": 5,
+    "icon": "share-nodes",
+    "title": "Share & Discover Recipes",
+    "description": "Explore community-created recipes and share your own masterpieces. Save your favorites, leave reviews, and inspire others with your creations."
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "icon": "userTie",
+    "name": "portfolio",
+    "link": "https://wilhelmus.vercel.app"
+  },
+  {
+    "icon": "facebookF",
+    "name": "facebook",
+    "link": "https://facebook.com/wilhelmus.ole"
+  },
+  {
+    "icon": "githubAlt",
+    "name": "GitHub",
+    "link": "https://github.com/wilhelmusolejr"
+  },
+  {
+    "icon": "linkedIn",
+    "name": "LinkedIn",
+    "link": "https://linkedin.com/wilhelmusolejr"
+  }
+]
