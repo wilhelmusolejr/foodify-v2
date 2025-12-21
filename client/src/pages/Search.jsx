@@ -100,8 +100,10 @@ export default function Search() {
 
   // Searh parameters
 
+  // ---------------------------------------
   // HANDLER FOR SEARCH BY NUTRIENTS
-  // Use a single, generic handler:
+  // Use a single, generic handler
+  // ---------------------------------------
   const handleNutrientRangeChange = (nutrientKey, newValue, indexToUpdate) => {
     setNutrientRanges((prevRanges) => ({
       ...prevRanges,
