@@ -34,6 +34,7 @@ import offlineRecipeData from "./recipe.json";
 // UTILS
 import { getRandomApiKey } from "../utils/apiUtils";
 import { ENV } from "@/config/env";
+import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 
 // DATA
 // DATA
@@ -366,12 +367,24 @@ export default function Search() {
       {searchParams.size == 0 ? (
         <>
           {/* heading */}
-          <div className="w-10/12 mx-auto mt-30">
-            <SectionHeading
-              heading="Find Your Perfect Meal"
-              subheading="Browse All Recipes by Category or Filter"
-            />
-          </div>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="w-10/12 mx-auto mt-30"
+          >
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+            >
+              <SectionHeading
+                heading="Find Your Perfect Meal"
+                subheading="Browse All Recipes by Category or Filter"
+              />
+            </motion.div>
+          </motion.div>
 
           <div className="w-10/12 mx-auto">
             {/* Type */}

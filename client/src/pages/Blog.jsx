@@ -10,6 +10,10 @@ import MailLetter from "@components/MailLetter";
 
 // UTILS
 import { ENV } from "@/config/env";
+import { fadeUp, staggerContainer } from "@/animations/motionVariants";
+
+// LIBRARY
+import { motion } from "framer-motion";
 
 let blogs = [
   {
@@ -68,24 +72,38 @@ export default function Blog() {
       <Navigator />
 
       {/* heading */}
-      <div className="w-10/12 max-w-7xl mx-auto mt-30">
-        <SectionHeading heading="Blog" subheading="Browse All Recipes by Category or Filter" />
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+        className="w-10/12 max-w-7xl mx-auto mt-30"
+      >
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <SectionHeading heading="Blog" subheading="Browse All Recipes by Category or Filter" />
+        </motion.div>
 
         {/* Search */}
-        <div className="flex flex-col md:flex-row md:items-end justify-center gap-2 mb-14 mt-30">
-          {/* form */}
-          <div className="w-full md:w-fit flex flex-col gap-2">
-            <Label name="Blog name" required={true} />
-            <input
-              type="text_name"
-              placeholder="e.g. chicken, rice, broccoli"
-              className={`border flex-1 md:w-fit border-black/50 rounded-lg px-4 py-3 lg:min-w-80`}
-            />
+        <div className="flex justify-end  mb-14 mt-30">
+          <div className="flex flex-col md:flex-row md:items-end justify-center gap-2">
+            {/* form */}
+            <div className="w-full md:w-fit flex flex-col gap-2">
+              <Label name="Blog name" required={true} />
+              <input
+                type="text_name"
+                placeholder="e.g. chicken, rice, broccoli"
+                className={`border flex-1 md:w-fit border-black/50 rounded-lg px-4 py-3 lg:min-w-80`}
+              />
+            </div>
+            {/* button */}
+            <button className="bg-black w-full md:w-fit cursor-pointer text-white px-4 py-3 rounded-lg uppercase">
+              <p>Search</p>
+            </button>
           </div>
-          {/* button */}
-          <button className="bg-black w-full md:w-fit cursor-pointer text-white px-4 py-3 rounded-lg uppercase">
-            <p>Search</p>
-          </button>
         </div>
 
         {/* parent */}
@@ -96,7 +114,7 @@ export default function Blog() {
         </div>
 
         <Pagination />
-      </div>
+      </motion.div>
 
       <br />
 
