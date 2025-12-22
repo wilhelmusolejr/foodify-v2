@@ -3,27 +3,23 @@ import { faLemon, faSpoon } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MealTypeItem from "./MealTypeItem";
 
-import { motion } from "framer-motion";
-import {
-  fadeUp,
-  staggerContainer,
-  containerVariants,
-  cardVariants,
-} from "@/animations/motionVariants";
-
 import img from "@/assets/foodinbowl.jpg";
 
-export default function DateCardItem({ dayName, dateLabel, meals, isToday, onClick }) {
+export default function DateCardItem({ dayName, dateLabel, meals, onClick, isoDate, selectedISO }) {
   let totalMeal =
     meals.breakfast.length + meals.lunch.length + meals.dinner.length + meals.snacks.length;
+
+  const todayISO = getLocalISO();
+  let isToday = todayISO === isoDate;
+  let isSelected = isoDate === selectedISO;
+
   return (
-    <motion.div
-      variants={cardVariants}
+    <div
       onClick={() => {
         onClick(dateLabel);
       }}
       className={`w-full min-h-72 flex flex-col rounded-2xl p-3 border shadow-sm hover:shadow-md transition-all cursor-pointer 
-    ${isToday ? "bg-green-50 border-green-400 shadow-md scale-[1.02]" : "bg-white border-gray-200"}
+    ${isSelected ? "bg-green-50 border-green-400 shadow-md scale-[1.02]" : "bg-white border-gray-200"}
   `}
     >
       <p className="uppercase text-center pb-3 text-gray-400 text-sm">{isToday ? "today" : "."}</p>
@@ -33,7 +29,7 @@ export default function DateCardItem({ dayName, dateLabel, meals, isToday, onCli
         <h3 className="text-sm text-gray-500">{dateLabel}</h3>
       </div>
 
-      {isToday ? (
+      {isSelected ? (
         <>
           <div className="border p-3 rounded-lg border-black/5 shadow-md h-full flex flex-col bg-white">
             {totalMeal > 0 ? (
@@ -112,6 +108,12 @@ export default function DateCardItem({ dayName, dateLabel, meals, isToday, onCli
           </div>
         </>
       )}
-    </motion.div>
+    </div>
   );
+}
+
+function getLocalISO(date = new Date()) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate()
+  ).padStart(2, "0")}`;
 }
