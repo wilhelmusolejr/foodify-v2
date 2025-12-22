@@ -20,7 +20,7 @@ export default function AuthLoader({ children }) {
         try {
           // 2. Set the Authorization Header for the request
           // This is how you send the JWT back to the server.
-          const response = await axios.get(`${ENV.VITE_BACKEND_URL}/api/auth/profile`, {
+          const response = await axios.get(`${ENV.backendUrl}/api/auth/profile`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -28,6 +28,7 @@ export default function AuthLoader({ children }) {
 
           // 3. Hydrate State: Server sends back the user object if the token is valid
           const user = response.data;
+          console.log(user);
           setUser(user); // Use the action to update the user object in Zustand
         } catch (error) {
           // Token is expired, invalid, or server is down.
