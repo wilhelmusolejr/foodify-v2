@@ -6,15 +6,19 @@ import Navigator from "@components/Navigator";
 import DateCardItem from "../components/mealplanner/DateCardItem";
 import Footer from "@components/Footer";
 import RecipeItem from "@components/RecipeItem";
+import AddMealModal from "@components/Modal/AddMealModal";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/useAuthStore";
 
+// UTILS
 import { getRandomApiKey } from "../utils/apiUtils";
+import { ENV } from "@/config/env";
 
+// LIBRARY
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-import AddMealModal from "../components/Modal/AddMealModal";
+
 import { useModal } from "../context/ModalContext";
 
 let nutrients = [
@@ -218,9 +222,7 @@ export default function Mealplanner() {
   const { modalType, openModal } = useModal();
 
   // ENV
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const BACKEND_MEAL_URL = `${BACKEND_URL}/api/mealplan`;
-  const FOOD_API = import.meta.env.VITE_FOOD_API;
+  const BACKEND_MEAL_URL = `${ENV.backendUrl}/api/mealplan`;
   const PAGE_NAME = import.meta.env.VITE_PAGE_NAME;
   const MAX_TRY = Number(import.meta.env.VITE_MAX_TRY);
   const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
@@ -230,6 +232,7 @@ export default function Mealplanner() {
 
   // AUTH
   const token = useAuthStore.getState().token;
+  const user = useAuthStore.getState().user;
 
   // clean up
   const todayISO = getLocalISO();
@@ -244,6 +247,8 @@ export default function Mealplanner() {
   const [isDeleteSuccess, setIsDeleteSuccess] = useState(false);
 
   function changeSelectedDate(iso) {
+    setSelectedMealId([]);
+    setToModify(false);
     setSelectedISO(iso);
   }
   // -----------------------------------------------------
@@ -264,18 +269,29 @@ export default function Mealplanner() {
       signal,
     });
 
+    console.log(res.data.data);
+
     return res.data.data;
+  };
+  const demoFetchUserMealSchedule = () => {
+    console.log("Fetching user meal schedule...");
+
+    const weekMeals = getLocalMealsForWeek(user.id, "2025-12-22");
+    return weekMeals;
   };
   const {
     data: userMealSchedule = [],
     isLoading: userMealLoading,
     error: userMealError,
   } = useQuery({
-    queryKey: ["user-meal-schedule"],
-    queryFn: fetchUserMealSchedule,
+    queryKey: ["user-meal-schedule", selectedISO],
+    queryFn: ENV.isDemoMode ? demoFetchUserMealSchedule : fetchUserMealSchedule,
     enabled: !!selectedISO,
+    retry: 1,
     staleTime: Infinity,
+    cacheTime: Infinity,
     refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     refetchOnMount: false,
   });
 
@@ -315,7 +331,7 @@ export default function Mealplanner() {
       try {
         const apiKey = getRandomApiKey();
 
-        const apiUrl = `${FOOD_API}/recipes/informationBulk?ids=${idsString.join(",")}&apiKey=${apiKey}`;
+        const apiUrl = `${ENV.foodApiUrl}/recipes/informationBulk?ids=${idsString.join(",")}&apiKey=${apiKey}`;
 
         const res = await axios.get(apiUrl, { signal });
 
@@ -386,7 +402,25 @@ export default function Mealplanner() {
       items: listId,
     };
 
-    console.log(formData);
+    if (ENV.isDemoMode) {
+      deleteLocalUserMeal({
+        userId: user.id,
+        isoDate: selectedISO,
+        items: listId,
+      });
+
+      toast.success("Deleted successfully");
+
+      setSelectedMealId([]);
+      setToModify(false);
+
+      // 🔥 THIS is the key line
+      queryClient.invalidateQueries({
+        queryKey: ["user-meal-schedule"],
+      });
+    }
+
+    return;
 
     try {
       const res = await axios.delete(`${BACKEND_MEAL_URL}/usermeal`, {
@@ -414,12 +448,6 @@ export default function Mealplanner() {
       toast.error("Failed to delete meal");
     }
   }
-
-  useEffect(() => {
-    console.log("Selected list ids:", listId);
-  }, [listId]);
-
-  console.log(selectedISO);
 
   return (
     <>
@@ -588,11 +616,11 @@ export default function Mealplanner() {
                         <>
                           <ul className="flex flex-col gap-10">
                             {/* Breakfast */}
-                            {enrichedSelectedDateData.meal.breakfast.length > 0 && (
+                            {enrichedSelectedDateData?.meal?.breakfast.length > 0 && (
                               <li>
                                 <h2 className="text-xl mb-4">Breakfast</h2>
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                  {enrichedSelectedDateData.meal.breakfast.map((item, idx) => (
+                                  {enrichedSelectedDateData?.meal?.breakfast.map((item, idx) => (
                                     <div key={idx}>
                                       {item?.details?.id && (
                                         <RecipeItem
@@ -612,11 +640,11 @@ export default function Mealplanner() {
                             )}
 
                             {/* Lunch */}
-                            {enrichedSelectedDateData.meal.lunch.length > 0 && (
+                            {enrichedSelectedDateData?.meal?.lunch.length > 0 && (
                               <li>
                                 <h2 className="text-xl mb-4">Lunch</h2>
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                  {enrichedSelectedDateData.meal.lunch.map((item, idx) => (
+                                  {enrichedSelectedDateData?.meal?.lunch.map((item, idx) => (
                                     <div key={idx}>
                                       {item?.details?.id && (
                                         <RecipeItem
@@ -636,11 +664,11 @@ export default function Mealplanner() {
                             )}
 
                             {/* Snacks */}
-                            {enrichedSelectedDateData.meal.snacks.length > 0 && (
+                            {enrichedSelectedDateData?.meal?.snacks.length > 0 && (
                               <li>
                                 <h2 className="text-xl mb-4">Snacks</h2>
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                  {enrichedSelectedDateData.meal.snacks.map((item, idx) => (
+                                  {enrichedSelectedDateData?.meal?.snacks.map((item, idx) => (
                                     <div key={idx}>
                                       {item?.details?.id && (
                                         <RecipeItem
@@ -660,11 +688,11 @@ export default function Mealplanner() {
                             )}
 
                             {/* Dinner */}
-                            {enrichedSelectedDateData.meal.dinner.length > 0 && (
+                            {enrichedSelectedDateData?.meal?.dinner.length > 0 && (
                               <li>
                                 <h2 className="text-xl mb-4">Dinner</h2>
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                  {enrichedSelectedDateData.meal.dinner.map((item, idx) => (
+                                  {enrichedSelectedDateData?.meal?.dinner.map((item, idx) => (
                                     <div key={idx}>
                                       {item?.details?.id && (
                                         <RecipeItem
@@ -857,4 +885,91 @@ function getLocalISO(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
     date.getDate()
   ).padStart(2, "0")}`;
+}
+
+function getLocalMealplans(userId) {
+  return JSON.parse(localStorage.getItem(`mealplans:${userId}`)) || {};
+}
+
+function getMonday(date) {
+  const d = new Date(date);
+  const day = d.getDay(); // 0 (Sun) → 6 (Sat)
+  const diff = day === 0 ? -6 : 1 - day; // move to Monday
+  d.setDate(d.getDate() + diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function toLocalISO(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function getLocalMealsForWeek(userId, baseISO = toLocalISO(new Date())) {
+  const plans = getLocalMealplans(userId) || {};
+  const baseDate = new Date(baseISO);
+  const monday = getMonday(baseDate);
+
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+
+    const iso = toLocalISO(d);
+
+    return {
+      date: d.toLocaleString("en-US", {
+        month: "long",
+        day: "numeric",
+      }),
+      iso,
+      short: d.toLocaleString("en-US", {
+        weekday: "short",
+        day: "numeric",
+      }),
+      day_type: d.toLocaleString("en-US", { weekday: "long" }).toLowerCase(),
+      meal: plans[iso]?.meal || {
+        breakfast: [],
+        lunch: [],
+        dinner: [],
+        snacks: [],
+      },
+    };
+  });
+}
+
+function deleteLocalUserMeal({ userId, isoDate, items }) {
+  const storageKey = `mealplans:${userId}`;
+
+  // 1. Read & parse
+  const raw = localStorage.getItem(storageKey);
+  if (!raw) return;
+
+  const plans = JSON.parse(raw);
+
+  if (!plans[isoDate] || !plans[isoDate].meal) return;
+
+  // 2. Clone safely
+  const updatedPlans = { ...plans };
+  const dayPlan = { ...updatedPlans[isoDate] };
+  const meals = { ...dayPlan.meal };
+
+  // 3. Apply deletions
+  items.forEach(({ recipeId, mealTime }) => {
+    if (!Array.isArray(meals[mealTime])) return;
+
+    meals[mealTime] = meals[mealTime].filter((item) => item.recipeId !== recipeId);
+  });
+
+  // 4. Save updated day
+  dayPlan.meal = meals;
+  updatedPlans[isoDate] = dayPlan;
+
+  // 5. Persist back to localStorage
+  localStorage.setItem(storageKey, JSON.stringify(updatedPlans));
 }
