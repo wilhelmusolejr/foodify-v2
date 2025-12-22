@@ -138,5 +138,4 @@ Follow up 7. Bug on deleting meals in mealplanner page
 Follow up 8. To fix offline data. add bookmark, comment, edit profile
 Follow up 9. Fix bug in profile - change initial data to queryFn ----- DONE
 
-generate shopping list. on mealplanner/recipe.
-hide add meal to me
+generate shopping list. on mealplanner/recipe. ----------------------- DONE
