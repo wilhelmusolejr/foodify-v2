@@ -10,7 +10,9 @@ export default function MealTypeItem({ mealTypeName = "loading", mealNum = 0 }) 
         {/* <FontAwesomeIcon icon={icon} size="xs" /> */}
         <span className="text-gray-700">{mealTypeName}</span>
       </div>
-      <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-600 rounded-full">{mealNum}</span>
+      <span className=" w-5 flex items-center justify-center h-5 text-xs bg-blue-100 text-blue-600 rounded-full">
+        <p>{mealNum}</p>
+      </span>
     </li>
   );
 }
