@@ -32,7 +32,7 @@ export default function Navigator() {
   let PLACEHOLDER_AVATAR;
 
   if (isLoggedIn) {
-    PLACEHOLDER_AVATAR = `https://placehold.co/40x40/4c3c3a/ffffff?text=${user.firstName[0]}`;
+    PLACEHOLDER_AVATAR = `https://placehold.co/40x40/4c3c3a/ffffff?text=${user.firstName}`;
   }
 
   const backdropVariants = {
