@@ -494,7 +494,8 @@ export default function Mealplanner() {
                 dayName={item.day_type}
                 dateLabel={item.date}
                 meals={item.meal}
-                isToday={item.iso === selectedISO}
+                isoDate={item.iso}
+                selectedISO={selectedISO}
                 onClick={() => {
                   changeSelectedDate(item.iso);
                 }}
