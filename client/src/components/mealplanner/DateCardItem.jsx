@@ -18,7 +18,7 @@ export default function DateCardItem({ dayName, dateLabel, meals, onClick, isoDa
       onClick={() => {
         onClick(dateLabel);
       }}
-      className={`w-full min-h-72 flex flex-col rounded-2xl p-3 border shadow-sm hover:shadow-md transition-all cursor-pointer 
+      className={`w-full min-w-52 min-h-72 flex flex-col rounded-2xl p-3 border shadow-sm hover:shadow-md transition-all cursor-pointer 
     ${isSelected ? "bg-green-50 border-green-400 shadow-md scale-[1.02]" : "bg-white border-gray-200"}
   `}
     >
