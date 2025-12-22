@@ -18,6 +18,8 @@ import { ENV } from "@/config/env";
 // LIBRARY
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { motion } from "framer-motion";
+import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 
 import { useModal } from "../context/ModalContext";
 
@@ -418,9 +420,9 @@ export default function Mealplanner() {
       queryClient.invalidateQueries({
         queryKey: ["user-meal-schedule"],
       });
-    }
 
-    return;
+      return;
+    }
 
     try {
       const res = await axios.delete(`${BACKEND_MEAL_URL}/usermeal`, {
@@ -455,8 +457,35 @@ export default function Mealplanner() {
 
       <Toaster position="top-center" reverseOrder={false} />
 
-      <div className="mt-40">
+      <div className="mt-30">
         <div className="w-10/12 mx-auto">
+          {/* heading */}
+          <motion.header
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            className="mb-10 md:mb-14 text-black"
+          >
+            <div className="min-h-[20vh] flex items-center justify-center ">
+              <div className="text-center capitalize flex gap-2 flex-col">
+                <motion.p
+                  variants={fadeUp}
+                  className="italic  uppercase text-base md:text-lg lg:text-xl "
+                >
+                  Plan your week, your way.
+                </motion.p>
+
+                <motion.h2
+                  variants={fadeUp}
+                  className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold"
+                >
+                  Meal Planner
+                </motion.h2>
+              </div>
+            </div>
+          </motion.header>
+
           {/* schedule */}
           <div className="flex gap-5 overflow-x-auto py-5 px-2">
             {userMealSchedule.map((item, idx) => (
