@@ -23,6 +23,7 @@ import { getRandomApiKey } from "../utils/apiUtils";
 import toast, { Toaster } from "react-hot-toast";
 import offlineRecipeData from "./recipe.json";
 
+// DEMO
 import userData from "../demo/users.json";
 import bookmarkData from "../demo/bookmarks.json";
 
@@ -99,6 +100,8 @@ export default function Bookmark() {
     initialData: ENV.isDemoMode ? demoFetchUserProfile : undefined,
   });
 
+  console.log(userProfile);
+
   // Fetch userbookmarks
   const fetchUserBookmarks = async ({ queryKey, signal }) => {
     const [, id] = queryKey;
@@ -143,6 +146,8 @@ export default function Bookmark() {
     staleTime: 1000 * 60 * 2,
     initialData: ENV.isDemoMode ? demoFetchUserBookmarks : undefined,
   });
+
+  console.log(userBookmarks);
 
   //   Fetch Recipe
   const bookmarkIds = useMemo(() => {
@@ -192,9 +197,8 @@ export default function Bookmark() {
   } = useQuery({
     queryKey: ["recipes", id, bookmarkIds],
     queryFn: fetchRecipe,
-    enabled: !!id && bookmarkIds.length > 0,
+    enabled: !!id && bookmarkIds.length > 0 && !ENV.isDemoMode,
     retry: 1,
-
     staleTime: Infinity,
     cacheTime: Infinity,
     refetchOnWindowFocus: false,
@@ -202,7 +206,11 @@ export default function Bookmark() {
     refetchOnMount: false,
   });
 
+  console.log(recipesLoading);
+
   let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
+
+  console.log(recipes);
 
   // Page title
   useEffect(() => {
@@ -232,7 +240,17 @@ export default function Bookmark() {
 
       <div className={`w-10/12 mx-auto mt-30 ${userProfileError ? "hidden" : ""}`}>
         {/* heading */}
-        <SectionHeading heading="Bookmark" subheading="Browse All Recipes by Category or Filter" />
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <SectionHeading
+            heading="Bookmark"
+            subheading="Browse All Recipes by Category or Filter"
+          />
+        </motion.div>
 
         {/* option */}
         <div className="mb-5 lg:mb-10 mt-30  max-w-7xl mx-auto flex flex-col-reverse lg:flex-row lg:items-end gap-10">

@@ -12,8 +12,11 @@ import { ENV } from "@/config/env";
 // LIBRARY
 import axios from "axios";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 export default function AddMealModal() {
   const { closeModal } = useModal();
+  const queryClient = useQueryClient();
 
   const STEPS = {
     SEARCH: "search",
@@ -123,6 +126,19 @@ export default function AddMealModal() {
         recipeId: selectedRecipeId,
       };
       addLocalMeal(formData);
+
+      // 🔥 refetch recipes used by meal planner
+      queryClient.invalidateQueries({
+        queryKey: ["user-meal-schedule"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["recipes"],
+      });
+
+      setIsSuccess(true);
+      setStep(STEPS.FINISH);
+
       return;
     }
 
