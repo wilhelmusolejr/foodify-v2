@@ -7,6 +7,7 @@ import { useModal } from "../../context/ModalContext";
 // UTILS
 import { getRandomApiKey } from "../../utils/apiUtils";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { ENV } from "@/config/env";
 
 // LIBRARY
 import axios from "axios";
@@ -39,6 +40,7 @@ export default function AddMealModal() {
 
   // AUTH
   const token = useAuthStore.getState().token;
+  const user = useAuthStore.getState().user;
 
   //   HANDLE
   async function handleSearch() {
@@ -111,6 +113,21 @@ export default function AddMealModal() {
       return;
     }
 
+    // LOCAL
+    // ------------------------------
+    if (ENV.isDemoMode) {
+      let formData = {
+        userId: user.id,
+        date: selectedISO,
+        mealTimes: selectedMeals,
+        recipeId: selectedRecipeId,
+      };
+      addLocalMeal(formData);
+      return;
+    }
+
+    // BACKEND
+    // ------------------------------
     try {
       setIsLoading(true);
 
@@ -137,7 +154,6 @@ export default function AddMealModal() {
     }
   }
 
-  //
   const weekSchedule = useMemo(() => getWeekSchedule(), []);
   const canSubmit = selectedISO && selectedMeals.length > 0;
 
@@ -389,4 +405,38 @@ function getWeekSchedule(baseDate = new Date(), weekStart = "monday", locale = "
   });
 
   return days;
+}
+
+function getLocalMealplans(userId) {
+  return JSON.parse(localStorage.getItem(`mealplans:${userId}`)) || {};
+}
+
+function saveLocalMealplans(userId, data) {
+  localStorage.setItem(`mealplans:${userId}`, JSON.stringify(data));
+}
+
+function addLocalMeal({ userId, date, mealTimes, recipeId }) {
+  const plans = getLocalMealplans(userId);
+
+  if (!plans[date]) {
+    plans[date] = {
+      date,
+      meal: {
+        breakfast: [],
+        lunch: [],
+        dinner: [],
+        snacks: [],
+      },
+    };
+  }
+
+  mealTimes.forEach((mealTime) => {
+    const exists = plans[date].meal[mealTime].some((item) => item.recipeId === recipeId);
+
+    if (!exists) {
+      plans[date].meal[mealTime].push({ recipeId });
+    }
+  });
+
+  saveLocalMealplans(userId, plans);
 }
