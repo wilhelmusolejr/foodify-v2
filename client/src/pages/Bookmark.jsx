@@ -319,7 +319,7 @@ export default function Bookmark() {
                   viewport={{ once: true, amount: 0.3 }}
                   className="grid max-w-7xl mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20 min-h-[60vh]"
                 >
-                  {recipes.map((recipe, index) => (
+                  {recipeData.map((recipe, index) => (
                     <motion.div key={index} variants={fadeUp}>
                       <RecipeItem
                         key={index}
