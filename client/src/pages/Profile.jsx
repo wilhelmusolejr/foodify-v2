@@ -280,9 +280,18 @@ export default function Profile() {
         ) : (
           <>
             {/* header */}
-            <div className="bg-green-900">
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.5 }}
+              className="bg-green-900"
+            >
               <div className="w-10/12 mx-auto max-w-7xl py-20 mt-10 text-white min-h-[60vh] flex items-center  relative">
-                <div className="flex flex-col md:flex-row gap-10 md:max-w-[700px] mx-auto items-center">
+                <motion.div
+                  variants={fadeUp}
+                  className="flex flex-col md:flex-row gap-10 md:max-w-[700px] mx-auto items-center"
+                >
                   {/* image */}
                   <div className="w-40 h-40 text-center flex justify-center items-center ">
                     <img
@@ -311,7 +320,7 @@ export default function Profile() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* settings button */}
                 {!isVisitor && (
@@ -328,7 +337,7 @@ export default function Profile() {
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
 
             {/* content */}
             <div className="w-10/12 mx-auto max-w-7xl">
