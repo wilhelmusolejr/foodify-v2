@@ -124,7 +124,7 @@ Figma
 --
 
 1. Mealplanner page. modify button, choose recipe to delete, press delete button.
-   in choosing recipe, add data-id, iso in the mealplanner page. breakfast or type in the recipeitem component.
+   in choosing recipe, add data-id, iso in the mealplanner page. breakfast or type in the re cipeitem component.
    upon delete button. show toast, refetch data.
    DONE
 
@@ -135,7 +135,7 @@ Figma
 6. ANIMATION - DONE
 
 Follow up 7. Bug on deleting meals in mealplanner page
-Follow up 8. To fix offline data. add bookmark, comment, edit profile
+Follow up 8. To fix offline data. add bookmark, comment, edit profil - DONE
 Follow up 9. Fix bug in profile - change initial data to queryFn ----- DONE
 
 generate shopping list. on mealplanner/recipe. ----------------------- DONE
