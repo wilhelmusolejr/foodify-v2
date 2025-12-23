@@ -38,8 +38,9 @@ import AddMealMealPlanner from "@components/Modal/AddMealMealPlanner";
 import Button from "@components/Global/Button";
 
 // UTILS
-import { formatCommentDate } from "../utils/dateUtils";
-import { getRandomApiKey } from "../utils/apiUtils";
+import { formatCommentDate } from "@/utils/dateUtils";
+import { getRandomApiKey } from "@/utils/apiUtils";
+import { generateShoppingList } from "@/utils/pdfUtils.js";
 
 // GLOBAL STATE
 import { useAuthStore } from "../stores/useAuthStore";
@@ -662,6 +663,10 @@ export default function Recipe() {
     openModal("meal-planner");
   }
 
+  function handleGenerateShoppinglist() {
+    generateShoppingList([recipe]);
+  }
+
   const fetchNutritionLabel = async ({ queryKey }) => {
     const [, productId] = queryKey;
 
@@ -978,12 +983,19 @@ export default function Recipe() {
                 {/* <Tags className="hidden lg:flex mb-14" /> */}
 
                 {/* Add to meal planner */}
-                <div className="">
+                <div className="flex gap-2 flex-col">
                   <button
                     onClick={handleAddMealPlanner}
                     className="w-full px-5 py-5 bg-green-900 text-white rounded-lg shadow-md hover:bg-green-800 transition duration-150 cursor-pointer"
                   >
                     Add to Meal Planner
+                  </button>
+
+                  <button
+                    onClick={handleGenerateShoppinglist}
+                    className="w-full px-5 py-5 bg-green-900 text-white rounded-lg shadow-md hover:bg-green-800 transition duration-150 cursor-pointer"
+                  >
+                    Generate shopping list
                   </button>
                 </div>
 
