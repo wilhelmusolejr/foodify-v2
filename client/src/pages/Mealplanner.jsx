@@ -7,6 +7,7 @@ import DateCardItem from "@components/mealplanner/DateCardItem";
 import Footer from "@components/Footer";
 import RecipeItem from "@components/RecipeItem";
 import AddMealModal from "@components/Modal/AddMealModal";
+import MealScheduleSlider from "@components/Modal/MealScheduleSlider";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/useAuthStore";
@@ -24,7 +25,6 @@ import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 import { useModal } from "../context/ModalContext";
 
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
-import MealScheduleSlider from "../components/Modal/MealScheduleSlider";
 
 let nutrients = [
   {
