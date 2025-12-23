@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
-import React, { use, useEffect, useMemo, useState } from "react";
+import React, { useRef, useEffect, useMemo, useState } from "react";
 
 // COMPONENTS
 import Navigator from "@components/Navigator";
-import DateCardItem from "../components/mealplanner/DateCardItem";
+import DateCardItem from "@components/mealplanner/DateCardItem";
 import Footer from "@components/Footer";
 import RecipeItem from "@components/RecipeItem";
 import AddMealModal from "@components/Modal/AddMealModal";
@@ -24,6 +24,7 @@ import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 import { useModal } from "../context/ModalContext";
 
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import MealScheduleSlider from "../components/Modal/MealScheduleSlider";
 
 let nutrients = [
   {
@@ -622,21 +623,13 @@ export default function Mealplanner() {
           </motion.header>
 
           {/* schedule */}
-          <div className="flex gap-5 overflow-x-auto py-5 px-2">
-            {userMealSchedule.map((item, idx) => (
-              <DateCardItem
-                key={item.iso} // prefer stable key
-                dayName={item.day_type}
-                dateLabel={item.date}
-                meals={item.meal}
-                isoDate={item.iso}
-                selectedISO={selectedISO}
-                onClick={() => {
-                  changeSelectedDate(item.iso);
-                }}
-              />
-            ))}
-          </div>
+          <MealScheduleSlider
+            userMealSchedule={userMealSchedule}
+            selectedISO={selectedISO}
+            changeSelectedDate={changeSelectedDate}
+          />
+
+          {/* userMealSchedule, selectedISO, changeSelectedDate */}
 
           <div className="my-30 flex gap-10 justify-between mx-auto">
             {/* side 1 */}
