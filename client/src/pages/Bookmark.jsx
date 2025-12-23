@@ -15,24 +15,25 @@ import Footer from "@components/Footer";
 import PaginationButton from "@components/PaginationButton";
 import EmptyRecipe from "@components/Profile/EmptyRecipe";
 
+// LIBRARY
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getRandomApiKey } from "../utils/apiUtils";
-
+import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
-import offlineRecipeData from "./recipe.json";
 
 // DEMO
 import userData from "../demo/users.json";
 import bookmarkData from "../demo/bookmarks.json";
+import offlineRecipeData from "./recipe.json";
 
 // GLOBAL STATE
 import { useAuthStore } from "../stores/useAuthStore";
 
+// UTILS
 import { ENV } from "@/config/env";
 import { fadeUp, staggerContainer } from "@/animations/motionVariants";
-import { motion } from "framer-motion";
 
 const skeletonRecipes = Array.from({ length: 12 }, () => <RecipeItemSkeleton />);
 
@@ -52,6 +53,8 @@ export default function Bookmark() {
     user.id = user.id.toString();
   }
   const isVisitor = isLoggedIn ? user.id !== id : true;
+
+  console.log(isVisitor);
 
   const BACKEND_USER_URL = `${ENV.backendUrl}/api/user`;
   const BACKEND_BOOKMARK_URL = `${ENV.backendUrl}/api/bookmark`;
@@ -147,8 +150,6 @@ export default function Bookmark() {
     initialData: ENV.isDemoMode ? demoFetchUserBookmarks : undefined,
   });
 
-  console.log(userBookmarks);
-
   //   Fetch Recipe
   const bookmarkIds = useMemo(() => {
     // extract numeric/string ids and join into a stable string
@@ -161,6 +162,8 @@ export default function Bookmark() {
   }, [userBookmarks]);
 
   const fetchRecipe = async ({ queryKey, signal }) => {
+    console.log("fetch recipe");
+
     const [, id, idsString] = queryKey;
 
     for (let attempt = 1; attempt <= ENV.maxTry; attempt++) {
@@ -197,7 +200,7 @@ export default function Bookmark() {
   } = useQuery({
     queryKey: ["recipes", id, bookmarkIds],
     queryFn: fetchRecipe,
-    enabled: !!id && bookmarkIds.length > 0 && !ENV.isDemoMode,
+    enabled: !!id && bookmarkIds.length > 0,
     retry: 1,
     staleTime: Infinity,
     cacheTime: Infinity,
@@ -206,11 +209,11 @@ export default function Bookmark() {
     refetchOnMount: false,
   });
 
-  console.log(recipesLoading);
+  // console.log(recipeData);
 
-  let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
+  // let recipes = recipeData.length === 0 ? skeletonRecipes : recipeData;
 
-  console.log(recipes);
+  // console.log(recipes);
 
   // Page title
   useEffect(() => {
@@ -307,7 +310,7 @@ export default function Bookmark() {
           </div>
         ) : (
           <>
-            {recipes.length > 0 ? (
+            {recipeData.length > 0 ? (
               <>
                 <motion.div
                   variants={staggerContainer}
