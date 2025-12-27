@@ -82,10 +82,6 @@ USER
 1. Image a. Upload actual image b. Save placeholder instead - done
 
 DEC 5
-DEC 5
-DEC 5
-DEC 5
-DEC 5
 
 - Handle error when mongo db is offline. // SHOW INFORMATION, make the page for frontend only. save to local storage instead
   make json of users. (extract data in the database)
@@ -106,8 +102,6 @@ DEC 6
 - Recipe page -> add to planner -> MODAL UI
   --- select data
 
-DEC 7.
-DEC 7.
 DEC 7.
 DATABASE
 
