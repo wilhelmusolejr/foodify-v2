@@ -63,7 +63,9 @@ export default function BlogItem() {
               <p className="text-sm uppercase tracking-widest opacity-80 mb-3 bg-green-800 w-fit mx-auto px-2">
                 Blog • {post.date}
               </p>
-              <h1 className="text-3xl md:text-5xl font-bold leading-tight">{post.header}</h1>
+              <h1 className="text-3xl md:text-5xl font-bold leading-tight bg-green-800">
+                {post.header}
+              </h1>
             </div>
           </div>
         </section>
