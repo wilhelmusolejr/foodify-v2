@@ -1,14 +1,16 @@
 import React from "react";
+import { ENV } from "@/config/env";
+import { Link } from "react-router-dom";
 
 export default function Test({ name, image_name }) {
   let image_path = `images/category/${image_name}`;
 
-  let link = `http://localhost:5173/search?query=${name}`;
+  let link = `${ENV.frontEndUrl}/search?query=${name}`;
 
   return (
     <div className="text-center flex flex-col items-center gap-5 w-full group">
       {/* image */}
-      <a href={link} className="rounded-full overflow-hidden">
+      <Link to={link} className="rounded-full overflow-hidden">
         <img
           src={image_path}
           alt={`Image for header food item`}
@@ -17,7 +19,7 @@ export default function Test({ name, image_name }) {
             group-hover:scale-110 
             group-hover:rotate-3"
         />
-      </a>
+      </Link>
 
       <a href={link} className="text-xl font-medium uppercase">
         {name}

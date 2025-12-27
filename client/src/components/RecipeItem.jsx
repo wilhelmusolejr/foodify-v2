@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { randomFoodIcon } from "../utils/foodLoaderUtils";
 import { faBox, faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 import { faSquare, faSquareCheck } from "@fortawesome/free-regular-svg-icons";
+import { Link } from "react-router-dom";
 
 export default function RecipeItem({
   image_name,
@@ -62,8 +63,8 @@ export default function RecipeItem({
   }
 
   return (
-    <a
-      href={recipe_link}
+    <Link
+      to={recipe_link}
       className="group block"
       onClick={(e) => {
         if (toModify) {
@@ -100,6 +101,6 @@ export default function RecipeItem({
       </div>
 
       <h2 className="capitalize mt-2 text-lg font-medium">{name}</h2>
-    </a>
+    </Link>
   );
 }

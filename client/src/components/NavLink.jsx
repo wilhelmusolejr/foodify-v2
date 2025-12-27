@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 // /GGG
@@ -13,7 +14,7 @@ export default function NavLink({ url = "#", label }) {
 
   return (
     <li className={`list-none text-xl ${className}`}>
-      <a href={url}>{label}</a>
+      <Link to={url}>{label}</Link>
     </li>
   );
 }
