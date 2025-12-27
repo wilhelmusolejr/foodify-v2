@@ -10,10 +10,14 @@ import Profile from "@pages/Profile";
 import Bookmark from "@pages/Bookmark";
 import Mealplanner from "@pages/Mealplanner";
 import Faq from "@pages/Faq";
+import ScrollToTop from "@components/ScrollToTop";
+import BlogItem from "@pages/BlogItem";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
+
       <AuthLoader>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -26,6 +30,7 @@ function App() {
           <Route path="/bookmark/:id" element={<Bookmark />} />
           <Route path="/mealplanner/:id" element={<Mealplanner />} />
           <Route path="/faq" element={<Faq />} />
+          <Route path="/blog/:id" element={<BlogItem />} />
         </Routes>
       </AuthLoader>
     </BrowserRouter>
