@@ -107,7 +107,7 @@ export default function Blog() {
         </div>
 
         {/* parent */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-5 mb-20">
           {blogs.map((blog, index) => (
             <BlogItemV2 data={blog} />
           ))}
