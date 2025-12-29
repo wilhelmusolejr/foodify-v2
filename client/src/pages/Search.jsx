@@ -21,6 +21,7 @@ import PaginationButton from "@components/PaginationButton";
 import SearchButton from "@components/SearchButton";
 import Paragraph from "@components/Paragraph";
 import InputError from "@components/InputError";
+import CategoryItem from "@components/CategoryItem";
 
 // LIBRARY
 import axios from "axios";
@@ -186,11 +187,10 @@ export default function Search() {
         }
         break;
       case "nutrient":
-        console.log("ccc");
         const areAllEmpty = Object.values(nutrientRanges).every((range) =>
           range.every((v) => v === "")
         );
-        if (areAllEmpty && sea) {
+        if (areAllEmpty && searchInput) {
           setInputError("Invalid input");
           return;
         }
@@ -745,6 +745,42 @@ export default function Search() {
           </div>
         </>
       )}
+
+      {/* Section - Categories */}
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        className="bg-white py-40 border-t border-black/10 my-40 mb-20"
+      >
+        <div className="w-10/12 mx-auto">
+          {/* Heading */}
+          <SectionHeading
+            heading={"Explore meal types"}
+            subheading={"Discover delicious meals for every ocean"}
+          />
+
+          {/* list */}
+          <div className="flex gap-4 flex-wrap justify-center">
+            {/* item */}
+            <motion.div variants={fadeUp}>
+              <CategoryItem image_path="images/category/category1.png" title="Main course" />
+            </motion.div>
+            <motion.div variants={fadeUp}>
+              <CategoryItem image_path="images/category/category2.png" title="Sea food" />
+            </motion.div>
+            <motion.div variants={fadeUp}>
+              <CategoryItem image_path="images/category/category3.png" title="Dessert" />
+            </motion.div>
+            <motion.div variants={fadeUp}>
+              <CategoryItem image_path="images/category/category4.png" title="Salad" />
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+
+      <br />
 
       {/* Section - mail letter */}
       <MailLetter />
