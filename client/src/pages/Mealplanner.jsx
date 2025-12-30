@@ -747,52 +747,75 @@ export default function Mealplanner() {
             {/* side 2 */}
             <div className="flex-1 max-w-[400px] hidden lg:block">
               {/* button */}
-              <div className="mb-10 flex flex-col gap-2">
-                {/* item */}
+              <div className="mb-10 flex flex-col gap-4 border border-black/20 p-5 rounded-lg bg-white shadow-lg">
+                {/* Generate shopping list */}
                 <div
                   onClick={handleGenerateShoppingList}
-                  className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
+                  className="
+      py-5 border-2 border-green-600/50 rounded-lg text-center bg-white uppercase cursor-pointer
+      transition-all duration-200 ease-out
+      hover:bg-green-50 hover:border-green-600 hover:shadow-md hover:-translate-y-0.5
+      active:translate-y-0
+    "
                 >
                   <p>Generate shopping list weekly</p>
                 </div>
 
-                {/* item */}
+                {/* Add meal (primary action) */}
                 <div
-                  onClick={() => {
-                    openModal("meal-planner");
-                  }}
-                  className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
+                  onClick={() => openModal("meal-planner")}
+                  className="
+      py-5 bg-green-600 border border-black/10 rounded-lg text-center text-white uppercase cursor-pointer
+      transition-all duration-200 ease-out
+      hover:bg-green-700 hover:shadow-lg hover:-translate-y-0.5
+      active:translate-y-0
+    "
                 >
                   <p>Add meal</p>
                 </div>
 
                 {!toModify ? (
                   <>
-                    {/* item */}
+                    {/* Modify */}
                     <div
-                      className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
                       onClick={() => handleModifyClick(true)}
+                      className="
+          py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer
+          transition-all duration-200 ease-out
+          hover:bg-gray-50 hover:shadow-md hover:-translate-y-0.5
+          active:translate-y-0
+        "
                     >
                       <p>Modify</p>
                     </div>
                   </>
                 ) : (
                   <>
-                    {/* item */}
+                    {/* Delete */}
                     <div
-                      className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
                       onClick={handleDeleteClick}
+                      className="
+          py-5 bg-red-500 border text-white border-black/10 rounded-lg text-center uppercase cursor-pointer
+          transition-all duration-200 ease-out
+          hover:bg-red-600 hover:shadow-lg hover:-translate-y-0.5
+          active:translate-y-0
+        "
                     >
                       <p>Delete</p>
                     </div>
                   </>
                 )}
 
-                {/* item */}
+                {/* Cancel */}
                 {toModify && (
                   <div
-                    className="py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer"
                     onClick={() => handleModifyClick(false)}
+                    className="
+        py-5 border border-black/10 rounded-lg text-center bg-white uppercase cursor-pointer
+        transition-all duration-200 ease-out
+        hover:bg-gray-50 hover:shadow-md hover:-translate-y-0.5
+        active:translate-y-0
+      "
                   >
                     <p>Cancel</p>
                   </div>
