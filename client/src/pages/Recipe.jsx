@@ -983,7 +983,7 @@ export default function Recipe() {
                 {/* <Tags className="hidden lg:flex mb-14" /> */}
 
                 {/* Add to meal planner */}
-                <div className="flex gap-2 flex-col">
+                <div className="flex gap-2 flex-col hidden">
                   <button
                     onClick={handleAddMealPlanner}
                     className="w-full px-5 py-5 bg-green-900 text-white rounded-lg shadow-md hover:bg-green-800 transition duration-150 cursor-pointer"
@@ -996,6 +996,41 @@ export default function Recipe() {
                     className="w-full px-5 py-5 bg-green-900 text-white rounded-lg shadow-md hover:bg-green-800 transition duration-150 cursor-pointer"
                   >
                     Generate shopping list
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  {/* Primary action */}
+                  <button
+                    onClick={handleAddMealPlanner}
+                    className="
+      w-full py-4 rounded-xl
+      cursor-pointer
+      bg-green-900 text-white font-semibold
+      shadow-sm
+      hover:bg-green-800
+      active:scale-[0.98]
+      transition-all
+    "
+                  >
+                    ➕ Add to Meal Planner
+                  </button>
+
+                  {/* Secondary action */}
+                  <button
+                    onClick={handleGenerateShoppinglist}
+                    className="
+      w-full py-3 rounded-xl
+      bg-white text-green-700 font-medium
+      border border-green-700
+      shadow-sm
+      cursor-pointer
+      hover:bg-green-50
+      active:scale-[0.98]
+      transition-all
+    "
+                  >
+                    🛒 Generate Shopping List
                   </button>
                 </div>
 
