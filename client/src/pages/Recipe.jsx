@@ -980,7 +980,6 @@ export default function Recipe() {
               {/* side 2 */}
               <div className="flex-1 ">
                 {/* tags */}
-                {/* <Tags className="hidden lg:flex mb-14" /> */}
 
                 {/* Add to meal planner */}
                 <div className="flex gap-2 flex-col hidden">
