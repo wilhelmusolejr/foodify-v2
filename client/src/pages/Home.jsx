@@ -33,6 +33,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fadeUp, staggerContainer } from "@/animations/motionVariants";
 
 // recipe data
+// recipe data
 import offlineRecipeData from "./recipe.json";
 
 // JSON
