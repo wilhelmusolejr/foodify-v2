@@ -978,6 +978,8 @@ export default function Recipe() {
               </div>
 
               {/* side 2 */}
+              {/* side 2 */}
+              {/* side 2 */}
               <div className="flex-1 ">
                 {/* tags */}
                 {/* tags */}
