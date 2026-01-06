@@ -986,6 +986,7 @@ export default function Recipe() {
                 {/* tags */}
 
                 {/* Add to meal planner */}
+                {/* Add to meal planner */}
                 <div className="flex gap-2 flex-col hidden">
                   <button
                     onClick={handleAddMealPlanner}
